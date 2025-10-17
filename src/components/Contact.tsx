@@ -23,11 +23,15 @@ const Contact = () => {
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-6 h-6" />
+                      <Mail className="w-6 h-6" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold mb-1">이메일</div>
-                      <a href="mailto:sinclairseo@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                      <a
+                        href="mailto:sinclairseo@gmail.com"
+                        aria-label="이메일 보내기: sinclairseo@gmail.com"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
                         sinclairseo@gmail.com
                       </a>
                     </div>
@@ -35,11 +39,15 @@ const Contact = () => {
 
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-6 h-6" />
+                      <Phone className="w-6 h-6" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold mb-1">전화</div>
-                      <a href="tel:010-4904-2671" className="text-muted-foreground hover:text-primary transition-colors">
+                      <a
+                        href="tel:010-4904-2671"
+                        aria-label="전화 걸기: 010-4904-2671"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
                         010-4904-2671
                       </a>
                     </div>
@@ -47,14 +55,15 @@ const Contact = () => {
 
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                      <Globe className="w-6 h-6" />
+                      <Globe className="w-6 h-6" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold mb-1">웹사이트</div>
-                      <a 
-                        href="https://www.ideaonaction.ai" 
-                        target="_blank" 
+                      <a
+                        href="https://www.ideaonaction.ai"
+                        target="_blank"
                         rel="noopener noreferrer"
+                        aria-label="웹사이트 방문하기: www.ideaonaction.ai"
                         className="text-muted-foreground hover:text-primary transition-colors"
                       >
                         www.ideaonaction.ai

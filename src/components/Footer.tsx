@@ -18,27 +18,30 @@ const Footer = () => {
               생각과행동으로 미래를 설계하다
             </p>
             <div className="flex items-center gap-3">
-              <a 
-                href="https://github.com/IDEA-on-Action" 
-                target="_blank" 
+              <a
+                href="https://github.com/IDEA-on-Action"
+                target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub 프로필 방문하기"
                 className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors"
               >
-                <Github className="w-5 h-5" />
+                <Github className="w-5 h-5" aria-hidden="true" />
               </a>
-              <a 
-                href="https://linkedin.com" 
-                target="_blank" 
+              <a
+                href="https://linkedin.com"
+                target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn 프로필 방문하기"
                 className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors"
               >
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-5 h-5" aria-hidden="true" />
               </a>
-              <a 
+              <a
                 href="mailto:sinclairseo@gmail.com"
+                aria-label="이메일 보내기: sinclairseo@gmail.com"
                 className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors"
               >
-                <Mail className="w-5 h-5" />
+                <Mail className="w-5 h-5" aria-hidden="true" />
               </a>
             </div>
           </div>
