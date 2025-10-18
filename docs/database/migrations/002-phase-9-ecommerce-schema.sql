@@ -16,7 +16,7 @@
 DROP TABLE IF EXISTS carts CASCADE;
 
 -- 새로운 carts 테이블 생성 (장바구니 메타데이터만)
-CREATE TABLE IF NOT EXISTS carts (
+CREATE TABLE carts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   created_at timestamptz DEFAULT now() NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS carts (
 );
 
 -- 인덱스
-CREATE INDEX IF NOT EXISTS idx_carts_user ON carts(user_id);
+CREATE INDEX idx_carts_user ON carts(user_id);
 
 -- 코멘트
 COMMENT ON TABLE carts IS '사용자 장바구니 (메타데이터)';
@@ -37,7 +37,10 @@ COMMENT ON COLUMN carts.user_id IS '장바구니 소유자 (auth.users.id)';
 -- PART 2: cart_items 테이블 생성 (장바구니 항목)
 -- ===================================================================
 
-CREATE TABLE IF NOT EXISTS cart_items (
+-- 기존 cart_items 테이블 삭제 (price 컬럼이 없는 구 버전)
+DROP TABLE IF EXISTS cart_items CASCADE;
+
+CREATE TABLE cart_items (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   cart_id uuid REFERENCES carts(id) ON DELETE CASCADE NOT NULL,
   service_id uuid REFERENCES services(id) ON DELETE CASCADE NOT NULL,
@@ -51,9 +54,9 @@ CREATE TABLE IF NOT EXISTS cart_items (
 );
 
 -- 인덱스
-CREATE INDEX IF NOT EXISTS idx_cart_items_cart ON cart_items(cart_id);
-CREATE INDEX IF NOT EXISTS idx_cart_items_service ON cart_items(service_id);
-CREATE INDEX IF NOT EXISTS idx_cart_items_created ON cart_items(created_at DESC);
+CREATE INDEX idx_cart_items_cart ON cart_items(cart_id);
+CREATE INDEX idx_cart_items_service ON cart_items(service_id);
+CREATE INDEX idx_cart_items_created ON cart_items(created_at DESC);
 
 -- 코멘트
 COMMENT ON TABLE cart_items IS '장바구니 항목 (각 서비스)';
@@ -70,7 +73,7 @@ COMMENT ON COLUMN cart_items.price IS '담을 당시 가격 (스냅샷, 가격 �
 DROP TABLE IF EXISTS orders CASCADE;
 
 -- 새로운 orders 테이블 생성
-CREATE TABLE IF NOT EXISTS orders (
+CREATE TABLE orders (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL, -- 사용자 삭제 후에도 주문 기록 보존
 
@@ -109,10 +112,10 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 -- 인덱스
-CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
-CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_orders_number ON orders(order_number);
+CREATE INDEX idx_orders_user ON orders(user_id);
+CREATE INDEX idx_orders_status ON orders(status);
+CREATE INDEX idx_orders_created ON orders(created_at DESC);
+CREATE INDEX idx_orders_number ON orders(order_number);
 
 -- 코멘트
 COMMENT ON TABLE orders IS '주문 (헤더)';
@@ -127,7 +130,7 @@ COMMENT ON COLUMN orders.status IS '주문 상태 (pending/confirmed/processing/
 
 DROP TABLE IF EXISTS order_items CASCADE;
 
-CREATE TABLE IF NOT EXISTS order_items (
+CREATE TABLE order_items (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id uuid REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
   service_id uuid REFERENCES services(id) ON DELETE SET NULL, -- 서비스 삭제 후에도 주문 기록 보존

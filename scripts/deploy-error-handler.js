@@ -9,9 +9,13 @@
  * - 빌드/린트/타입 에러 파싱
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 설정
 const CONFIG = {
@@ -313,6 +317,11 @@ class DeployErrorHandler {
     // 6. 결과 출력
     this.printSummary(report);
 
+    // 7. 에러가 없으면 성공 메시지
+    if (this.errors.length === 0) {
+      console.log('\n🎉 에러가 발견되지 않았습니다. 배포 준비가 완료되었습니다!');
+    }
+
     return report;
   }
 
@@ -341,9 +350,9 @@ class DeployErrorHandler {
 }
 
 // CLI 인터페이스
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const handler = new DeployErrorHandler();
   handler.run().catch(console.error);
 }
 
-module.exports = DeployErrorHandler;
+export default DeployErrorHandler;
