@@ -22,7 +22,13 @@
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
     "release:dry": "standard-version --dry-run",
-    "release:first": "standard-version --first-release"
+    "release:first": "standard-version --first-release",
+    "repomix:generate": "repomix",
+    "sub-agent": "node scripts/sub-agent-runner.js",
+    "sub-agent:help": "node scripts/sub-agent-runner.js --help",
+    "sub-agent:windows": "scripts\\run-sub-agent.bat",
+    "sub-agent:powershell": "powershell -ExecutionPolicy Bypass -File scripts\\run-sub-agent.ps1",
+    "sub-agent:templates": "node scripts/sub-agent-templates.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -103,6 +109,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^5.4.19",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "repomix": "^1.0.0"
   }
 }

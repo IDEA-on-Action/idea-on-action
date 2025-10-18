@@ -1,5 +1,6 @@
-import { Menu, User as UserIcon } from "lucide-react";
+import { Menu, User as UserIcon, X } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -13,53 +14,124 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import logoSymbol from "@/assets/logo-symbol.png";
 
-const Header = () => {
+// Types
+interface HeaderProps {
+  className?: string;
+}
+
+interface NavigationItem {
+  label: string;
+  href: string;
+  isExternal?: boolean;
+}
+
+// Constants
+const BRAND_INFO = {
+  name: "IDEA on Action",
+  tagline: "생각과행동",
+  logo: logoSymbol,
+  logoAlt: "IDEA on Action Logo"
+} as const;
+
+const NAVIGATION_ITEMS: NavigationItem[] = [
+  { label: "서비스", href: "/services" },
+  { label: "기술", href: "#features" },
+  { label: "회사소개", href: "#about" },
+  { label: "문의", href: "#contact" }
+];
+
+const Header = ({ className = "" }: HeaderProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = location.pathname === "/";
   const { user, signOut } = useAuth();
   const { data: isAdmin } = useIsAdmin();
 
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const renderNavigationItem = (item: NavigationItem, index: number) => {
+    const isExternal = item.isExternal || (isHomePage && item.href.startsWith('#'));
+    const Component = isExternal ? 'a' : Link;
+    const props = isExternal 
+      ? { href: item.href }
+      : { to: item.href };
+
+    return (
+      <Component
+        key={index}
+        {...props}
+        className="text-foreground/80 hover:text-foreground transition-colors"
+        aria-label={`${item.label} 페이지로 이동`}
+      >
+        {item.label}
+      </Component>
+    );
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-gray-200 dark:border-gray-700">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 glass-card border-b transition-all duration-300 ${
+        isScrolled ? 'bg-background/95 backdrop-blur-md' : 'bg-background/80'
+      } border-gray-200 dark:border-gray-700 ${className}`}
+    >
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <img src={logoSymbol} alt="IDEA on Action Logo" className="h-10 w-10" />
+        <Link 
+          to="/" 
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          aria-label="홈페이지로 이동"
+        >
+          <img 
+            src={BRAND_INFO.logo} 
+            alt={BRAND_INFO.logoAlt} 
+            className="h-10 w-10" 
+            width={40}
+            height={40}
+          />
           <div className="flex flex-col">
-            <span className="font-bold text-lg leading-tight">IDEA on Action</span>
-            <span className="text-xs text-muted-foreground">생각과행동</span>
+            <span className="font-bold text-lg leading-tight">{BRAND_INFO.name}</span>
+            <span className="text-xs text-muted-foreground">{BRAND_INFO.tagline}</span>
           </div>
         </Link>
 
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/services" className="text-foreground/80 hover:text-foreground transition-colors">
-            서비스
-          </Link>
-          {isHomePage ? (
-            <>
-              <a href="#features" className="text-foreground/80 hover:text-foreground transition-colors">
-                기술
-              </a>
-              <a href="#about" className="text-foreground/80 hover:text-foreground transition-colors">
-                회사소개
-              </a>
-              <a href="#contact" className="text-foreground/80 hover:text-foreground transition-colors">
-                문의
-              </a>
-            </>
-          ) : (
-            <>
-              <Link to="/#features" className="text-foreground/80 hover:text-foreground transition-colors">
-                기술
-              </Link>
-              <Link to="/#about" className="text-foreground/80 hover:text-foreground transition-colors">
-                회사소개
-              </Link>
-              <Link to="/#contact" className="text-foreground/80 hover:text-foreground transition-colors">
-                문의
-              </Link>
-            </>
-          )}
+          {NAVIGATION_ITEMS.map((item, index) => {
+            const isExternal = isHomePage && item.href.startsWith('#');
+            const Component = isExternal ? 'a' : Link;
+            const props = isExternal 
+              ? { href: item.href }
+              : { to: item.href };
+
+            return (
+              <Component
+                key={index}
+                {...props}
+                className="text-foreground/80 hover:text-foreground transition-colors"
+                aria-label={`${item.label} 페이지로 이동`}
+              >
+                {item.label}
+              </Component>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-3">
@@ -68,7 +140,11 @@ const Header = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Button 
+                  variant="ghost" 
+                  className="relative h-10 w-10 rounded-full"
+                  aria-label="사용자 메뉴 열기"
+                >
                   <Avatar>
                     <AvatarFallback className="bg-gradient-primary text-white">
                       {user.email?.[0]?.toUpperCase() || <UserIcon className="h-5 w-5" />}
@@ -77,15 +153,24 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <DropdownMenuItem 
+                  onClick={() => navigate('/profile')}
+                  aria-label="프로필 페이지로 이동"
+                >
                   프로필
                 </DropdownMenuItem>
                 {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate('/admin/services')}>
+                  <DropdownMenuItem 
+                    onClick={() => navigate('/admin/services')}
+                    aria-label="관리자 페이지로 이동"
+                  >
                     관리자
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={signOut}>
+                <DropdownMenuItem 
+                  onClick={signOut}
+                  aria-label="로그아웃"
+                >
                   로그아웃
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -95,16 +180,68 @@ const Header = () => {
               variant="default"
               className="hidden md:inline-flex bg-gradient-primary hover:opacity-90"
               onClick={() => navigate('/login')}
+              aria-label="로그인 페이지로 이동"
             >
               로그인
             </Button>
           )}
 
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="h-5 w-5" />
+          {/* Mobile Menu Button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="md:hidden"
+            onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+          <div className="container mx-auto px-4 py-4 space-y-4">
+            {NAVIGATION_ITEMS.map((item, index) => {
+              const isExternal = isHomePage && item.href.startsWith('#');
+              const Component = isExternal ? 'a' : Link;
+              const props = isExternal 
+                ? { href: item.href }
+                : { to: item.href };
+
+              return (
+                <Component
+                  key={index}
+                  {...props}
+                  className="block text-foreground/80 hover:text-foreground transition-colors py-2"
+                  aria-label={`${item.label} 페이지로 이동`}
+                >
+                  {item.label}
+                </Component>
+              );
+            })}
+            
+            {!user && (
+              <Button
+                variant="default"
+                className="w-full bg-gradient-primary hover:opacity-90 mt-4"
+                onClick={() => {
+                  navigate('/login');
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                로그인
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };

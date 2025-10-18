@@ -2,15 +2,44 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import logoFull from "@/assets/logo-full.png";
 
-const Hero = () => {
+// Constants
+const ANIMATION_DELAYS = {
+  FLOAT_1: '0s',
+  FLOAT_2: '1s',
+  FADE_IN: '0.2s'
+} as const;
+
+const HERO_CONTENT = {
+  BADGE_TEXT: "AI 기반 워킹 솔루션",
+  MAIN_TITLE: "생각과 행동으로",
+  GRADIENT_TITLE: "미래를 설계하다",
+  SLOGAN: "KEEP AWAKE, LIVE PASSIONATE",
+  DESCRIPTION: "IDEA on Action은 AI 기반의 혁신적인 워킹 솔루션으로\n비즈니스의 생산성과 효율성을 극대화합니다",
+  CTA_PRIMARY: "무료로 시작하기",
+  CTA_SECONDARY: "더 알아보기"
+} as const;
+
+interface HeroProps {
+  className?: string;
+}
+
+const Hero = ({ className = "" }: HeroProps) => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+    <section className={`relative min-h-screen flex items-center justify-center overflow-hidden pt-16 ${className}`}>
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-hero" />
       
       {/* Animated Glow Elements */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+      <div 
+        className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-float" 
+        style={{ animationDelay: ANIMATION_DELAYS.FLOAT_1 }}
+        aria-hidden="true"
+      />
+      <div 
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" 
+        style={{ animationDelay: ANIMATION_DELAYS.FLOAT_2 }}
+        aria-hidden="true"
+      />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center animate-fade-in">
@@ -20,34 +49,39 @@ const Hero = () => {
               src={logoFull} 
               alt="VIBE WORKING - KEEP AWAKE, LIVE PASSIONATE" 
               className="h-20 md:h-24 mx-auto"
+              width={96}
+              height={96}
             />
           </div>
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 backdrop-blur-sm border border-primary/20 mb-8">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">AI 기반 워킹 솔루션</span>
+            <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
+            <span className="text-sm text-muted-foreground">{HERO_CONTENT.BADGE_TEXT}</span>
           </div>
 
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            생각과 행동으로
+            {HERO_CONTENT.MAIN_TITLE}
             <br />
             <span className="bg-gradient-primary bg-clip-text text-transparent">
-              미래를 설계하다
+              {HERO_CONTENT.GRADIENT_TITLE}
             </span>
           </h1>
 
           {/* Slogan */}
           <p className="text-2xl md:text-3xl font-semibold text-accent mb-4">
-            KEEP AWAKE, LIVE PASSIONATE
+            {HERO_CONTENT.SLOGAN}
           </p>
 
           {/* Description */}
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            IDEA on Action은 AI 기반의 혁신적인 워킹 솔루션으로
-            <br className="hidden md:block" />
-            비즈니스의 생산성과 효율성을 극대화합니다
+            {HERO_CONTENT.DESCRIPTION.split('\n').map((line, index) => (
+              <span key={index}>
+                {line}
+                {index === 0 && <br className="hidden md:block" />}
+              </span>
+            ))}
           </p>
 
           {/* CTA Buttons */}
@@ -55,23 +89,25 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-gradient-primary hover:opacity-90 text-lg px-8 shadow-glow group"
+              aria-label="무료로 시작하기"
             >
-              무료로 시작하기
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              {HERO_CONTENT.CTA_PRIMARY}
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
               className="text-lg px-8 border-primary/30 hover:bg-primary/10"
+              aria-label="더 알아보기"
             >
-              더 알아보기
+              {HERO_CONTENT.CTA_SECONDARY}
             </Button>
           </div>
         </div>
       </div>
 
       {/* Bottom Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" aria-hidden="true" />
     </section>
   );
 };

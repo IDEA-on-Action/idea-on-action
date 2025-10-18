@@ -1,0 +1,54 @@
+{
+  "output": {
+    "filePath": "repomix-output.md",
+    "format": "markdown"
+  },
+  "ignore": {
+    "useGitignore": true,
+    "useFiles": [
+      "node_modules/**",
+      "dist/**",
+      "test-results/**",
+      "playwright-report/**",
+      ".git/**",
+      "coverage/**",
+      "*.log",
+      "*.local",
+      ".DS_Store",
+      "*.suo",
+      "*.ntvs*",
+      "*.njsproj",
+      "*.sln",
+      "*.sw?",
+      "bun.lockb",
+      "package-lock.json",
+      "yarn.lock",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "include": {
+    "useGitignore": false,
+    "useFiles": [
+      "src/**",
+      "docs/**",
+      "tests/**",
+      "*.json",
+      "*.js",
+      "*.ts",
+      "*.tsx",
+      "*.css",
+      "*.md",
+      "*.html",
+      "*.config.*",
+      "*.toml",
+      "*.yml",
+      "*.yaml"
+    ]
+  },
+  "formatting": {
+    "maxLineLength": 100,
+    "indentSize": 2,
+    "showLineNumbers": true,
+    "showFileTree": true
+  }
+}

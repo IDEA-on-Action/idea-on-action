@@ -1,82 +1,170 @@
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail, LucideIcon } from "lucide-react";
 import logoSymbol from "@/assets/logo-symbol.png";
 
-const Footer = () => {
+// Types
+interface FooterProps {
+  className?: string;
+}
+
+interface SocialLink {
+  icon: LucideIcon;
+  href: string;
+  label: string;
+  isExternal?: boolean;
+}
+
+interface FooterSection {
+  title: string;
+  links: Array<{
+    label: string;
+    href: string;
+    isExternal?: boolean;
+  }>;
+}
+
+// Constants
+const BRAND_INFO = {
+  name: "IDEA on Action",
+  tagline: "생각과행동",
+  logo: logoSymbol,
+  logoAlt: "IDEA on Action Logo",
+  description: "생각과행동으로 미래를 설계하다",
+  slogan: "KEEP AWAKE, LIVE PASSIONATE"
+} as const;
+
+const SOCIAL_LINKS: SocialLink[] = [
+  {
+    icon: Github,
+    href: "https://github.com/IDEA-on-Action",
+    label: "GitHub 프로필 방문하기",
+    isExternal: true
+  },
+  {
+    icon: Linkedin,
+    href: "https://linkedin.com",
+    label: "LinkedIn 프로필 방문하기",
+    isExternal: true
+  },
+  {
+    icon: Mail,
+    href: "mailto:sinclairseo@gmail.com",
+    label: "이메일 보내기: sinclairseo@gmail.com",
+    isExternal: false
+  }
+];
+
+const FOOTER_SECTIONS: FooterSection[] = [
+  {
+    title: "솔루션",
+    links: [
+      { label: "AI 컨설팅", href: "#services" },
+      { label: "워크플로우 자동화", href: "#services" },
+      { label: "데이터 분석", href: "#services" }
+    ]
+  },
+  {
+    title: "회사",
+    links: [
+      { label: "회사소개", href: "#about" },
+      { label: "기술", href: "#features" },
+      { label: "문의", href: "#contact" }
+    ]
+  },
+  {
+    title: "리소스",
+    links: [
+      { 
+        label: "GitHub", 
+        href: "https://github.com/IDEA-on-Action/IdeaonAction-Homepage", 
+        isExternal: true 
+      },
+      { 
+        label: "웹사이트", 
+        href: "https://www.ideaonaction.ai", 
+        isExternal: true 
+      },
+      { label: "블로그", href: "#" }
+    ]
+  }
+];
+
+const COPYRIGHT_INFO = {
+  year: new Date().getFullYear(),
+  company: "IDEA on Action (생각과행동)",
+  rights: "All rights reserved."
+} as const;
+
+const Footer = ({ className = "" }: FooterProps) => {
   return (
-    <footer className="border-t border-border bg-card/30 backdrop-blur-sm">
+    <footer className={`border-t border-border bg-card/30 backdrop-blur-sm ${className}`}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
+          {/* Brand Section */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img src={logoSymbol} alt="IDEA on Action Logo" className="h-10 w-10" />
+              <img 
+                src={BRAND_INFO.logo} 
+                alt={BRAND_INFO.logoAlt} 
+                className="h-10 w-10" 
+                width={40}
+                height={40}
+              />
               <div className="flex flex-col">
-                <span className="font-bold text-lg leading-tight">IDEA on Action</span>
-                <span className="text-xs text-muted-foreground">생각과행동</span>
+                <span className="font-bold text-lg leading-tight">{BRAND_INFO.name}</span>
+                <span className="text-xs text-muted-foreground">{BRAND_INFO.tagline}</span>
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              생각과행동으로 미래를 설계하다
+              {BRAND_INFO.description}
             </p>
-            <div className="flex items-center gap-3">
-              <a
-                href="https://github.com/IDEA-on-Action"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub 프로필 방문하기"
-                className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors"
-              >
-                <Github className="w-5 h-5" aria-hidden="true" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn 프로필 방문하기"
-                className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors"
-              >
-                <Linkedin className="w-5 h-5" aria-hidden="true" />
-              </a>
-              <a
-                href="mailto:sinclairseo@gmail.com"
-                aria-label="이메일 보내기: sinclairseo@gmail.com"
-                className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors"
-              >
-                <Mail className="w-5 h-5" aria-hidden="true" />
-              </a>
+            <div className="flex items-center gap-3" role="list" aria-label="소셜 미디어 링크">
+              {SOCIAL_LINKS.map((social, index) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={index}
+                    href={social.href}
+                    target={social.isExternal ? "_blank" : undefined}
+                    rel={social.isExternal ? "noopener noreferrer" : undefined}
+                    aria-label={social.label}
+                    className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  >
+                    <Icon className="w-5 h-5" aria-hidden="true" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold mb-4">솔루션</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#services" className="hover:text-primary transition-colors">AI 컨설팅</a></li>
-              <li><a href="#services" className="hover:text-primary transition-colors">워크플로우 자동화</a></li>
-              <li><a href="#services" className="hover:text-primary transition-colors">데이터 분석</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">회사</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#about" className="hover:text-primary transition-colors">회사소개</a></li>
-              <li><a href="#features" className="hover:text-primary transition-colors">기술</a></li>
-              <li><a href="#contact" className="hover:text-primary transition-colors">문의</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">리소스</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="https://github.com/IDEA-on-Action/IdeaonAction-Homepage" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">GitHub</a></li>
-              <li><a href="https://www.ideaonaction.ai" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">웹사이트</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">블로그</a></li>
-            </ul>
-          </div>
+          {/* Footer Sections */}
+          {FOOTER_SECTIONS.map((section, sectionIndex) => (
+            <div key={sectionIndex}>
+              <h4 className="font-semibold mb-4">{section.title}</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground" role="list">
+                {section.links.map((link, linkIndex) => (
+                  <li key={linkIndex}>
+                    <a
+                      href={link.href}
+                      target={link.isExternal ? "_blank" : undefined}
+                      rel={link.isExternal ? "noopener noreferrer" : undefined}
+                      className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm"
+                      aria-label={`${link.label} 페이지로 이동`}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
+        {/* Copyright Section */}
         <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>© 2025 IDEA on Action (생각과행동). All rights reserved.</p>
-          <p className="mt-2 text-accent font-semibold">KEEP AWAKE, LIVE PASSIONATE</p>
+          <p>
+            © {COPYRIGHT_INFO.year} {COPYRIGHT_INFO.company}. {COPYRIGHT_INFO.rights}
+          </p>
+          <p className="mt-2 text-accent font-semibold">{BRAND_INFO.slogan}</p>
         </div>
       </div>
     </footer>

@@ -28,3 +28,6 @@ test-results/
 playwright-report/
 coverage/
 .nyc_output/
+
+# Repomix output
+repomix-output.md
