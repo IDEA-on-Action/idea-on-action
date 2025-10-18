@@ -79,8 +79,10 @@ describe('Features Component', () => {
     
     // Check for proper ARIA labels
     const articles = screen.getAllByRole('article');
+    const expectedIds = ['feature-title-fast-implementation', 'feature-title-stability', 'feature-title-scalability', 'feature-title-innovation'];
+    
     articles.forEach((article, index) => {
-      expect(article).toHaveAttribute('aria-labelledby', `feature-title-fast-implementation`);
+      expect(article).toHaveAttribute('aria-labelledby', expectedIds[index]);
     });
   });
 
