@@ -9,10 +9,20 @@
 
 ---
 
-## [Unreleased] - 2025-10-18
+## [Unreleased] - Phase 9 진행 중
 
 ### Added
-- **테스트 인프라 구축** (90% 완료) 🧪 ⭐ UPDATED
+- **Phase 9 전자상거래 기능 개발 시작** (2025-10-18)
+  - `feature/phase-9-ecommerce` 브랜치 생성
+  - Phase 9 진행 상황 추적 문서 (`docs/project/phase-9-progress.md`)
+  - Week 1: 데이터베이스 스키마 설계 (carts, cart_items)
+
+---
+
+## [1.5.1] - 2025-10-18
+
+### Added
+- **테스트 인프라 구축** (90% 완료) 🧪
   - **E2E 테스트 (60개)**
     - 관리자 테스트: `dashboard.spec.ts` (7개, 100% 통과), `service-crud.spec.ts` (15개), `image-upload.spec.ts` (12개)
     - 공개 페이지: `homepage.spec.ts` (12개, 91.7% 통과), `login.spec.ts` (7개), `services.spec.ts` (11개)
