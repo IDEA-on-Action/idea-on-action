@@ -2,10 +2,12 @@
  * Supabase Database Types
  *
  * 이 파일은 Supabase 데이터베이스 스키마를 기반으로 한 TypeScript 타입 정의입니다.
- * 마이그레이션: 001-schema-cleanup-and-improvement.sql
+ * 마이그레이션:
+ * - 001-schema-cleanup-and-improvement.sql
+ * - 002-phase-9-ecommerce-schema.sql
  *
- * @generated 2025-10-17
- * @version 1.0.0
+ * @generated 2025-10-18
+ * @version 1.1.0 (Phase 9 E-commerce)
  */
 
 // ===================================================================
@@ -57,80 +59,138 @@ export interface ServiceCategory {
 // Phase 9: E-commerce
 // ===================================================================
 
+/**
+ * Cart - 장바구니 (메타데이터만, 사용자당 하나)
+ */
 export interface Cart {
   id: string
   user_id: string
-  service_id: string
-  quantity: number
   created_at: string
   updated_at: string
 }
 
+/**
+ * CartItem - 장바구니 항목 (각 서비스)
+ */
+export interface CartItem {
+  id: string
+  cart_id: string
+  service_id: string
+  quantity: number
+  price: number // 담을 당시 가격 스냅샷
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Order - 주문 헤더
+ */
 export interface Order {
   id: string
   user_id: string | null
+
+  // 주문 금액
+  subtotal: number
+  tax_amount: number | null
+  discount_amount: number | null
+  shipping_fee: number | null
   total_amount: number
-  tax_amount: number
-  discount_amount: number
-  status: 'pending' | 'processing' | 'completed' | 'cancelled' | 'refunded'
+
+  // 주문 상태
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded'
+
+  // 배송 정보
   shipping_address: ShippingAddress | null
-  contact_info: ContactInfo | null
+  shipping_name: string | null
+  shipping_phone: string | null
   shipping_note: string | null
+
+  // 연락처 정보
+  contact_email: string | null
+  contact_phone: string | null
+
+  // 메타데이터
+  order_number: string // ORD-YYYYMMDD-XXXX
+  payment_id: string | null
+
+  // 타임스탬프
   created_at: string
   updated_at: string
+  confirmed_at: string | null
+  shipped_at: string | null
+  delivered_at: string | null
+  cancelled_at: string | null
 }
 
+/**
+ * ShippingAddress - 배송지 정보
+ */
 export interface ShippingAddress {
-  recipient_name: string
-  phone: string
-  postal_code: string
+  postcode: string
   address: string
-  address_detail: string
-  delivery_request?: string
+  addressDetail: string
+  city?: string
+  state?: string
 }
 
-export interface ContactInfo {
-  name: string
-  email: string
-  phone: string
-}
-
+/**
+ * OrderItem - 주문 항목 (각 서비스)
+ */
 export interface OrderItem {
   id: string
   order_id: string
-  service_id: string | null
+  service_id: string | null // 서비스 삭제 후에도 주문 기록 보존
+
+  // 스냅샷 정보
+  service_title: string
+  service_description: string | null
   quantity: number
   unit_price: number
   subtotal: number
+
+  // 전체 서비스 스냅샷
+  service_snapshot: Record<string, unknown> | null
+
   created_at: string
 }
 
+/**
+ * Payment - 결제 정보
+ */
 export interface Payment {
   id: string
   order_id: string | null
-  provider: 'kakao' | 'toss' | 'stripe'
-  provider_transaction_id: string | null
+
+  // 결제 정보
   amount: number
-  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded'
+
+  // 결제 게이트웨이
+  provider: 'kakao' | 'toss' | 'stripe' | 'paypal' | null
+  provider_transaction_id: string | null
   payment_method: string | null
-  metadata: PaymentMetadata
-  paid_at: string | null
+
+  // 카드 정보 (마스킹)
+  card_info: CardInfo | null
+
+  // 메타데이터
+  metadata: Record<string, unknown>
+  failure_reason: string | null
+
+  // 타임스탬프
   created_at: string
+  paid_at: string | null
+  failed_at: string | null
+  refunded_at: string | null
 }
 
-export interface PaymentMetadata {
-  card_info?: {
-    card_company: string
-    card_number: string
-    installment_month: number
-  }
-  virtual_account?: {
-    bank_code: string
-    account_number: string
-    due_date: string
-  }
-  webhook_data?: Record<string, unknown>
-  [key: string]: unknown
+/**
+ * CardInfo - 마스킹된 카드 정보
+ */
+export interface CardInfo {
+  cardType?: string
+  cardNumber?: string // "**** **** **** 1234"
+  issuer?: string
 }
 
 // ===================================================================
@@ -206,6 +266,7 @@ export interface Database {
       services: Service
       service_categories: ServiceCategory
       carts: Cart
+      cart_items: CartItem
       orders: Order
       order_items: OrderItem
       payments: Payment
@@ -222,6 +283,7 @@ export interface Database {
 export type ServiceInsert = Omit<Service, 'id' | 'created_at' | 'updated_at'>
 export type ServiceCategoryInsert = Omit<ServiceCategory, 'id' | 'created_at' | 'updated_at'>
 export type CartInsert = Omit<Cart, 'id' | 'created_at' | 'updated_at'>
+export type CartItemInsert = Omit<CartItem, 'id' | 'created_at' | 'updated_at'>
 export type OrderInsert = Omit<Order, 'id' | 'created_at' | 'updated_at'>
 export type OrderItemInsert = Omit<OrderItem, 'id' | 'created_at'>
 export type PaymentInsert = Omit<Payment, 'id' | 'created_at'>
@@ -233,6 +295,7 @@ export type PostInsert = Omit<Post, 'id' | 'created_at' | 'updated_at'>
 export type ServiceUpdate = Partial<Omit<Service, 'id' | 'created_at'>>
 export type ServiceCategoryUpdate = Partial<Omit<ServiceCategory, 'id' | 'created_at'>>
 export type CartUpdate = Partial<Omit<Cart, 'id' | 'created_at'>>
+export type CartItemUpdate = Partial<Omit<CartItem, 'id' | 'created_at'>>
 export type OrderUpdate = Partial<Omit<Order, 'id' | 'created_at'>>
 export type OrderItemUpdate = Partial<Omit<OrderItem, 'id' | 'created_at'>>
 export type PaymentUpdate = Partial<Omit<Payment, 'id' | 'created_at'>>
@@ -244,9 +307,21 @@ export interface ServiceWithCategory extends Service {
   category: ServiceCategory | null
 }
 
+export interface CartWithItems extends Cart {
+  items: (CartItem & { service: Service | null })[]
+}
+
+export interface CartItemWithService extends CartItem {
+  service: Service | null
+}
+
 export interface OrderWithItems extends Order {
   items: (OrderItem & { service: Service | null })[]
   payment: Payment | null
+}
+
+export interface OrderItemWithService extends OrderItem {
+  service: Service | null
 }
 
 export interface PostWithAuthor extends Post {
