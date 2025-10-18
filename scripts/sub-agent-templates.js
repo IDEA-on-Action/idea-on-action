@@ -380,4 +380,45 @@ if (require.main === module) {
   }
 }
 
+// 문서 현행화 템플릿
+const DOC_MAINTENANCE_TEMPLATE = {
+  name: "문서 현행화 에이전트",
+  description: "작업 완료 후 문서 자동 현행화",
+  prompt: `최근 커밋을 분석하여 프로젝트 문서를 자동으로 업데이트하세요.
+
+1. **Changelog 업데이트** (docs/project/changelog.md)
+   - 최근 커밋 메시지를 분석
+   - [Unreleased] 섹션에 변경사항 추가
+   - Keep a Changelog 형식 준수
+
+2. **CLAUDE.md 슬림화** (CLAUDE.md)
+   - 파일 크기가 30KB 초과 시:
+     - 오래된 섹션을 docs/archive/CLAUDE-sections-{날짜}.md로 이동
+     - CLAUDE.md에 요약 + 링크만 남김
+     - 목표: 20KB 이하로 축소
+
+3. **project-todo.md 정리** (project-todo.md)
+   - 완료된 항목(✅)을 docs/archive/completed-tasks-{날짜}.md로 이동
+   - 진행 중/예정 작업만 유지
+   - 목표: 15KB 이하로 축소
+
+4. **문서 일관성 검증**
+   - package.json, CLAUDE.md, project-todo.md의 버전 일치 확인
+   - 마지막 업데이트 날짜 현행화
+   - 불일치 발견 시 자동 수정
+
+5. **실행 명령어**
+   \`\`\`bash
+   npm run doc:check    # 검사만 (Dry run)
+   npm run doc:update   # 실제 업데이트
+   \`\`\`
+`,
+  config: {
+    maxCLAUDESize: 30000,  // 30KB
+    maxTodoSize: 15000,     // 15KB
+    archiveThreshold: 90,   // 90일
+  }
+};
+
 module.exports = SubAgentTemplates;
+module.exports.DOC_MAINTENANCE_TEMPLATE = DOC_MAINTENANCE_TEMPLATE;

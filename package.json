@@ -28,7 +28,10 @@
     "sub-agent:help": "node scripts/sub-agent-runner.js --help",
     "sub-agent:windows": "scripts\\run-sub-agent.bat",
     "sub-agent:powershell": "powershell -ExecutionPolicy Bypass -File scripts\\run-sub-agent.ps1",
-    "sub-agent:templates": "node scripts/sub-agent-templates.js"
+    "sub-agent:templates": "node scripts/sub-agent-templates.js",
+    "doc:check": "node scripts/doc-maintenance-agent.js --check",
+    "doc:update": "node scripts/doc-maintenance-agent.js",
+    "doc:maintain": "node scripts/doc-maintenance-agent.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

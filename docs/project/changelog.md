@@ -9,6 +9,56 @@
 
 ---
 
+## [Unreleased] - 2025-10-18
+
+### Added
+- **테스트 인프라 구축** (85% 완료) 🧪
+  - **E2E 테스트 (60개)**
+    - 관리자 테스트: `dashboard.spec.ts` (7개, 100% 통과), `service-crud.spec.ts` (15개), `image-upload.spec.ts` (12개)
+    - 공개 페이지: `homepage.spec.ts` (12개, 91.7% 통과), `login.spec.ts` (7개), `services.spec.ts` (11개)
+  - **시각적 회귀 테스트 (28개)**
+    - `dark-mode.spec.ts` (8개, 87.5% 통과) - 드롭다운 메뉴 인터랙션 패턴
+    - `responsive.spec.ts` (20개, 65% 통과) - 모바일/태블릿/데스크탑
+  - **유닛 테스트 (15개, 100% 통과)**
+    - `useAuth.test.ts` (8개 테스트)
+    - `useServices.test.tsx` (7개 테스트)
+  - **테스트 인프라**
+    - 인증 헬퍼 함수 (`loginAsAdmin`, `loginAsRegularUser`)
+    - 테스트 픽스처 (`users.ts`, `services.ts`, `images.ts`)
+    - Playwright 설정 업데이트 (포트 8080-8083, webServer 통합)
+  - **테스트 문서**
+    - `docs/guides/testing/test-user-setup.md` - 테스트 사용자 설정 가이드
+    - `docs/guides/testing/quick-start.md` - 빠른 시작 가이드
+
+- **접근성 개선**
+  - Footer 소셜 링크 aria-label 추가 (GitHub, LinkedIn, Email)
+  - Contact 연락처 링크 aria-label 추가 (Email, Phone, Website)
+  - 아이콘 aria-hidden 설정
+
+- **개발 도구**
+  - `repomix.config.json` - 코드베이스 분석 설정
+  - Sub-agent 스크립트 4개 (runner, templates, batch, powershell)
+  - 컴포넌트 문서 6개 (Features, Footer, Header, Hero, Services, README)
+
+- **파비콘 시스템**
+  - 다양한 크기 파비콘 (16x16, 32x32, 192x192, 512x512)
+  - Apple touch icon
+  - site.webmanifest
+
+### Changed
+- 다크 모드 테스트 패턴 개선 (단순 토글 → 드롭다운 메뉴 인터랙션)
+- Playwright baseURL 설정 (production → localhost:8080)
+- 테마 토글 컴포넌트 인터랙션 방식 변경
+
+### Test Statistics
+- **총 테스트**: 103개 작성 | 59개 검증
+- **전체 통과율**: 78%
+- **E2E**: 60개 (16개 검증, 81% 통과)
+- **시각적**: 28개 (28개 검증, 75% 통과)
+- **유닛**: 15개 (15개 검증, 100% 통과)
+
+---
+
 ## [1.5.0] - 2025-10-17
 
 ### Added
