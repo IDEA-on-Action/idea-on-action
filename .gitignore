@@ -28,6 +28,19 @@ test-results/
 playwright-report/
 coverage/
 .nyc_output/
+blob-report/
+playwright/.cache/
 
 # Repomix output
 repomix-output.md
+repomix-output.txt
+
+# Temporary files
+*.tmp
+*.temp
+*-temp.md
+*-draft.md
+
+# OS files
+Thumbs.db
+.DS_Store
