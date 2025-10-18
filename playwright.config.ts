@@ -27,7 +27,7 @@ export default defineConfig({
   /* 공통 테스트 설정 */
   use: {
     /* 베이스 URL */
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://www.ideaonaction.ai',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8080',
 
     /* 실패 시 스크린샷 */
     screenshot: 'only-on-failure',
@@ -40,12 +40,12 @@ export default defineConfig({
   },
 
   /* 테스트 전 개발 서버 실행 (로컬 테스트 시에만) */
-  // webServer: process.env.PLAYWRIGHT_SKIP_SERVER ? undefined : {
-  //   command: 'npm run dev',
-  //   url: 'http://localhost:5173',
-  //   reuseExistingServer: !process.env.CI,
-  //   timeout: 120000,
-  // },
+  webServer: process.env.PLAYWRIGHT_SKIP_SERVER ? undefined : {
+    command: 'npm run dev',
+    url: 'http://localhost:8080',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
+  },
 
   /* 브라우저 설정 */
   projects: [
