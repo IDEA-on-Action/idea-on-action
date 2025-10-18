@@ -3,8 +3,8 @@
 > 프로젝트 작업 목록 및 진행 상황 관리
 
 **마지막 업데이트**: 2025-10-18
-**현재 Phase**: 테스트 인프라 구축 (90% 완료)
-**프로젝트 버전**: 1.5.0
+**현재 Phase**: Phase 9 전자상거래 (Week 2 완료, 67%)
+**프로젝트 버전**: 1.6.0
 
 ---
 
@@ -129,28 +129,80 @@ CI/CD:            6개 워크플로우 (ci, test-e2e, test-unit, lighthouse, dep
 
 ---
 
-### Phase 9: 전자상거래 (Phase 완료 후)
+### Phase 9: 전자상거래 (진행 중) - 67% 완료 ⭐ UPDATED
+**시작일**: 2025-10-18
+**예상 완료**: 2025-11-08 (3주)
+**현재 상태**: Week 1-2 완료, Week 3 대기 중
 
-#### 장바구니 시스템
-- [ ] 장바구니 UI (헤더 + 사이드바)
-- [ ] 로컬 스토리지 + Supabase 동기화
-- [ ] 수량 조절 로직
-- [ ] 총액 계산
+#### Week 1: 장바구니 시스템 ✅ 완료
+- [x] 데이터베이스 스키마 설계 (carts, cart_items) ✅
+  - [x] carts 테이블 (메타데이터만, 사용자당 하나)
+  - [x] cart_items 테이블 (다대다 관계, 가격 스냅샷)
+  - [x] RLS 정책 8개 (사용자/관리자 권한 분리)
+- [x] Zustand 상태 관리 (cartStore.ts) ✅
+  - [x] UI 상태: isOpen, itemCount
+  - [x] 액션: openCart, closeCart, toggleCart, setItemCount
+- [x] useCart 훅 구현 (5개 함수) ✅
+  - [x] useCart() - 장바구니 조회
+  - [x] useAddToCart() - 항목 추가 (중복 체크, 자동 장바구니 생성)
+  - [x] useUpdateCartItem() - 수량 변경 (1-99 제한)
+  - [x] useRemoveCartItem() - 항목 삭제
+  - [x] useClearCart() - 장바구니 비우기
+- [x] Cart UI 컴포넌트 (4개) ✅
+  - [x] CartButton - 헤더 우측 상단 버튼 (배지 포함)
+  - [x] CartDrawer - 우측 슬라이드 패널 (Sheet 사용)
+  - [x] CartItem - 개별 항목 (수량 조절, 삭제)
+  - [x] CartSummary - 합계 계산 (소계, 부가세 10%, 총액)
+- [x] Header 통합 (장바구니 버튼 + 배지) ✅
+- [x] ServiceDetail "장바구니 담기" 버튼 ✅
 
-#### 주문 관리
-- [ ] 주문 폼 구현
-- [ ] 주문 내역 페이지 (`/orders`)
-- [ ] 주문 상태 추적
+#### Week 2: 주문 관리 시스템 ✅ 완료
+- [x] 데이터베이스 스키마 설계 (orders, order_items, payments) ✅
+  - [x] orders 테이블 (7단계 상태, 배송/연락처 정보)
+  - [x] order_items 테이블 (서비스 스냅샷)
+  - [x] payments 테이블 (다중 게이트웨이 지원)
+  - [x] RLS 정책 7개 + 헬퍼 함수 2개
+- [x] useOrders 훅 구현 (6개 함수) ✅
+  - [x] useOrders() - 주문 목록 조회
+  - [x] useOrderDetail() - 주문 상세 조회
+  - [x] useCreateOrder() - 주문 생성 (장바구니 → 주문 전환)
+  - [x] useCancelOrder() - 주문 취소 (pending/confirmed만)
+  - [x] useAdminOrders() - 관리자 전체 주문 조회
+  - [x] useUpdateOrderStatus() - 관리자 주문 상태 변경
+- [x] Checkout 페이지 ✅
+  - [x] React Hook Form + Zod 폼 검증
+  - [x] 배송 정보 입력 (이름, 연락처, 주소, 요청사항)
+  - [x] 주문자 정보 입력 (이메일, 연락처)
+  - [x] 주문 요약 사이드바
+- [x] Orders 페이지 (주문 목록) ✅
+  - [x] 주문 카드 (주문번호, 날짜, 상태, 항목, 금액)
+  - [x] 주문 상태 배지 (7가지 색상)
+  - [x] 빈 목록 UI
+- [x] OrderDetail 페이지 (주문 상세) ✅
+  - [x] 주문 정보 표시
+  - [x] 주문 항목 목록
+  - [x] 배송/주문자 정보
+  - [x] 결제 정보 (소계, 부가세, 할인, 배송비)
+  - [x] 주문 취소 버튼
+- [x] Header "내 주문" 메뉴 추가 ✅
 
-#### 결제 게이트웨이
-- [ ] 카카오페이 SDK 연동
-- [ ] 토스페이먼츠 연동
-- [ ] 웹훅 처리
-
-#### 관리자 대시보드
-- [ ] 주문 관리 페이지
-- [ ] 매출 통계
-- [ ] 사용자 관리
+#### Week 3: 결제 게이트웨이 (진행 예정)
+- [ ] Kakao Pay SDK 연동
+  - [ ] 결제 준비 API
+  - [ ] 결제 승인 API
+  - [ ] Webhook 처리
+- [ ] Toss Payments SDK 연동
+  - [ ] 결제 위젯 통합
+  - [ ] 결제 승인 API
+  - [ ] Webhook 처리
+- [ ] 결제 페이지 구현
+  - [ ] 결제 수단 선택
+  - [ ] 결제 처리 플로우
+  - [ ] 결제 성공/실패 페이지
+- [ ] 관리자 주문 관리 페이지
+  - [ ] 주문 목록 (필터링, 정렬)
+  - [ ] 주문 상태 변경
+  - [ ] 매출 통계 대시보드
 
 ---
 
