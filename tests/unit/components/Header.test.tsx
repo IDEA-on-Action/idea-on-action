@@ -63,7 +63,7 @@ describe('Header Component', () => {
       </TestWrapper>
     );
     
-    expect(screen.getByText('서비스')).toBeInTheDocument();
+    expect(screen.getAllByText('서비스')).toHaveLength(2); // Desktop and mobile versions
     expect(screen.getByText('기술')).toBeInTheDocument();
     expect(screen.getByText('회사소개')).toBeInTheDocument();
     expect(screen.getByText('문의')).toBeInTheDocument();

@@ -56,7 +56,7 @@ const Services = ({
   // Loading state
   if (isLoading) {
     return (
-      <section id="services" className={`py-24 relative ${className}`}>
+      <section id="services" className={`py-24 relative ${className}`} role="region">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <div className="h-12 bg-muted animate-pulse rounded-lg mb-4 mx-auto max-w-md"></div>
