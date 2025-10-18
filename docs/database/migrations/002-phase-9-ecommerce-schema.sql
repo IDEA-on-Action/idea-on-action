@@ -149,8 +149,8 @@ CREATE TABLE order_items (
 );
 
 -- 인덱스
-CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
-CREATE INDEX IF NOT EXISTS idx_order_items_service ON order_items(service_id);
+CREATE INDEX idx_order_items_order ON order_items(order_id);
+CREATE INDEX idx_order_items_service ON order_items(service_id);
 
 -- 코멘트
 COMMENT ON TABLE order_items IS '주문 항목 (각 서비스)';
@@ -163,7 +163,7 @@ COMMENT ON COLUMN order_items.service_snapshot IS '서비스 전체 정보 (주�
 
 DROP TABLE IF EXISTS payments CASCADE;
 
-CREATE TABLE IF NOT EXISTS payments (
+CREATE TABLE payments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id uuid REFERENCES orders(id) ON DELETE SET NULL NOT NULL,
 
@@ -195,10 +195,10 @@ CREATE TABLE IF NOT EXISTS payments (
 );
 
 -- 인덱스
-CREATE INDEX IF NOT EXISTS idx_payments_order ON payments(order_id);
-CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
-CREATE INDEX IF NOT EXISTS idx_payments_provider ON payments(provider);
-CREATE INDEX IF NOT EXISTS idx_payments_created ON payments(created_at DESC);
+CREATE INDEX idx_payments_order ON payments(order_id);
+CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_provider ON payments(provider);
+CREATE INDEX idx_payments_created ON payments(created_at DESC);
 
 -- 코멘트
 COMMENT ON TABLE payments IS '결제 정보';
