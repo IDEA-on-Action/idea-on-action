@@ -9,20 +9,61 @@
 
 ---
 
-## [Unreleased] - Phase 11 계획 중
+## [Unreleased] - Phase 12 계획 중
 
 ### Planned
-- **Phase 11: 콘텐츠 관리 시스템** (계획)
-  - 블로그 시스템 (Markdown 에디터)
-  - 공지사항 관리
-  - SEO 최적화
-  - RSS 피드
+- **Phase 12: 고도화** (계획)
+  - 다국어 지원 (i18n) - 한국어/영어
+  - AI 챗봇 통합 - Claude/GPT API
+  - PWA (Progressive Web App) - 오프라인 지원
+  - 이메일 알림 - Resend/SendGrid 통합
+  - 실시간 알림 - Supabase Realtime
 
 ---
 
 ## [1.6.1] - 2025-10-20
 
 ### Added
+- **Phase 11: 콘텐츠 관리 시스템 (CMS)** 📝 🎉
+  - **Week 1: 블로그 시스템**
+    - Markdown 에디터 (react-markdown, remark-gfm, rehype-raw, rehype-sanitize)
+    - `useBlogPosts` 훅 (9개 함수: 목록 조회, 상세 조회, CRUD, 통계)
+    - `Blog.tsx` - 블로그 목록 페이지 (카테고리, 태그 필터링)
+    - `BlogPost.tsx` - 블로그 상세 페이지 (Markdown 렌더링)
+    - `AdminBlog.tsx` - 블로그 관리 페이지
+    - `CreateBlogPost.tsx`, `EditBlogPost.tsx` - 블로그 편집
+    - 컴포넌트: `BlogCard`, `BlogPostForm`, `MarkdownRenderer`
+    - 카테고리, 태그 시스템
+    - 조회수, 좋아요 기능
+  - **Week 2: 공지사항 & SEO**
+    - `useNotices` 훅 (6개 함수: CRUD, 통계)
+    - `Notices.tsx` - 공지사항 목록 페이지
+    - `AdminNotices.tsx` - 공지사항 관리
+    - `CreateNotice.tsx`, `EditNotice.tsx` - 공지사항 편집
+    - 컴포넌트: `NoticeCard`, `NoticeForm`
+    - 중요도 시스템 (low, medium, high, urgent)
+    - SEO 스크립트: `scripts/generate-sitemap.ts`, `scripts/generate-rss.ts`
+    - `public/robots.txt` - 검색엔진 크롤링 제어
+    - NPM 스크립트: `generate:sitemap`, `generate:rss`
+  - **타입 정의**
+    - `src/types/blog.ts` - BlogPost, BlogCategory 타입
+    - `src/types/notice.ts` - Notice 타입
+
+- **Phase 10 Week 3: RBAC & 감사 로그** 🔐 🎉
+  - **역할 기반 접근 제어 (RBAC)**
+    - 4개 역할: `super_admin`, `admin`, `manager`, `user`
+    - 25개 권한: services (CRUD), orders (view/manage), users (view/manage), roles (view/manage), audit_logs (view), payments (view/manage), content (CRUD) 등
+    - `useRBAC` 훅 (7개 함수)
+      - `useRoles`, `useUserRoles`, `usePermissions`, `useHasPermission`
+      - `useAssignRole`, `useRemoveRole`, `useCanAccess`
+    - `AdminRoles.tsx` - 역할 관리 페이지
+  - **감사 로그 시스템**
+    - 사용자 활동 추적 (CRUD, 로그인, 로그아웃 등)
+    - `useAuditLogs` 훅 (2개 함수: `useAuditLogs`, `useLogAction`)
+    - `AuditLogs.tsx` - 감사 로그 조회 페이지
+  - **타입 정의**
+    - `src/types/rbac.ts` - Role, Permission, UserRole 타입
+
 - **Phase 10 Week 2: 2FA & 보안 강화** 🔐
   - **데이터베이스 (Migration 004)**
     - `two_factor_auth` 테이블 (TOTP secret, 백업 코드)
@@ -56,28 +97,66 @@
     - React Hook Form + Zod 검증
     - 아바타 업로드 다이얼로그
 
-- **Phase 9 Week 3: 결제 게이트웨이** 💳
-  - **Kakao Pay REST API 연동**
-    - `src/lib/payments/kakao-pay.ts`
-  - **Toss Payments SDK 연동**
-    - `src/lib/payments/toss-payments.ts`
-    - `@tosspayments/payment-sdk` 통합
-  - **usePayment 훅 (3개)**
-    - 결제 시작, 승인, 취소
-  - **결제 페이지**
-    - `Payment.tsx`, `PaymentSuccess.tsx`, `PaymentFail.tsx`
-    - `PaymentMethodSelector`, `PaymentStatus` 컴포넌트
-  - **관리자 주문 관리 강화**
-    - `AdminOrders` 페이지 (필터링, 정렬, 상태 업데이트)
-  - **관리자 대시보드 통계**
-    - Recharts 통합 (일별 매출 차트, 결제 수단 분포)
+- **Phase 9: 전자상거래 시스템** 💳 🎉
+  - **Week 1: 장바구니 시스템**
+    - Zustand 상태 관리 (`src/stores/cartStore.ts`)
+    - `useCart` 훅 (5개 함수: 조회, 추가, 수정, 삭제, 비우기)
+    - Cart UI 컴포넌트: `CartButton`, `CartDrawer`, `CartItem`, `CartSummary`
+    - Header 통합 (장바구니 버튼 + 배지)
+    - ServiceDetail "장바구니 담기" 버튼
+  - **Week 2: 주문 관리 시스템**
+    - `useOrders` 훅 (6개 함수)
+    - `Checkout.tsx` - 주문 생성 페이지 (React Hook Form + Zod)
+    - `Orders.tsx` - 주문 목록 페이지
+    - `OrderDetail.tsx` - 주문 상세 페이지
+    - Header "내 주문" 메뉴 추가
+    - 7단계 주문 상태 (pending, confirmed, processing, shipped, delivered, cancelled, refunded)
+  - **Week 3: 결제 게이트웨이**
+    - Kakao Pay REST API 연동 (`src/lib/payments/kakao-pay.ts`)
+    - Toss Payments SDK 연동 (`src/lib/payments/toss-payments.ts`)
+    - `usePayment` 훅 (3개 함수: 시작, 승인, 취소)
+    - 결제 페이지: `Payment.tsx`, `PaymentSuccess.tsx`, `PaymentFail.tsx`
+    - 컴포넌트: `PaymentMethodSelector`, `PaymentStatus`
+    - 관리자 주문 관리 (`AdminOrders` 페이지 - 필터링, 정렬, 상태 업데이트)
+    - 관리자 대시보드 통계 (Recharts: 일별 매출 차트, 결제 수단 분포)
+  - **데이터베이스 (Migrations)**
+    - `carts`, `cart_items` 테이블 (장바구니)
+    - `orders`, `order_items` 테이블 (주문)
+    - `payments` 테이블 (결제 기록)
+    - RLS 정책 15개
+
+- **테스트 인프라 구축 완료** 🧪 🎉
+  - **E2E 테스트 (97개 추가, 총 157개)**
+    - `cart.spec.ts` (7개) - 장바구니
+    - `checkout.spec.ts` (10개) - 결제 프로세스
+    - `blog.spec.ts` (19개) - 블로그 시스템
+    - `notices.spec.ts` (17개) - 공지사항
+    - `profile.spec.ts` (19개) - 프로필 & 2FA
+    - `rbac.spec.ts` (25개) - RBAC & 감사 로그
+  - **유닛 테스트 (48개 추가, 총 82개)**
+    - `useBlogPosts.test.tsx` (12개)
+    - `useNotices.test.tsx` (12개)
+    - `useRBAC.test.tsx` (12개)
+    - `useAuditLogs.test.tsx` (12개)
+  - **테스트 문서 (7개)**
+    - `docs/testing/phase9-11-tests.md` - Phase 9-11 상세 테스트 문서
+    - `docs/testing/testing-strategy.md` - 전체 테스트 전략
+  - **통계**
+    - E2E: 157개 (기존 60 + 신규 97)
+    - Unit: 82개 (기존 34 + 신규 48)
+    - Visual: 28개
+    - **Total: 267+ 테스트 케이스**
 
 ### Changed
-- **빌드 크기 증가**
-  - v1.5.0 → v1.6.1: +171.29 kB (gzip)
-  - Phase 9 Week 3 (결제): +72 kB
-  - Phase 10 Week 2 (2FA): +74 kB
+- **빌드 크기**
+  - v1.5.0 → v1.6.1: +124.89 kB (gzip)
+  - v1.5.0: 423.84 kB (gzip) → v1.6.1: 548.73 kB (gzip)
+  - Phase 9 (전자상거래): +72 kB (Toss Payments SDK, Kakao Pay)
+  - Phase 10 (인증 강화): +99 kB (2FA: otpauth, qrcode)
+  - Phase 11 (CMS): +54 kB (react-markdown, remark-gfm, rehype)
   - Recharts (대시보드): +30 kB
+  - 기타 최적화: -130.11 kB
+  - **경고**: JS 번들 533.94 kB (Code Splitting 권장)
 
 ### Security
 - **브루트 포스 방지** - 5회 실패 시 30분 자동 잠금
