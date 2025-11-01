@@ -197,20 +197,135 @@ export interface CardInfo {
 // Phase 10: Authentication & User Management
 // ===================================================================
 
+/**
+ * UserProfile - Extended user information
+ */
 export interface UserProfile {
-  id: string // FK to auth.users
-  full_name: string | null
+  id: string
+  user_id: string // FK to auth.users
   avatar_url: string | null
-  phone: string | null
+  display_name: string | null
   bio: string | null
+  phone: string | null
+  location: UserLocation | null
+  preferences: UserPreferences | null
+  email_verified: boolean
+  phone_verified: boolean
+  last_login_at: string | null
+  last_login_ip: string | null
   created_at: string
   updated_at: string
 }
 
-export interface UserRole {
+export interface UserLocation {
+  country?: string
+  city?: string
+  timezone?: string
+}
+
+export interface UserPreferences {
+  theme?: 'light' | 'dark' | 'system'
+  language?: string
+  notifications?: boolean
+}
+
+/**
+ * ConnectedAccount - OAuth provider connections
+ */
+export interface ConnectedAccount {
   id: string
   user_id: string
-  role: 'admin' | 'user' | 'guest'
+  provider: 'google' | 'github' | 'kakao' | 'microsoft' | 'apple'
+  provider_account_id: string
+  provider_account_email: string | null
+  is_primary: boolean
+  connected_at: string
+  last_used_at: string | null
+}
+
+/**
+ * TwoFactorAuth - TOTP 2FA settings
+ */
+export interface TwoFactorAuth {
+  id: string
+  user_id: string
+  secret: string // TOTP secret (should be encrypted in production)
+  enabled: boolean
+  verified_at: string | null
+  backup_codes: string[] | null // Hashed backup codes
+  backup_codes_used: number
+  created_at: string
+  updated_at: string
+  last_used_at: string | null
+}
+
+/**
+ * LoginAttempt - Security logging
+ */
+export interface LoginAttempt {
+  id: string
+  user_id: string | null
+  email: string
+  ip_address: string | null
+  user_agent: string | null
+  success: boolean
+  failure_reason: string | null
+  created_at: string
+}
+
+/**
+ * Role - RBAC roles
+ */
+export interface Role {
+  id: string
+  name: 'admin' | 'manager' | 'user' | 'viewer'
+  description: string | null
+  created_at: string
+}
+
+/**
+ * Permission - RBAC permissions
+ */
+export interface Permission {
+  id: string
+  name: string // Format: resource:action (e.g., 'blog:create')
+  resource: string
+  action: 'create' | 'read' | 'update' | 'delete' | 'manage'
+  description: string | null
+  created_at: string
+}
+
+/**
+ * UserRole - User-Role assignment
+ */
+export interface UserRole {
+  user_id: string
+  role_id: string
+  assigned_by: string | null
+  assigned_at: string
+}
+
+/**
+ * RolePermission - Role-Permission assignment
+ */
+export interface RolePermission {
+  role_id: string
+  permission_id: string
+  created_at: string
+}
+
+/**
+ * AuditLog - Action tracking
+ */
+export interface AuditLog {
+  id: string
+  user_id: string | null
+  action: string // 'create', 'update', 'delete', 'login', etc.
+  resource: string // 'service', 'blog', 'user', etc.
+  resource_id: string | null
+  details: Record<string, unknown> | null
+  ip_address: string | null
+  user_agent: string | null
   created_at: string
 }
 
@@ -263,16 +378,49 @@ export interface AnalyticsEvent {
 export interface Database {
   public: {
     Tables: {
+      // Phase 8: Services
       services: Service
       service_categories: ServiceCategory
+
+      // Phase 9: E-commerce
       carts: Cart
       cart_items: CartItem
       orders: Order
       order_items: OrderItem
       payments: Payment
+
+      // Phase 10: User Management & RBAC
       user_profiles: UserProfile
+      connected_accounts: ConnectedAccount
+      two_factor_auth: TwoFactorAuth
+      login_attempts: LoginAttempt
+      roles: Role
+      permissions: Permission
       user_roles: UserRole
+      role_permissions: RolePermission
+      audit_logs: AuditLog
+
+      // Phase 11: Content Management
       posts: Post
+      post_categories: ServiceCategory // Reusing type structure
+      post_tags: { id: string; name: string; slug: string; created_at: string }
+      post_tag_relations: { post_id: string; tag_id: string; created_at: string }
+      notices: {
+        id: string
+        title: string
+        content: string
+        type: 'info' | 'warning' | 'urgent' | 'maintenance'
+        status: 'draft' | 'published' | 'archived'
+        author_id: string
+        published_at: string | null
+        expires_at: string | null
+        is_pinned: boolean
+        view_count: number
+        created_at: string
+        updated_at: string
+      }
+
+      // Phase 12: Advanced Features
       chat_messages: ChatMessage
       analytics_events: AnalyticsEvent
     }
@@ -287,8 +435,12 @@ export type CartItemInsert = Omit<CartItem, 'id' | 'created_at' | 'updated_at'>
 export type OrderInsert = Omit<Order, 'id' | 'created_at' | 'updated_at'>
 export type OrderItemInsert = Omit<OrderItem, 'id' | 'created_at'>
 export type PaymentInsert = Omit<Payment, 'id' | 'created_at'>
-export type UserProfileInsert = Omit<UserProfile, 'created_at' | 'updated_at'>
-export type UserRoleInsert = Omit<UserRole, 'id' | 'created_at'>
+export type UserProfileInsert = Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>
+export type ConnectedAccountInsert = Omit<ConnectedAccount, 'id' | 'connected_at'>
+export type TwoFactorAuthInsert = Omit<TwoFactorAuth, 'id' | 'created_at' | 'updated_at'>
+export type LoginAttemptInsert = Omit<LoginAttempt, 'id' | 'created_at'>
+export type UserRoleInsert = Omit<UserRole, 'assigned_at'>
+export type AuditLogInsert = Omit<AuditLog, 'id' | 'created_at'>
 export type PostInsert = Omit<Post, 'id' | 'created_at' | 'updated_at'>
 
 // UPDATE용 타입 (모든 필드 optional)
@@ -300,6 +452,8 @@ export type OrderUpdate = Partial<Omit<Order, 'id' | 'created_at'>>
 export type OrderItemUpdate = Partial<Omit<OrderItem, 'id' | 'created_at'>>
 export type PaymentUpdate = Partial<Omit<Payment, 'id' | 'created_at'>>
 export type UserProfileUpdate = Partial<Omit<UserProfile, 'id' | 'created_at'>>
+export type ConnectedAccountUpdate = Partial<Omit<ConnectedAccount, 'id' | 'connected_at'>>
+export type TwoFactorAuthUpdate = Partial<Omit<TwoFactorAuth, 'id' | 'created_at'>>
 export type PostUpdate = Partial<Omit<Post, 'id' | 'created_at'>>
 
 // JOIN용 확장 타입

@@ -7,6 +7,9 @@ import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Notices from "./pages/Notices";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import PaymentSuccess from "./pages/PaymentSuccess";
@@ -26,6 +29,14 @@ import Dashboard from "./pages/admin/Dashboard";
 import AdminServices from "./pages/admin/AdminServices";
 import CreateService from "./pages/admin/CreateService";
 import EditService from "./pages/admin/EditService";
+import AdminBlog from "./pages/admin/AdminBlog";
+import CreateBlogPost from "./pages/admin/CreateBlogPost";
+import EditBlogPost from "./pages/admin/EditBlogPost";
+import AdminNotices from "./pages/admin/AdminNotices";
+import CreateNotice from "./pages/admin/CreateNotice";
+import EditNotice from "./pages/admin/EditNotice";
+import AdminRoles from "./pages/admin/AdminRoles";
+import AuditLogs from "./pages/admin/AuditLogs";
 import AdminOrders from "./pages/admin/Orders";
 
 const queryClient = new QueryClient();
@@ -48,6 +59,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
             <Route path="/services/:id" element={<ServiceDetail />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/notices" element={<Notices />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/checkout/payment" element={<Payment />} />
             <Route path="/checkout/payment/kakao/success" element={<PaymentSuccess />} />
@@ -76,6 +90,14 @@ const App = () => (
               <Route path="services" element={<AdminServices />} />
               <Route path="services/new" element={<CreateService />} />
               <Route path="services/:id/edit" element={<EditService />} />
+              <Route path="blog" element={<AdminBlog />} />
+              <Route path="blog/new" element={<CreateBlogPost />} />
+              <Route path="blog/:id/edit" element={<EditBlogPost />} />
+              <Route path="notices" element={<AdminNotices />} />
+              <Route path="notices/new" element={<CreateNotice />} />
+              <Route path="notices/:id/edit" element={<EditNotice />} />
+              <Route path="roles" element={<AdminRoles />} />
+              <Route path="audit-logs" element={<AuditLogs />} />
               <Route path="orders" element={<AdminOrders />} />
             </Route>
 

@@ -15,6 +15,10 @@ import {
   Package,
   Plus,
   ShoppingCart,
+  FileText,
+  Bell,
+  Shield,
+  ScrollText,
   LogOut,
   Home,
   Menu,
@@ -38,6 +42,26 @@ const navItems = [
     title: '서비스 등록',
     href: '/admin/services/new',
     icon: Plus,
+  },
+  {
+    title: '블로그 관리',
+    href: '/admin/blog',
+    icon: FileText,
+  },
+  {
+    title: '공지사항 관리',
+    href: '/admin/notices',
+    icon: Bell,
+  },
+  {
+    title: '역할 관리',
+    href: '/admin/roles',
+    icon: Shield,
+  },
+  {
+    title: '감사 로그',
+    href: '/admin/audit-logs',
+    icon: ScrollText,
   },
   {
     title: '주문 관리',
