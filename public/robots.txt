@@ -1,14 +1,22 @@
-User-agent: Googlebot
-Allow: /
+# robots.txt for VIBE WORKING
+# https://www.ideaonaction.ai/
 
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# Allow search engines to crawl public content
 User-agent: *
 Allow: /
+Allow: /services
+Allow: /blog
+Allow: /notices
+
+# Disallow private/admin pages
+Disallow: /admin/
+Disallow: /login
+Disallow: /profile
+Disallow: /2fa/
+
+# Disallow checkout/payment pages
+Disallow: /checkout/
+Disallow: /orders/
+
+# Sitemap
+Sitemap: https://www.ideaonaction.ai/sitemap.xml
