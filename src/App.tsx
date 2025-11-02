@@ -8,6 +8,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AdminRoute } from "./components/auth/AdminRoute";
 import { CartDrawer } from "./components/cart";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
 import { initSentry } from "./lib/sentry";
 import { initGA4, trackPageView } from "./lib/analytics";
 import * as Sentry from "@sentry/react";
@@ -112,6 +114,8 @@ const App = () => (
         >
           <AnalyticsTracker />
           <CartDrawer />
+          <PWAInstallPrompt />
+          <PWAUpdatePrompt />
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               {/* Public Routes */}
