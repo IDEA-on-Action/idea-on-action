@@ -61,6 +61,7 @@ import NotFound from "./pages/NotFound";
 // Lazy load (Code Split) - Public pages
 const Services = lazy(() => import("./pages/Services"));
 const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
+const Search = lazy(() => import("./pages/Search"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Notices = lazy(() => import("./pages/Notices"));
@@ -122,6 +123,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
               <Route path="/services/:id" element={<ServiceDetail />} />
+              <Route path="/search" element={<Search />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/notices" element={<Notices />} />

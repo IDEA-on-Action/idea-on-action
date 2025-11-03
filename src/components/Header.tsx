@@ -1,4 +1,4 @@
-import { Menu, User as UserIcon, X } from "lucide-react";
+import { Menu, User as UserIcon, X, Search as SearchIcon } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -138,6 +138,17 @@ const Header = ({ className = "" }: HeaderProps) => {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* 검색 버튼 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden md:inline-flex"
+            onClick={() => navigate('/search')}
+            aria-label="검색"
+          >
+            <SearchIcon className="h-5 w-5" />
+          </Button>
+
           <LanguageSwitcher />
           <ThemeToggle />
           {user && <CartButton />}
@@ -227,10 +238,24 @@ const Header = ({ className = "" }: HeaderProps) => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
           <div className="container mx-auto px-4 py-4 space-y-4">
+            {/* 모바일 검색 */}
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => {
+                navigate('/search');
+                setIsMobileMenuOpen(false);
+              }}
+              aria-label="검색"
+            >
+              <SearchIcon className="h-5 w-5 mr-2" />
+              검색
+            </Button>
+
             {NAVIGATION_ITEMS.map((item, index) => {
               const isExternal = isHomePage && item.href.startsWith('#');
               const Component = isExternal ? 'a' : Link;
-              const props = isExternal 
+              const props = isExternal
                 ? { href: item.href }
                 : { to: item.href };
 
@@ -245,7 +270,7 @@ const Header = ({ className = "" }: HeaderProps) => {
                 </Component>
               );
             })}
-            
+
             {!user && (
               <Button
                 variant="default"
