@@ -12,37 +12,44 @@ import { Package, FileText, Bell, Calendar } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import type { SearchResult } from '@/hooks/useSearch'
 import { format } from 'date-fns'
-import { ko } from 'date-fns/locale'
+import { ko, enUS } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
 
 interface SearchResultCardProps {
   result: SearchResult
   searchTerm: string
 }
 
-const typeConfig = {
-  service: {
-    label: '서비스',
-    Icon: Package,
-    color: 'text-blue-600 dark:text-blue-400',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
-  },
-  blog: {
-    label: '블로그',
-    Icon: FileText,
-    color: 'text-green-600 dark:text-green-400',
-    bgColor: 'bg-green-100 dark:bg-green-900/30',
-  },
-  notice: {
-    label: '공지사항',
-    Icon: Bell,
-    color: 'text-orange-600 dark:text-orange-400',
-    bgColor: 'bg-orange-100 dark:bg-orange-900/30',
-  },
-}
-
 export function SearchResultCard({ result, searchTerm }: SearchResultCardProps) {
+  const { t, i18n } = useTranslation('search')
+
+  const typeConfig = {
+    service: {
+      label: t('search:card.service'),
+      Icon: Package,
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+    },
+    blog: {
+      label: t('search:card.blog'),
+      Icon: FileText,
+      color: 'text-green-600 dark:text-green-400',
+      bgColor: 'bg-green-100 dark:bg-green-900/30',
+    },
+    notice: {
+      label: t('search:card.notice'),
+      Icon: Bell,
+      color: 'text-orange-600 dark:text-orange-400',
+      bgColor: 'bg-orange-100 dark:bg-orange-900/30',
+    },
+  }
+
   const config = typeConfig[result.type]
   const { Icon } = config
+
+  // 날짜 로케일
+  const dateLocale = i18n.language === 'ko' ? ko : enUS
+  const dateFormat = i18n.language === 'ko' ? 'yyyy년 M월 d일' : 'MMM d, yyyy'
 
   // 검색어 하이라이팅
   const highlightText = (text: string) => {
@@ -103,7 +110,7 @@ export function SearchResultCard({ result, searchTerm }: SearchResultCardProps) 
             {/* 날짜 */}
             <div className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
               <Calendar className="h-3 w-3" />
-              {format(new Date(result.created_at), 'yyyy년 M월 d일', { locale: ko })}
+              {format(new Date(result.created_at), dateFormat, { locale: dateLocale })}
             </div>
           </div>
 

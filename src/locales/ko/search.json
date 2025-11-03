@@ -1,0 +1,22 @@
+{
+  "title": "검색",
+  "placeholder": "검색어를 입력하세요 (최소 2자)",
+  "button": "검색",
+  "filters": {
+    "all": "전체",
+    "service": "서비스",
+    "blog": "블로그",
+    "notice": "공지사항"
+  },
+  "results": {
+    "count": "{{count}}개의 결과",
+    "empty": "검색 결과가 없습니다",
+    "minLength": "최소 2자 이상 입력해주세요"
+  },
+  "card": {
+    "service": "서비스",
+    "blog": "블로그",
+    "notice": "공지사항",
+    "readMore": "자세히 보기"
+  }
+}

@@ -53,6 +53,11 @@
     "addToCart": "장바구니 담기",
     "checkout": "결제하기"
   },
+  "clear": "초기화",
+  "description": "서비스, 블로그, 공지사항을 한번에 검색하세요",
+  "errors": {
+    "generic": "검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+  },
   "messages": {
     "loading": "로딩 중...",
     "success": "성공",
@@ -93,5 +98,36 @@
     "placeholder": "검색...",
     "noResults": "검색 결과가 없습니다",
     "resultsFor": "\"{{query}}\" 검색 결과"
+  },
+  "chat": {
+    "title": "AI 어시스턴트",
+    "open": "채팅 열기",
+    "close": "채팅 닫기",
+    "clear": "대화 초기화",
+    "send": "전송",
+    "placeholder": "메시지를 입력하세요...",
+    "hint": "Enter로 전송, Shift+Enter로 줄바꿈",
+    "welcome": "안녕하세요! 👋",
+    "welcomeMessage": "VIBE WORKING의 AI 어시스턴트입니다. 무엇을 도와드릴까요?",
+    "confirmClear": "대화 내역을 모두 삭제하시겠습니까?"
+  },
+  "notifications": {
+    "title": "알림",
+    "empty": "알림이 없습니다",
+    "markAsRead": "읽음으로 표시",
+    "markAllRead": "모두 읽음",
+    "delete": "삭제",
+    "filter": {
+      "all": "전체",
+      "unread": "읽지 않음"
+    },
+    "types": {
+      "order": "주문",
+      "comment": "댓글",
+      "system": "시스템",
+      "announcement": "공지"
+    },
+    "new": "새 알림",
+    "viewAll": "모두 보기"
   }
 }

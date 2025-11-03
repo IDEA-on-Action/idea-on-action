@@ -1,6 +1,7 @@
 import { Menu, User as UserIcon, X, Search as SearchIcon } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
@@ -14,6 +15,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CartButton } from "@/components/cart";
+import { NotificationBell } from "@/components/notifications";
 import logoSymbol from "@/assets/logo-symbol.png";
 
 // Types
@@ -44,6 +46,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
 ];
 
 const Header = ({ className = "" }: HeaderProps) => {
+  const { t } = useTranslation(['common', 'search']);
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -144,14 +147,19 @@ const Header = ({ className = "" }: HeaderProps) => {
             size="icon"
             className="hidden md:inline-flex"
             onClick={() => navigate('/search')}
-            aria-label="검색"
+            aria-label={t('search:title')}
           >
             <SearchIcon className="h-5 w-5" />
           </Button>
 
           <LanguageSwitcher />
           <ThemeToggle />
-          {user && <CartButton />}
+          {user && (
+            <>
+              <NotificationBell />
+              <CartButton />
+            </>
+          )}
 
           {user ? (
             <DropdownMenu>
@@ -246,10 +254,10 @@ const Header = ({ className = "" }: HeaderProps) => {
                 navigate('/search');
                 setIsMobileMenuOpen(false);
               }}
-              aria-label="검색"
+              aria-label={t('search:title')}
             >
               <SearchIcon className="h-5 w-5 mr-2" />
-              검색
+              {t('search:title')}
             </Button>
 
             {NAVIGATION_ITEMS.map((item, index) => {

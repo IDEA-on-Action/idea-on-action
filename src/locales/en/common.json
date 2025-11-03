@@ -53,6 +53,11 @@
     "addToCart": "Add to Cart",
     "checkout": "Checkout"
   },
+  "clear": "Clear",
+  "description": "Search services, blog posts, and notices all at once",
+  "errors": {
+    "generic": "An error occurred while searching. Please try again later."
+  },
   "messages": {
     "loading": "Loading...",
     "success": "Success",
@@ -93,5 +98,36 @@
     "placeholder": "Search...",
     "noResults": "No results found",
     "resultsFor": "Results for \"{{query}}\""
+  },
+  "chat": {
+    "title": "AI Assistant",
+    "open": "Open chat",
+    "close": "Close chat",
+    "clear": "Clear chat history",
+    "send": "Send",
+    "placeholder": "Type your message...",
+    "hint": "Press Enter to send, Shift+Enter for new line",
+    "welcome": "Hello! 👋",
+    "welcomeMessage": "I'm VIBE WORKING's AI assistant. How can I help you today?",
+    "confirmClear": "Are you sure you want to clear all chat history?"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "markAsRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "delete": "Delete",
+    "filter": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "types": {
+      "order": "Order",
+      "comment": "Comment",
+      "system": "System",
+      "announcement": "Announcement"
+    },
+    "new": "New notification",
+    "viewAll": "View all"
   }
 }

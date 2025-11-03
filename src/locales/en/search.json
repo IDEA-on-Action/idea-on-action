@@ -1,0 +1,22 @@
+{
+  "title": "Search",
+  "placeholder": "Enter search query (minimum 2 characters)",
+  "button": "Search",
+  "filters": {
+    "all": "All",
+    "service": "Services",
+    "blog": "Blog",
+    "notice": "Notices"
+  },
+  "results": {
+    "count": "{{count}} results",
+    "empty": "No results found",
+    "minLength": "Please enter at least 2 characters"
+  },
+  "card": {
+    "service": "Service",
+    "blog": "Blog",
+    "notice": "Notice",
+    "readMore": "Read more"
+  }
+}

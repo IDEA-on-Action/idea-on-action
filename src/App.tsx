@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AdminRoute } from "./components/auth/AdminRoute";
 import { CartDrawer } from "./components/cart";
+import { ChatWidget } from "./components/chat";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
 import { initSentry } from "./lib/sentry";
@@ -72,6 +73,7 @@ const PaymentFail = lazy(() => import("./pages/PaymentFail"));
 const Orders = lazy(() => import("./pages/Orders"));
 const OrderDetail = lazy(() => import("./pages/OrderDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Notifications = lazy(() => import("./pages/Notifications"));
 const TwoFactorSetup = lazy(() => import("./pages/TwoFactorSetup"));
 const TwoFactorVerify = lazy(() => import("./pages/TwoFactorVerify"));
 const Forbidden = lazy(() => import("./pages/Forbidden"));
@@ -115,6 +117,7 @@ const App = () => (
         >
           <AnalyticsTracker />
           <CartDrawer />
+          <ChatWidget />
           <PWAInstallPrompt />
           <PWAUpdatePrompt />
           <Suspense fallback={<LoadingFallback />}>
@@ -137,6 +140,7 @@ const App = () => (
               <Route path="/orders" element={<Orders />} />
               <Route path="/orders/:id" element={<OrderDetail />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/notifications" element={<Notifications />} />
               <Route path="/login" element={<Login />} />
               <Route path="/2fa/setup" element={<TwoFactorSetup />} />
               <Route path="/2fa/verify" element={<TwoFactorVerify />} />

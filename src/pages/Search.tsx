@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { SearchResultCard } from '@/components/search'
@@ -23,6 +24,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Search as SearchIcon, X, Package, FileText, Bell, AlertCircle } from 'lucide-react'
 
 export default function Search() {
+  const { t } = useTranslation(['search', 'common'])
   const [searchParams, setSearchParams] = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
   const initialType = searchParams.get('type') || 'all'
@@ -79,10 +81,10 @@ export default function Search() {
   return (
     <>
       <Helmet>
-        <title>검색 | VIBE WORKING</title>
+        <title>{t('search:title')} | VIBE WORKING</title>
         <meta
           name="description"
-          content="서비스, 블로그, 공지사항 통합 검색 - VIBE WORKING"
+          content={`${t('search:title')} - VIBE WORKING`}
         />
       </Helmet>
 
@@ -93,10 +95,10 @@ export default function Search() {
           {/* 검색 헤더 */}
           <div className="text-center space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              통합 검색
+              {t('search:title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              서비스, 블로그, 공지사항을 한번에 검색하세요
+              {t('common:description')}
             </p>
           </div>
 
@@ -107,7 +109,7 @@ export default function Search() {
                 <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="검색어를 입력하세요 (최소 2자)"
+                  placeholder={t('search:placeholder')}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="pl-10 pr-10 h-12 text-lg"
@@ -120,7 +122,7 @@ export default function Search() {
                     size="icon"
                     className="absolute right-2 top-1/2 -translate-y-1/2"
                     onClick={handleClear}
-                    aria-label="검색어 초기화"
+                    aria-label={t('common:clear')}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -132,7 +134,7 @@ export default function Search() {
                 className="bg-gradient-primary hover:opacity-90 px-8"
                 disabled={!inputValue.trim() || inputValue.trim().length < 2}
               >
-                검색
+                {t('search:button')}
               </Button>
             </form>
 
@@ -142,19 +144,19 @@ export default function Search() {
                 <Tabs value={selectedType} onValueChange={(value: any) => setSelectedType(value)}>
                   <TabsList className="w-full grid grid-cols-4">
                     <TabsTrigger value="all">
-                      전체 ({totalCount})
+                      {t('search:filters.all')} ({totalCount})
                     </TabsTrigger>
                     <TabsTrigger value="service">
                       <Package className="h-4 w-4 mr-2" />
-                      서비스 ({serviceCount})
+                      {t('search:filters.service')} ({serviceCount})
                     </TabsTrigger>
                     <TabsTrigger value="blog">
                       <FileText className="h-4 w-4 mr-2" />
-                      블로그 ({blogCount})
+                      {t('search:filters.blog')} ({blogCount})
                     </TabsTrigger>
                     <TabsTrigger value="notice">
                       <Bell className="h-4 w-4 mr-2" />
-                      공지 ({noticeCount})
+                      {t('search:filters.notice')} ({noticeCount})
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -187,7 +189,7 @@ export default function Search() {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+                    {t('common:errors.generic')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -196,18 +198,10 @@ export default function Search() {
               {!isLoading && !isError && results && results.length === 0 && (
                 <div className="text-center py-16 space-y-4">
                   <SearchIcon className="h-16 w-16 mx-auto text-muted-foreground opacity-50" />
-                  <h3 className="text-lg font-semibold">검색 결과가 없습니다</h3>
+                  <h3 className="text-lg font-semibold">{t('search:results.empty')}</h3>
                   <p className="text-muted-foreground">
-                    &ldquo;<span className="font-semibold text-foreground">{query}</span>&rdquo;에 대한 검색 결과를 찾을 수 없습니다.
+                    &ldquo;<span className="font-semibold text-foreground">{query}</span>&rdquo;
                   </p>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <p>검색 팁:</p>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>다른 검색어를 시도해보세요</li>
-                      <li>더 짧거나 일반적인 검색어를 사용해보세요</li>
-                      <li>맞춤법을 확인해보세요</li>
-                    </ul>
-                  </div>
                 </div>
               )}
 
@@ -216,7 +210,7 @@ export default function Search() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold">
-                      검색 결과 <span className="text-primary">{totalCount}개</span>
+                      {t('search:results.count', { count: totalCount })}
                     </h2>
                   </div>
 
@@ -238,9 +232,9 @@ export default function Search() {
           {!query && (
             <div className="text-center py-16 space-y-4">
               <SearchIcon className="h-16 w-16 mx-auto text-muted-foreground opacity-50" />
-              <h3 className="text-lg font-semibold">검색어를 입력해주세요</h3>
+              <h3 className="text-lg font-semibold">{t('search:results.minLength')}</h3>
               <p className="text-muted-foreground">
-                서비스, 블로그, 공지사항을 한번에 검색할 수 있습니다
+                {t('common:description')}
               </p>
             </div>
           )}

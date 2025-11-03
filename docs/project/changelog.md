@@ -12,10 +12,163 @@
 ## [Unreleased] - Phase 13 진행 중
 
 ### Planned
-- **Phase 13: AI & 실시간 기능** (진행 중 - 33%)
+- **Phase 13: AI & 실시간 기능** (진행 중 - 100%) ✅
   - [x] Week 1: 통합 검색 시스템 ✅
-  - [ ] Week 2: AI 챗봇 통합 - Claude/GPT API
-  - [ ] Week 3: 알림 시스템 - 이메일 알림, 실시간 알림
+  - [x] Week 2: AI 챗봇 통합 ✅
+  - [x] Week 3: 알림 시스템 ✅
+
+---
+
+## [1.7.3] - 2025-11-04
+
+### Added
+- **Phase 13 Week 3: 알림 시스템** 🔔 ✅
+  - `supabase/migrations/20251104000001_create_notifications.sql` - 알림 테이블 마이그레이션
+    - notifications 테이블 스키마 (id, user_id, type, title, message, link, read, created_at)
+    - RLS 정책 4개 (SELECT, INSERT, UPDATE, DELETE)
+    - 인덱스 2개 (user_id, created_at)
+    - 알림 타입: order, comment, system, announcement
+  - `src/lib/email.ts` - Resend 이메일 서비스
+    - sendEmail 함수 (React Email 템플릿 지원)
+    - 에러 핸들링 및 재시도 로직
+    - TypeScript 타입 정의
+  - `src/hooks/useNotifications.ts` - 알림 관리 훅
+    - 알림 목록 조회 (React Query)
+    - Supabase Realtime 구독 (INSERT 이벤트)
+    - markAsRead, markAllAsRead, deleteNotification 함수
+    - createNotification 함수 (관리자/시스템용)
+    - unreadCount 계산
+  - `src/components/notifications/NotificationBell.tsx` - 알림 벨 컴포넌트
+    - 헤더 우측 상단 배치
+    - unreadCount 배지 표시 (9+ 처리)
+    - 드롭다운 메뉴 (최근 3개 알림)
+    - "모두 보기" 링크 (/notifications)
+  - `src/components/notifications/NotificationDropdown.tsx` - 알림 드롭다운
+    - Popover 기반 UI
+    - 최근 3개 알림 표시
+    - 빈 상태 처리
+  - `src/components/notifications/NotificationItem.tsx` - 알림 아이템
+    - 타입별 아이콘 (Package, FileText, Bell, Megaphone)
+    - 읽음/읽지 않음 스타일
+    - 클릭 시 markAsRead + 링크 이동
+    - 날짜 표시 (상대 시간)
+  - `src/pages/Notifications.tsx` - 알림 센터 페이지
+    - 전체 알림 목록 (50개 제한)
+    - 필터 탭 (전체/읽지 않음)
+    - 개별 삭제 버튼
+    - "모두 읽음" 버튼
+    - SEO 최적화
+
+### Changed
+- `src/App.tsx` - Notifications 라우트 추가 (/notifications)
+  - lazy loading으로 Notifications 컴포넌트 로드
+- `src/components/Header.tsx` - NotificationBell 통합
+  - ThemeToggle과 CartButton 사이에 배치
+- `src/locales/ko/common.json` - 알림 번역 추가 (15개 키)
+- `src/locales/en/common.json` - 알림 번역 추가 (15개 키)
+- `.env.example` - Resend 환경 변수 추가
+  - VITE_RESEND_API_KEY
+  - VITE_FROM_EMAIL
+  - VITE_APP_VERSION: 1.7.0 → 1.7.2
+
+### Technical
+- **Bundle Size**: Notifications-Cwmb4tJM.js (3.01 kB / 1.28 kB gzip)
+- **Total Size**: ~552 kB gzip (v1.7.2 대비 +4%)
+- **PWA Cache**: 43 entries (2805.38 KiB)
+- **Build Time**: 16.34s
+- **Dependencies**: resend@^4.0.3, @react-email/components@^0.0.31, react-email@^3.0.3
+
+---
+
+## [1.7.2] - 2025-11-04
+
+### Added
+- **Phase 13 Week 2: AI 챗봇 통합** 🤖 ✅
+  - `src/lib/openai.ts` - OpenAI API 클라이언트 래퍼
+    - GPT-3.5-turbo 기본 모델
+    - 스트리밍 응답 지원 (createChatCompletionStream)
+    - VIBE WORKING 컨텍스트 시스템 프롬프트
+    - 에러 핸들링
+  - `src/hooks/useChat.ts` - 채팅 상태 관리 훅
+    - 메시지 목록 관리 (Message[])
+    - sendMessage 함수 (스트리밍 응답)
+    - clearMessages 함수
+    - LocalStorage 자동 저장/로드
+    - 로딩 상태 관리
+  - `src/components/chat/ChatMessage.tsx` - 메시지 컴포넌트
+    - 역할별 스타일링 (user: 우측, assistant: 좌측)
+    - Markdown 렌더링 (react-markdown, remark-gfm)
+    - 아바타 표시
+  - `src/components/chat/ChatInput.tsx` - 입력 컴포넌트
+    - Textarea with autoResize
+    - Enter로 전송, Shift+Enter로 줄바꿈
+    - 전송/로딩 버튼
+  - `src/components/chat/ChatWindow.tsx` - 채팅 창 컴포넌트
+    - 메시지 목록 (자동 스크롤)
+    - ChatInput 통합
+    - 헤더 (타이틀, 대화 초기화, 닫기)
+    - 환영 메시지
+  - `src/components/chat/ChatWidget.tsx` - 플로팅 챗 버튼
+    - 우측 하단 고정 위치
+    - 펄스 애니메이션
+    - ChatWindow 토글
+  - `src/components/chat/index.ts` - 컴포넌트 export
+
+### Changed
+- `src/App.tsx` - ChatWidget 통합
+  - CartDrawer 아래에 배치
+- `src/locales/ko/common.json` - 채팅 번역 추가 (10개 키)
+- `src/locales/en/common.json` - 채팅 번역 추가 (10개 키)
+- `.env.example` - OpenAI 환경 변수 추가
+  - VITE_OPENAI_API_KEY
+  - VITE_OPENAI_MODEL
+
+### Technical
+- **Bundle Size**: index-B2370P9-.js (181.35 kB / 54.67 kB gzip)
+- **Total Size**: ~532 kB gzip (v1.7.1 대비 +0.4%)
+- **Build Time**: 16.65s
+- **Dependencies**: openai@^4.77.3, react-markdown@^9.0.2, remark-gfm@^4.0.1
+
+---
+
+## [1.7.1] - 2025-11-04
+
+### Added
+- **Search 페이지 i18n 지원** 🌐
+  - `src/locales/ko/search.json` - 한국어 번역 (15개 키)
+  - `src/locales/en/search.json` - 영어 번역 (15개 키)
+  - `src/locales/ko/common.json` - 공통 번역 추가 (clear, description, errors.generic)
+  - `src/locales/en/common.json` - 공통 번역 추가 (clear, description, errors.generic)
+
+- **테스트 추가** 🧪
+  - `tests/e2e/search.spec.ts` - E2E 테스트 15개
+    - 검색 페이지 렌더링, 검색 입력/결과, 타입 필터
+    - 검색어 하이라이팅, URL 파라미터, 빈 결과
+    - 카드 클릭, Header 통합, 모바일 반응형
+    - 다크 모드, 30개 제한, 로딩/에러 상태
+  - `tests/unit/hooks/useSearch.test.tsx` - 유닛 테스트 10개
+    - 초기 상태, 검색 실행, 통합 검색
+    - 타입 필터링, 빈 결과, React Query 캐싱
+    - 로딩/에러 상태, 검색어 변경, limit 파라미터
+
+- **문서화** 📚
+  - `docs/archive/phase12-performance-pwa-i18n.md` - Phase 12 완료 문서
+
+### Changed
+- `src/pages/Search.tsx` - useTranslation 통합 (12개 문자열)
+- `src/components/search/SearchResultCard.tsx` - 타입 배지 및 날짜 로케일 번역
+- `src/components/Header.tsx` - 검색 버튼 aria-label 번역 (데스크톱/모바일)
+
+### Fixed
+- 번역 파일 위치 수정 (`public/locales` → `src/locales`)
+
+### Statistics
+- **총 테스트**: 267개 → 292개 (+25개)
+  - E2E: 157개 → 172개 (+15개)
+  - Unit: 82개 → 92개 (+10개)
+  - Visual: 28개
+- **번역 키**: 330개 → 345개 (+15개)
+- **지원 언어**: 2개 (한국어/영어)
 
 ---
 
