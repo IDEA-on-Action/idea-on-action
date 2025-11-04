@@ -9,13 +9,76 @@
 
 ---
 
-## [Unreleased] - Phase 13 진행 중
+## [Unreleased] - Phase 14 완료
+
+### Completed
+- **Phase 14: 고급 분석 대시보드** (완료 - 100%) ✅
+  - [x] Week 1: 사용자 행동 분석 ✅
+  - [x] Week 2: 매출 차트 & KPI ✅
+  - [x] Week 3: 실시간 대시보드 ✅
 
 ### Planned
-- **Phase 13: AI & 실시간 기능** (진행 중 - 100%) ✅
-  - [x] Week 1: 통합 검색 시스템 ✅
-  - [x] Week 2: AI 챗봇 통합 ✅
-  - [x] Week 3: 알림 시스템 ✅
+- **Phase 15: 모니터링 & 성능 개선**
+  - [ ] Week 1: APM 통합 (Datadog/New Relic)
+  - [ ] Week 2: 로그 수집 시스템
+  - [ ] Week 3: 성능 최적화
+
+---
+
+## [1.8.0] - 2025-11-04
+
+### Added
+- **Phase 14: 고급 분석 대시보드** 📊 ✅
+  - **Week 1: 사용자 행동 분석**
+    - `src/lib/analytics.ts` - GA4 이벤트 15개 추가 (viewService, removeFromCart, addPaymentInfo, searchWithResults, etc.)
+    - `supabase/migrations/20251111000001_create_analytics_events.sql` - analytics_events 테이블
+      - 4개 인덱스 (event_name, created_at, params GIN, funnel)
+      - RLS: 관리자 전용 조회
+    - `supabase/migrations/20251111000002_analytics_functions.sql` - SQL 함수 4개
+      - calculate_funnel(): 5단계 퍼널 분석 (signup → purchase)
+      - calculate_bounce_rate(): 이탈률 계산
+      - get_event_counts(): 이벤트별 집계
+      - get_session_timeline(): 세션 타임라인
+    - `src/lib/session.ts` - SessionStorage 기반 세션 ID 관리 (30분 타임아웃)
+    - `src/hooks/useAnalyticsEvents.ts` - React Query 훅 7개
+    - `src/pages/admin/Analytics.tsx` - Analytics 페이지 (4개 탭: 개요/퍼널/행동/로그)
+    - `src/components/analytics/DateRangePicker.tsx` - 날짜 범위 선택기 (7개 프리셋)
+    - `src/components/analytics/FunnelChart.tsx` - Recharts 퍼널 시각화
+    - `src/components/analytics/BounceRateCard.tsx` - 이탈률 KPI 카드
+    - `src/components/analytics/EventTimeline.tsx` - 이벤트 타임라인 (14개 아이콘)
+  - **Week 2: 매출 차트 & KPI**
+    - `supabase/migrations/20251111000003_revenue_functions.sql` - SQL 함수 3개
+      - get_revenue_by_date(): 일/주/월별 매출 집계
+      - get_revenue_by_service(): 서비스별 매출 TOP 순위
+      - get_kpis(): 6개 KPI 계산
+    - `src/hooks/useRevenue.ts` - React Query 훅 5개
+    - `src/components/analytics/RevenueChart.tsx` - 매출 추이 (Line/Bar 전환)
+    - `src/components/analytics/ServiceRevenueChart.tsx` - 서비스별 매출 (Horizontal Bar, TOP 10)
+    - `src/components/analytics/OrdersChart.tsx` - 주문 건수 (Area Chart)
+    - `src/components/analytics/RevenueComparisonChart.tsx` - 이전 기간 대비 매출 비교
+    - `src/components/analytics/KPICard.tsx` - KPI 카드 시스템 (6개 KPI)
+    - `src/pages/admin/Revenue.tsx` - Revenue 페이지 (4개 탭, CSV 내보내기)
+  - **Week 3: 실시간 대시보드**
+    - `src/hooks/useRealtimeDashboard.ts` - Realtime 훅 3개
+      - useRealtimeDashboard(): Supabase Realtime 구독
+      - useAutoRefresh(): 자동 새로고침 (10초/30초/1분)
+      - useRealtimeMetrics(): Presence API (온라인 사용자)
+    - `src/components/analytics/LiveMetricCard.tsx` - LIVE 배지, 펄스 애니메이션
+    - `src/components/analytics/LiveActivityFeed.tsx` - 실시간 주문 피드 (최근 10개)
+    - `src/pages/admin/RealtimeDashboard.tsx` - RealtimeDashboard 페이지
+  - **전체 통계**: 32개 파일 (24개 신규, 8개 수정), 6,531줄 코드 추가
+
+### Changed
+- `src/App.tsx` - 3개 라우트 추가 (/admin/analytics, /admin/revenue, /admin/realtime)
+- `src/components/layouts/AdminLayout.tsx` - 3개 메뉴 항목 추가 (BarChart3, TrendingUp, Activity)
+- Bundle 크기: pages-admin 50.28 kB → 61.23 kB gzip (+10.95 kB, +21.8%)
+- Total 크기: 552 kB → 602 kB gzip (+50 kB, +9.1%)
+
+### Performance
+- SQL 함수로 서버 사이드 집계 (클라이언트 부담 감소)
+- React Query 캐싱 (5-10분 staleTime)
+- Supabase Realtime으로 실시간 업데이트 (폴링 없음)
+- Lazy Loading (모든 새 페이지 lazy 로드)
 
 ---
 

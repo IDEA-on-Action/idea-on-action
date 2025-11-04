@@ -3,10 +3,18 @@
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
 **마지막 업데이트**: 2025-11-04
-**프로젝트 버전**: 1.7.3
-**상태**: ✅ Production Ready | 🎉 Phase 13 완료 (AI & 실시간 기능)
+**프로젝트 버전**: 1.8.0
+**상태**: ✅ Production Ready | 🎉 Phase 14 완료 (고급 분석 대시보드)
 
 **최신 업데이트**:
+- 2025-11-04: **Phase 14 완료** 🎉 - 고급 분석 대시보드 (3주)
+  - Week 1: 사용자 행동 분석 (GA4 15개, 퍼널, 이탈률, Analytics 페이지)
+  - Week 2: 매출 차트 & KPI (일/주/월 매출, 서비스별, 6개 KPI, CSV 내보내기)
+  - Week 3: 실시간 대시보드 (Supabase Realtime, 자동 새로고침, Presence API)
+  - 총 파일: 32개 (24개 신규, 8개 수정)
+  - 총 코드: 6,531줄 추가
+  - 총 테스트: 292개 (E2E 172, Unit 92, Visual 28)
+  - Bundle: pages-admin 61.23 kB gzip (+10.95 kB)
 - 2025-11-04: **Phase 13 완료** 🎉 - AI & 실시간 기능 (3주)
   - Week 1: 통합 검색 시스템 (useSearch, Search 페이지, i18n, 테스트 25개)
   - Week 2: AI 챗봇 (OpenAI GPT-3.5, 스트리밍, LocalStorage, i18n)
@@ -60,7 +68,7 @@
 
 ## 🔢 버전 관리
 
-**현재 버전**: 1.7.3
+**현재 버전**: 1.8.0
 **형식**: Major.Minor.Patch
 
 ### 버전 업 기준
@@ -431,78 +439,104 @@ npm run lint      # ESLint 검사
       - i18n 지원 (한국어/영어, 15개 번역 키)
       - Dependencies: resend, @react-email/components, react-email
 
+15. **Phase 14: 고급 분석 대시보드** (100%) 📊 ✅ 완료 (2025-11-04)
+    - **Week 1: 사용자 행동 분석** ✅
+      - GA4 이벤트 15개 추가 (viewService, removeFromCart, addPaymentInfo, etc.)
+      - analytics_events 테이블 마이그레이션 (4개 인덱스, RLS)
+      - SQL 함수 4개 (calculate_funnel, calculate_bounce_rate, get_event_counts, get_session_timeline)
+      - useAnalyticsEvents 훅 (7개: 이벤트 조회, 퍼널, 이탈률, 집계, 타임라인, 실시간, 사용자 히스토리)
+      - src/lib/session.ts (SessionStorage 기반, 30분 타임아웃)
+      - Analytics 페이지 (/admin/analytics, 4개 탭)
+      - 차트 컴포넌트 4개 (DateRangePicker, FunnelChart, BounceRateCard, EventTimeline)
+    - **Week 2: 매출 차트 & KPI** ✅
+      - SQL 함수 3개 (get_revenue_by_date, get_revenue_by_service, get_kpis)
+      - useRevenue 훅 (5개: 일/주/월 매출, 서비스별, KPI, 총 매출, 사용자 지출)
+      - 차트 컴포넌트 4개 (RevenueChart, ServiceRevenueChart, OrdersChart, RevenueComparisonChart)
+      - KPICard 컴포넌트 (KPIGrid, 6개 개별 카드)
+      - Revenue 페이지 (/admin/revenue, 4개 탭, CSV 내보내기)
+    - **Week 3: 실시간 대시보드** ✅
+      - useRealtimeDashboard 훅 (3개: Realtime 구독, 자동 새로고침, 실시간 메트릭)
+      - Supabase Realtime 구독 (orders, analytics_events 테이블)
+      - Presence API (온라인 사용자 추적)
+      - LiveMetricCard 컴포넌트 (LIVE 배지, 펄스 애니메이션)
+      - LiveActivityFeed 컴포넌트 (최근 10개 주문, 상태별 아이콘)
+      - RealtimeDashboard 페이지 (/admin/realtime, 자동 새로고침 간격 설정)
+    - **전체 통계**: 32개 파일 (24개 신규, 8개 수정), 6,531줄 코드 추가
+
 ### 🚀 다음 단계
 
 #### 즉시 가능 작업
-- **테스트 실행**: Phase 13 E2E/유닛 테스트 검증
-- **Phase 13 문서 아카이브**: phase13-ai-realtime.md 작성
-- **Lighthouse 성능 점수 측정**: Core Web Vitals 확인
+- **테스트 실행**: Phase 14 E2E/유닛 테스트 작성 및 검증
+- **Phase 14 문서 아카이브**: phase14-analytics.md 작성
+- **성능 최적화**: Bundle 크기 분석 및 최적화
 
 #### 다음 Phase
-- [ ] Phase 14: 고급 분석 대시보드 (사용자 행동 분석, 매출 차트, 실시간 대시보드)
 - [ ] Phase 15: 모니터링 & 성능 개선 (APM, 로그 수집, 성능 최적화)
+- [ ] Phase 16: 고급 기능 (알림 자동화, 스케줄링, 워크플로우)
 
 #### 백로그 & 개선 사항
+- [ ] Phase 14 E2E 테스트 작성 (Analytics, Revenue, Realtime)
+- [ ] Phase 14 유닛 테스트 작성 (useRevenue, useRealtimeDashboard)
 - [ ] 추가 컴포넌트 유닛 테스트 (Hero, Features, Services)
 - [ ] Manual 테스트 체크리스트
-- ✅ Phase 12 문서 아카이브 정리 (완료)
-- [ ] Phase 13 E2E 테스트 작성 (채팅, 알림)
+- ✅ Phase 13 문서 아카이브 정리 (완료)
 - [ ] 알림 이메일 템플릿 작성 (React Email)
 
 ### 빌드 통계 (2025-11-04)
 
-**v1.7.3 - Phase 13 완료 (AI & 실시간 기능)**
+**v1.8.0 - Phase 14 완료 (고급 분석 대시보드)**
 ```
 dist/manifest.webmanifest                          0.50 kB
 dist/index.html                                    2.67 kB │ gzip:   0.99 kB
-dist/assets/index-Csqml4Bl.css                    88.39 kB │ gzip:  14.66 kB
-dist/assets/Forbidden-DNG9fok-.js                  1.49 kB │ gzip:   0.79 kB
-dist/assets/TwoFactorVerify-i-it_AXF.js            2.41 kB │ gzip:   1.29 kB
-dist/assets/Notifications-Cwmb4tJM.js              3.01 kB │ gzip:   1.28 kB ⭐ NEW
-dist/assets/AdminLayout-BGqaLAjq.js                3.33 kB │ gzip:   1.43 kB
+dist/assets/index-BYlDLVBQ.css                    90.25 kB │ gzip:  15.00 kB
+dist/assets/Forbidden-B2SW210Y.js                  1.49 kB │ gzip:   0.80 kB
+dist/assets/TwoFactorVerify-D9-Me55r.js            2.41 kB │ gzip:   1.29 kB
+dist/assets/Notifications-_NN0NBEg.js              3.01 kB │ gzip:   1.29 kB
+dist/assets/AdminLayout--_5X8v_-.js                3.49 kB │ gzip:   1.51 kB
 dist/assets/vendor-payments-YkKx6g3r.js            3.87 kB │ gzip:   1.47 kB
-dist/assets/use2FA-2CD8iV3d.js                     4.54 kB │ gzip:   1.61 kB
+dist/assets/use2FA-CrrFmr7V.js                     4.54 kB │ gzip:   1.61 kB
 dist/assets/workbox-window.prod.es5-B9K5rw8f.js    5.72 kB │ gzip:   2.35 kB
-dist/assets/TwoFactorSetup-C4sCXzNy.js             6.90 kB │ gzip:   2.55 kB
-dist/assets/OrderDetail-Ct77VDQ1.js                8.15 kB │ gzip:   2.44 kB
-dist/assets/Search-t4RLFIAm.js                     9.25 kB │ gzip:   3.14 kB
-dist/assets/Profile-Dt1YH9DB.js                   14.39 kB │ gzip:   5.05 kB
-dist/assets/pages-cms-BCDiCZLW.js                 32.94 kB │ gzip:   7.97 kB
-dist/assets/pages-services-CNS5niHf.js            35.18 kB │ gzip:  12.95 kB
-dist/assets/vendor-query-BHM8WCac.js              39.19 kB │ gzip:  11.69 kB
+dist/assets/TwoFactorSetup-CQt1zJOp.js             6.90 kB │ gzip:   2.56 kB
+dist/assets/OrderDetail-CR6bxYYk.js                8.15 kB │ gzip:   2.44 kB
+dist/assets/Search-D96Twpmm.js                     9.25 kB │ gzip:   3.15 kB
+dist/assets/Profile-Bza5-qv2.js                   14.40 kB │ gzip:   5.05 kB
+dist/assets/pages-cms-Czo5TUxn.js                 31.96 kB │ gzip:   7.80 kB
+dist/assets/pages-services-CjYPy98t.js            35.15 kB │ gzip:  12.94 kB
+dist/assets/vendor-query-BiSJXyoQ.js              39.19 kB │ gzip:  11.69 kB
 dist/assets/vendor-auth-C0KVTEQY.js               48.49 kB │ gzip:  18.59 kB
-dist/assets/vendor-forms-cKvrjYaG.js              55.09 kB │ gzip:  12.88 kB
-dist/assets/pages-ecommerce-DyGCoFPS.js           94.87 kB │ gzip:  30.96 kB
-dist/assets/vendor-ui-ihdaqAF6.js                131.23 kB │ gzip:  41.06 kB
+dist/assets/vendor-forms-DH3qquFH.js              55.09 kB │ gzip:  12.88 kB
+dist/assets/pages-ecommerce-D0JXV7dV.js           94.76 kB │ gzip:  30.94 kB
+dist/assets/vendor-ui-D8JdQl-B.js                135.77 kB │ gzip:  42.11 kB
 dist/assets/vendor-supabase-BXcIgd3p.js          148.46 kB │ gzip:  39.35 kB
-dist/assets/index-B2370P9-.js                    181.35 kB │ gzip:  54.67 kB 🤖 Chat
-dist/assets/pages-admin-1bQebCAn.js              192.79 kB │ gzip:  50.28 kB
-dist/assets/vendor-sentry-BdWdwLzn.js            315.03 kB │ gzip: 103.77 kB
+dist/assets/index-CFz977Xo.js                    181.82 kB │ gzip:  54.73 kB
+dist/assets/pages-admin-D5O_tdOD.js              241.44 kB │ gzip:  61.23 kB 📊 Analytics
+dist/assets/vendor-sentry-D5wFNKG3.js            315.03 kB │ gzip: 103.77 kB
 dist/assets/vendor-markdown-C-WVu4T1.js          315.63 kB │ gzip:  99.08 kB
-dist/assets/vendor-react-CeMSjHIC.js             317.81 kB │ gzip: 104.13 kB
-dist/assets/vendor-charts-DVvlwFLH.js            371.72 kB │ gzip: 101.16 kB
+dist/assets/vendor-react-BoAnGoh3.js             348.77 kB │ gzip: 113.60 kB
+dist/assets/vendor-charts-Dj6EVShV.js            394.13 kB │ gzip: 105.30 kB
 
-Total (gzip): ~552 kB (30개 chunk)
-Build Time: 16.34s
-PWA: 43 entries (2805.38 KiB) cached
+Total (gzip): ~602 kB (30개 chunk)
+Build Time: 14.76s
+PWA: 43 entries (2912.92 KiB) cached
 ```
 
-**Phase 13 전체 변경 사항**:
-- v1.7.0 → v1.7.3 (Phase 13 Week 1-3 완료)
-  - ⭐ **새 기능**: 통합 검색, AI 챗봇, 알림 시스템
-  - 📦 **새 청크**: Search (3.14 kB gzip), Notifications (1.28 kB gzip)
-  - 🤖 **AI 통합**: OpenAI GPT-3.5 채팅 (index 청크 +32 kB gzip)
-  - 📈 **Total 증가**: 527 kB → 552 kB gzip (+4.7%)
-  - 🔍 **라우트**: /search, /notifications 추가
-  - 📊 **PWA 캐시**: 41 → 43 entries (+2)
-  - 🌐 **i18n**: +40개 번역 키 (검색 15, 채팅 10, 알림 15)
-  - ⚡ **Lazy Loading**: 모든 새 페이지 lazy 로드
+**Phase 14 전체 변경 사항**:
+- v1.7.3 → v1.8.0 (Phase 14 Week 1-3 완료)
+  - 📊 **새 기능**: 사용자 행동 분석, 매출 차트 & KPI, 실시간 대시보드
+  - 🆕 **새 페이지**: Analytics, Revenue, RealtimeDashboard (3개)
+  - 📦 **Bundle 증가**: pages-admin 50.28 kB → 61.23 kB gzip (+10.95 kB, +21.8%)
+  - 📈 **Total 증가**: 552 kB → 602 kB gzip (+50 kB, +9.1%)
+  - 🔍 **라우트**: /admin/analytics, /admin/revenue, /admin/realtime 추가
+  - 📊 **SQL 함수**: 7개 (퍼널, 이탈률, 이벤트 집계, 매출 집계, KPI)
+  - 📈 **차트**: 11개 (Funnel, BounceRate, Revenue, ServiceRevenue, Orders, etc.)
+  - ⚡ **Realtime**: Supabase Realtime 구독, Presence API
 
-**성능 개선**:
-- Code Splitting으로 초기 로딩 시간 단축 유지
-- Route-based 청크로 네트워크 병렬 다운로드
-- Vendor 청크 캐싱으로 재방문 속도 향상
-- Search 페이지 lazy loading으로 초기 번들 크기 최소화
+**성능 특징**:
+- Lazy Loading으로 초기 번들 크기 최소화
+- 차트는 별도 vendor-charts 청크로 분리 (105.30 kB gzip)
+- SQL 함수로 서버 사이드 집계 (클라이언트 부담 감소)
+- React Query 캐싱 (5-10분 staleTime)
+- Supabase Realtime으로 실시간 업데이트 (폴링 없음)
 
 ---
 
