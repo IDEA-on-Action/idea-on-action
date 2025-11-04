@@ -156,4 +156,152 @@ export const analytics = {
       ],
     });
   },
+
+  // ===== Phase 14 추가 이벤트 (15개) =====
+
+  // 1. 서비스 상세 조회
+  viewService: (serviceId: string, serviceName: string, category: string) => {
+    trackEvent("view_service", {
+      service_id: serviceId,
+      service_name: serviceName,
+      service_category: category,
+    });
+  },
+
+  // 2. 장바구니 항목 제거
+  removeFromCart: (serviceId: string, serviceName: string, price: number) => {
+    trackEvent("remove_from_cart", {
+      currency: "KRW",
+      value: price,
+      items: [
+        {
+          item_id: serviceId,
+          item_name: serviceName,
+          price: price,
+        },
+      ],
+    });
+  },
+
+  // 3. 결제 정보 추가
+  addPaymentInfo: (method: "kakao" | "toss", orderId?: string) => {
+    trackEvent("add_payment_info", {
+      payment_type: method,
+      order_id: orderId,
+    });
+  },
+
+  // 4. 블로그 게시물 조회
+  viewBlogPost: (postId: string, title: string, category: string) => {
+    trackEvent("view_blog_post", {
+      post_id: postId,
+      post_title: title,
+      post_category: category,
+    });
+  },
+
+  // 5. 검색 (확장)
+  searchWithResults: (
+    query: string,
+    type: string,
+    resultCount: number
+  ) => {
+    trackEvent("search", {
+      search_term: query,
+      search_type: type, // 'all', 'service', 'blog', 'notice'
+      result_count: resultCount,
+    });
+  },
+
+  // 6. CTA 클릭
+  clickCTA: (location: string, label: string, url?: string) => {
+    trackEvent("click_cta", {
+      cta_location: location, // 'header', 'hero', 'service_detail' 등
+      cta_label: label, // '문의하기', '구매하기', '더 알아보기' 등
+      cta_url: url,
+    });
+  },
+
+  // 7. 콘텐츠 공유
+  shareContent: (
+    contentType: "service" | "blog" | "notice",
+    contentId: string,
+    method: "facebook" | "twitter" | "kakao" | "link"
+  ) => {
+    trackEvent("share", {
+      content_type: contentType,
+      content_id: contentId,
+      method: method,
+    });
+  },
+
+  // 8. 파일 다운로드
+  downloadFile: (fileName: string, fileType: string, fileSize?: number) => {
+    trackEvent("file_download", {
+      file_name: fileName,
+      file_type: fileType, // 'pdf', 'csv', 'xlsx' 등
+      file_size: fileSize,
+    });
+  },
+
+  // 9. 에러 발생
+  error: (errorMessage: string, page: string, errorType?: string) => {
+    trackEvent("exception", {
+      description: errorMessage,
+      page: page,
+      error_type: errorType, // 'network', 'validation', 'server' 등
+      fatal: false,
+    });
+  },
+
+  // 10. 프로필 업데이트
+  updateProfile: (fields: string[]) => {
+    trackEvent("update_profile", {
+      updated_fields: fields.join(","), // 'avatar', 'name', 'email' 등
+    });
+  },
+
+  // 11. 2FA 활성화
+  enable2FA: () => {
+    trackEvent("enable_2fa", {
+      security_action: "2fa_enabled",
+    });
+  },
+
+  // 12. 알림 상호작용
+  interactNotification: (
+    action: "click" | "dismiss" | "mark_read",
+    notificationType: string
+  ) => {
+    trackEvent("notification_interaction", {
+      action: action,
+      notification_type: notificationType, // 'order', 'system', 'promotion' 등
+    });
+  },
+
+  // 13. 챗봇 상호작용
+  chatbotInteraction: (action: "open" | "close" | "send_message", messageCount?: number) => {
+    trackEvent("chatbot_interaction", {
+      action: action,
+      message_count: messageCount,
+    });
+  },
+
+  // 14. 필터 적용
+  applyFilter: (
+    filterType: string,
+    filterValue: string,
+    resultCount?: number
+  ) => {
+    trackEvent("apply_filter", {
+      filter_type: filterType, // 'category', 'price_range', 'status' 등
+      filter_value: filterValue,
+      result_count: resultCount,
+    });
+  },
+
+  // 15. 커스텀 이벤트
+  customEvent: (eventName: string, params: Record<string, any>) => {
+    trackEvent(eventName, params);
+  },
 };

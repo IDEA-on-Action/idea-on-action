@@ -19,6 +19,7 @@ import {
   Bell,
   Shield,
   ScrollText,
+  BarChart3,
   LogOut,
   Home,
   Menu,
@@ -67,6 +68,11 @@ const navItems = [
     title: '주문 관리',
     href: '/admin/orders',
     icon: ShoppingCart,
+  },
+  {
+    title: '분석 대시보드',
+    href: '/admin/analytics',
+    icon: BarChart3,
   },
 ]
 
