@@ -1,15 +1,22 @@
 import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Calendar, TrendingUp, Users, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useRoadmap } from "@/hooks/useRoadmap";
+import { PageLayout, HeroSection, Section } from "@/components/layouts";
+import { LoadingState, ErrorState, EmptyState } from "@/components/shared";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const Roadmap = () => {
   const { data: roadmapData, isLoading, error } = useRoadmap();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin();
   const [selectedQuarter, setSelectedQuarter] = useState("");
+  const navigate = useNavigate();
 
   // Set initial selected quarter when data loads
   useEffect(() => {
@@ -57,37 +64,53 @@ const Roadmap = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
+      <PageLayout>
+        <LoadingState />
+      </PageLayout>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="glass-card p-8 max-w-md text-center">
-          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">데이터 로드 실패</h2>
-          <p className="text-muted-foreground">
-            {error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}
-          </p>
-        </Card>
-      </div>
+      <PageLayout>
+        <ErrorState error={error} />
+      </PageLayout>
     );
   }
 
   // No data state
   if (!roadmapData || roadmapData.length === 0) {
+    // 관리자 확인이 완료될 때까지 기다림 (로딩 중이면 버튼을 표시하지 않음)
+    const showAdminButton = !isAdminLoading && isAdmin === true;
+
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="glass-card p-8 max-w-md text-center">
-          <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">로드맵 없음</h2>
-          <p className="text-muted-foreground">아직 등록된 로드맵이 없습니다.</p>
-        </Card>
-      </div>
+      <PageLayout>
+        <HeroSection
+          badge={{ icon: Calendar, text: "Roadmap" }}
+          title="로드맵"
+          description="분기별 목표와 진행 상황을 투명하게 공개합니다"
+        />
+        <Section>
+          <EmptyState
+            icon={Calendar}
+            title="로드맵 없음"
+            description={
+              showAdminButton
+                ? "아직 등록된 로드맵이 없습니다. 관리자 페이지에서 로드맵을 등록할 수 있습니다."
+                : "아직 등록된 로드맵이 없습니다. 로드맵은 관리자에 의해 등록됩니다."
+            }
+            action={
+              showAdminButton
+                ? {
+                    label: "관리자 페이지로 이동",
+                    onClick: () => navigate("/admin"),
+                  }
+                : undefined
+            }
+          />
+        </Section>
+      </PageLayout>
     );
   }
 
@@ -104,29 +127,15 @@ const Roadmap = () => {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10"></div>
-          <div className="container mx-auto max-w-6xl relative">
-            <div className="text-center space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-4">
-                <Calendar className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold">Roadmap 2025-2026</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-                우리의 여정
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                투명하게 공개되는 로드맵으로 함께 성장합니다
-              </p>
-            </div>
-          </div>
-        </section>
+      <PageLayout>
+        <HeroSection
+          badge={{ icon: Calendar, text: "Roadmap 2025-2026" }}
+          title="우리의 여정"
+          description="투명하게 공개되는 로드맵으로 함께 성장합니다"
+        />
 
         {/* Roadmap Tabs */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
+        <Section>
             <Tabs value={selectedQuarter} onValueChange={setSelectedQuarter}>
               <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 bg-transparent h-auto">
                 {roadmapData.map((item) => (
@@ -271,35 +280,29 @@ const Roadmap = () => {
                 </TabsContent>
               ))}
             </Tabs>
-          </div>
-        </section>
+        </Section>
 
         {/* CTA Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-          <div className="container mx-auto max-w-4xl text-center space-y-6">
+        <Section variant="gradient" maxWidth="4xl">
+          <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">함께 만들어가고 싶으신가요?</h2>
             <p className="text-lg text-foreground/80">
               로드맵의 일부가 되어 함께 성장하세요.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <a
-                href="/lab"
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
-              >
-                바운티 참여하기
-              </a>
-              <a
-                href="/portfolio"
-                className="px-6 py-3 glass-card rounded-md hover:bg-muted/50 transition-colors font-semibold"
-              >
-                프로젝트 보기
-              </a>
+              <Button asChild>
+                <Link to="/lab">바운티 참여하기</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/portfolio">프로젝트 보기</Link>
+              </Button>
             </div>
           </div>
-        </section>
-      </div>
+        </Section>
+      </PageLayout>
     </>
   );
 };
 
 export default Roadmap;
+

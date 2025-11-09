@@ -15,7 +15,7 @@ const Contact = () => {
       const body = encodeURIComponent(
         "안녕하세요.\n\nIDEA on Action 서비스에 대해 상담을 신청합니다.\n\n문의 내용:\n- \n\n연락처:\n- \n\n감사합니다."
       );
-      window.open(`mailto:sinclairseo@gmail.com?subject=${subject}&body=${body}`);
+      window.open(`mailto:sinclair.seo@ideaonaction.ai?subject=${subject}&body=${body}`);
     } else {
       // 전화 문의
       window.open("tel:010-4904-2671");
@@ -46,11 +46,11 @@ const Contact = () => {
                     <div>
                       <div className="font-semibold mb-1">이메일</div>
                       <a
-                        href="mailto:sinclairseo@gmail.com"
-                        aria-label="이메일 보내기: sinclairseo@gmail.com"
+                        href="mailto:sinclair.seo@ideaonaction.ai"
+                        aria-label="이메일 보내기: sinclair.seo@ideaonaction.ai"
                         className="text-muted-foreground hover:text-primary transition-colors"
                       >
-                        sinclairseo@gmail.com
+                        sinclair.seo@ideaonaction.ai
                       </a>
                     </div>
                   </div>
@@ -94,13 +94,16 @@ const Contact = () => {
               <div>
                 <h3 className="text-2xl font-bold mb-6">대표자</h3>
                 <div className="p-6 rounded-2xl bg-background/50 border border-border mb-6">
-                  <div className="text-lg font-semibold mb-2">서민원 대표</div>
+                  <div className="text-lg font-semibold mb-2">서민원 (Sinclair Seo)</div>
                   <div className="text-muted-foreground text-sm">
-                    IDEA on Action CEO
+                    생각과 행동 대표
                   </div>
                 </div>
 
-                <Button className="w-full bg-gradient-primary hover:opacity-90 text-lg py-6">
+                <Button 
+                  onClick={handleConsultation}
+                  className="w-full bg-gradient-primary hover:opacity-90 text-lg py-6"
+                >
                   상담 신청하기
                 </Button>
               </div>

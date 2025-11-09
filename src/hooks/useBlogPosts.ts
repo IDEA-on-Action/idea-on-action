@@ -61,9 +61,8 @@ export function useBlogPosts(options: UsePostsOptions = {}) {
         .from('blog_posts')
         .select(`
           *,
-          author:author_id(id, email, raw_user_meta_data),
-          category:category_id(id, name, slug),
-          tags:post_tag_relations(tag:tag_id(id, name, slug))
+          category:post_categories(id, name, slug),
+          tags:post_tag_relations(tag:post_tags(id, name, slug))
         `)
 
       // Apply filters
@@ -92,11 +91,29 @@ export function useBlogPosts(options: UsePostsOptions = {}) {
 
       if (error) throw error
 
-      // Transform data to include tags as array
+      // Fetch authors separately
+      const authorIds = [...new Set((data || []).map((post: BlogPost) => post.author_id).filter(Boolean))]
+      const authorsMap = new Map<string, { user_id: string; display_name: string | null; avatar_url: string | null }>()
+      
+      if (authorIds.length > 0) {
+        const { data: authors, error: authorsError } = await supabase
+          .from('user_profiles')
+          .select('user_id, display_name, avatar_url')
+          .in('user_id', authorIds)
+
+        if (!authorsError && authors) {
+          authors.forEach(author => {
+            authorsMap.set(author.user_id, author)
+          })
+        }
+      }
+
+      // Transform data to include tags and authors as array
       const posts: BlogPostWithRelations[] = (data || []).map((post: unknown) => {
         const p = post as BlogPost & { tags?: Array<{ tag: PostTag }> }
         return {
           ...p,
+          author: authorsMap.get(p.author_id) || undefined,
           tags: p.tags?.map((t) => t.tag).filter(Boolean) || [],
         }
       })
@@ -119,19 +136,33 @@ export function useBlogPost(id: string | undefined) {
         .from('blog_posts')
         .select(`
           *,
-          author:author_id(id, email, raw_user_meta_data),
-          category:category_id(id, name, slug, description),
-          tags:post_tag_relations(tag:tag_id(id, name, slug))
+          category:post_categories(id, name, slug, description),
+          tags:post_tag_relations(tag:post_tags(id, name, slug))
         `)
         .eq('id', id)
         .single()
 
       if (error) throw error
 
+      // Fetch author separately
+      let author: { user_id: string; display_name: string | null; avatar_url: string | null } | undefined
+      if (data.author_id) {
+        const { data: authorData, error: authorError } = await supabase
+          .from('user_profiles')
+          .select('user_id, display_name, avatar_url')
+          .eq('user_id', data.author_id)
+          .single()
+
+        if (!authorError && authorData) {
+          author = authorData
+        }
+      }
+
       // Transform data
       const d = data as BlogPost & { tags?: Array<{ tag: PostTag }> }
       const post: BlogPostWithRelations = {
         ...d,
+        author,
         tags: d.tags?.map((t) => t.tag).filter(Boolean) || [],
       }
 
@@ -154,19 +185,33 @@ export function useBlogPostBySlug(slug: string | undefined) {
         .from('blog_posts')
         .select(`
           *,
-          author:author_id(id, email, raw_user_meta_data),
-          category:category_id(id, name, slug, description),
-          tags:post_tag_relations(tag:tag_id(id, name, slug))
+          category:post_categories(id, name, slug, description),
+          tags:post_tag_relations(tag:post_tags(id, name, slug))
         `)
         .eq('slug', slug)
         .single()
 
       if (error) throw error
 
+      // Fetch author separately
+      let author: { user_id: string; display_name: string | null; avatar_url: string | null } | undefined
+      if (data.author_id) {
+        const { data: authorData, error: authorError } = await supabase
+          .from('user_profiles')
+          .select('user_id, display_name, avatar_url')
+          .eq('user_id', data.author_id)
+          .single()
+
+        if (!authorError && authorData) {
+          author = authorData
+        }
+      }
+
       // Transform data
       const d = data as BlogPost & { tags?: Array<{ tag: PostTag }> }
       const post: BlogPostWithRelations = {
         ...d,
+        author,
         tags: d.tags?.map((t) => t.tag).filter(Boolean) || [],
       }
 

@@ -32,10 +32,16 @@ export default function BlogPost() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+        <div className="text-center space-y-4">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading post...</p>
+          <p className="text-muted-foreground">Loading post...</p>
+          <Button variant="ghost" asChild>
+            <Link to="/">
+              <Home className="mr-2 h-4 w-4" />
+              홈으로 돌아가기
+            </Link>
+          </Button>
         </div>
       </div>
     )
@@ -43,15 +49,23 @@ export default function BlogPost() {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+        <div className="text-center space-y-4 max-w-md">
           <p className="text-destructive text-lg">Post not found</p>
-          <Button asChild className="mt-4">
-            <Link to="/blog">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Blog
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild>
+              <Link to="/blog">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Blog
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/">
+                <Home className="w-4 h-4 mr-2" />
+                홈으로 돌아가기
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     )
@@ -99,12 +113,20 @@ export default function BlogPost() {
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         {/* Back Button */}
         <div className="container mx-auto px-4 pt-8">
-          <Button variant="ghost" asChild>
-            <Link to="/blog">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Blog
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" asChild>
+              <Link to="/blog">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Blog
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/">
+                <Home className="w-4 h-4 mr-2" />
+                홈
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Article Header */}

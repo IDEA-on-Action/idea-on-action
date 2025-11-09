@@ -143,19 +143,21 @@ const Lab = () => {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Users className="w-4 h-4" />
-                        <span>{bounty.applicants.length}명 신청</span>
+                        <span>{(bounty.applicants?.length || 0)}명 신청</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Skills */}
-                  <div className="flex flex-wrap gap-2">
-                    {bounty.skillsRequired.map((skill, skillIndex) => (
-                      <Badge key={skillIndex} variant="secondary" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
+                  {bounty.skillsRequired && bounty.skillsRequired.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {bounty.skillsRequired.map((skill, skillIndex) => (
+                        <Badge key={skillIndex} variant="secondary" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
 
                   {/* Deadline */}
                   <div className="flex items-center justify-between pt-4 border-t">

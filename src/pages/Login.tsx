@@ -6,7 +6,7 @@
  * - 이메일/비밀번호 (관리자 계정용)
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '@/hooks/useAuth'
@@ -29,10 +29,12 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
 
   // 이미 로그인되어 있으면 리다이렉트
-  if (user) {
-    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/'
-    navigate(from, { replace: true })
-  }
+  useEffect(() => {
+    if (user) {
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/'
+      navigate(from, { replace: true })
+    }
+  }, [user, location.state, navigate])
 
   const handleOAuthLogin = async (provider: 'google' | 'github' | 'kakao' | 'microsoft' | 'apple') => {
     try {

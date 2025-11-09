@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Github, Calendar, TrendingUp, Users, GitBranch, TestTube, Target, Check } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, Calendar, TrendingUp, Users, GitBranch, TestTube, Target, Check, Home } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -13,8 +13,18 @@ const PortfolioDetail = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">프로젝트를 불러오는 중...</p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Home className="w-4 h-4" />
+            홈으로 돌아가기
+          </Link>
+        </div>
       </div>
     );
   }
@@ -22,19 +32,28 @@ const PortfolioDetail = () => {
   // Error or not found
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="glass-card p-12 text-center max-w-md">
           <h2 className="text-2xl font-bold mb-4">프로젝트를 찾을 수 없습니다</h2>
           <p className="text-muted-foreground mb-6">
             요청하신 프로젝트가 존재하지 않거나 삭제되었습니다.
           </p>
-          <Link
-            to="/portfolio"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            포트폴리오로 돌아가기
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/portfolio"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              포트폴리오로 돌아가기
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-border rounded-md hover:bg-muted transition-colors font-semibold"
+            >
+              <Home className="w-4 h-4" />
+              홈으로 돌아가기
+            </Link>
+          </div>
         </Card>
       </div>
     );
@@ -68,13 +87,23 @@ const PortfolioDetail = () => {
         {/* Header */}
         <section className="relative py-12 px-4 border-b">
           <div className="container mx-auto max-w-6xl">
-            <Link
-              to="/portfolio"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              포트폴리오로 돌아가기
-            </Link>
+            <div className="flex items-center gap-3 mb-6">
+              <Link
+                to="/portfolio"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                포트폴리오로 돌아가기
+              </Link>
+              <span className="text-muted-foreground">•</span>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                홈
+              </Link>
+            </div>
 
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-4">

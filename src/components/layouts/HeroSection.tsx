@@ -46,9 +46,9 @@ export const HeroSection = ({
             {title}
           </h1>
           {description && (
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               {description}
-            </p>
+            </div>
           )}
           {children}
         </div>

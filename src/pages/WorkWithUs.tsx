@@ -3,6 +3,7 @@ import { Rocket, Code, Palette, Mail, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WorkWithUsForm } from "@/components/forms/WorkWithUsForm";
+import { PageLayout, HeroSection, Section } from "@/components/layouts";
 
 const WorkWithUs = () => {
   const packages = [
@@ -66,37 +67,23 @@ const WorkWithUs = () => {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10"></div>
-          <div className="container mx-auto max-w-6xl relative">
-            <div className="text-center space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-4">
-                <Rocket className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold">Let's Build Together</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-                Work with Us
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                아이디어를 현실로 만드는 여정에 함께하세요
-              </p>
-            </div>
-          </div>
-        </section>
+      <PageLayout>
+        <HeroSection
+          badge={{ icon: Rocket, text: "Let's Build Together" }}
+          title="Work with Us"
+          description="아이디어를 현실로 만드는 여정에 함께하세요"
+        />
 
         {/* Packages */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">협업 패키지</h2>
-              <p className="text-lg text-muted-foreground">
-                프로젝트 단계와 니즈에 맞는 패키지를 선택하세요
-              </p>
-            </div>
+        <Section maxWidth="6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">협업 패키지</h2>
+            <p className="text-lg text-muted-foreground">
+              프로젝트 단계와 니즈에 맞는 패키지를 선택하세요
+            </p>
+          </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
               {packages.map((pkg, index) => (
                 <Card
                   key={index}
@@ -137,33 +124,31 @@ const WorkWithUs = () => {
                   </div>
                 </Card>
               ))}
-            </div>
           </div>
-        </section>
+        </Section>
 
         {/* Contact Form */}
-        <section className="py-16 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-4xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">협업 제안하기</h2>
-              <p className="text-lg text-muted-foreground">
-                프로젝트에 대한 자세한 내용을 알려주시면 2-3일 내에 답변드리겠습니다.
-              </p>
-            </div>
+        <Section variant="muted" maxWidth="4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">협업 제안하기</h2>
+            <p className="text-lg text-muted-foreground">
+              프로젝트에 대한 자세한 내용을 알려주시면 2-3일 내에 답변드리겠습니다.
+            </p>
+          </div>
 
-            <Card className="glass-card p-8 md:p-12">
-              <WorkWithUsForm />
-            </Card>
+          <Card className="glass-card p-8 md:p-12">
+            <WorkWithUsForm />
+          </Card>
 
-            <div className="grid md:grid-cols-2 gap-6 mt-8 max-w-2xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 mt-8 max-w-2xl mx-auto">
               <a
-                href="mailto:sinclairseo@gmail.com?subject=프로젝트 협업 문의"
+                href="mailto:sinclair.seo@ideaonaction.ai?subject=프로젝트 협업 문의"
                 className="flex items-center justify-center gap-3 p-6 glass-card rounded-lg hover:bg-muted/50 transition-colors group"
               >
                 <Mail className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
                 <div className="text-left">
                   <div className="font-bold">직접 이메일 보내기</div>
-                  <div className="text-sm text-muted-foreground">sinclairseo@gmail.com</div>
+                  <div className="text-sm text-muted-foreground">sinclair.seo@ideaonaction.ai</div>
                 </div>
               </a>
 
@@ -181,19 +166,17 @@ const WorkWithUs = () => {
                   <div className="text-sm text-muted-foreground">Coming Soon</div>
                 </div>
               </a>
-            </div>
           </div>
-        </section>
+        </Section>
 
         {/* Process */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">협업 프로세스</h2>
-              <p className="text-muted-foreground">투명하고 체계적인 프로세스로 진행합니다</p>
-            </div>
+        <Section maxWidth="6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">협업 프로세스</h2>
+            <p className="text-muted-foreground">투명하고 체계적인 프로세스로 진행합니다</p>
+          </div>
 
-            <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
               {[
                 { step: "1", title: "문의", description: "이메일로 프로젝트 개요를 보내주세요" },
                 { step: "2", title: "상담", description: "요구사항을 상세히 논의합니다" },
@@ -208,27 +191,26 @@ const WorkWithUs = () => {
                   <p className="text-sm text-muted-foreground">{item.description}</p>
                 </div>
               ))}
-            </div>
           </div>
-        </section>
+        </Section>
 
         {/* CTA Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-          <div className="container mx-auto max-w-4xl text-center space-y-6">
+        <Section variant="gradient" maxWidth="4xl">
+          <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">프로젝트 시작 준비되셨나요?</h2>
             <p className="text-lg text-foreground/80">
               함께 만들어갈 여정이 기다립니다.
             </p>
             <a
-              href="mailto:sinclairseo@gmail.com?subject=프로젝트 협업 문의"
+              href="mailto:sinclair.seo@ideaonaction.ai?subject=프로젝트 협업 문의"
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
             >
               <Mail className="w-4 h-4" />
               지금 문의하기
             </a>
           </div>
-        </section>
-      </div>
+        </Section>
+      </PageLayout>
     </>
   );
 };

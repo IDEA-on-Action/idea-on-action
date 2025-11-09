@@ -3,11 +3,23 @@
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
 **마지막 업데이트**: 2025-01-09
-**현재 버전**: 2.0.0-sprint3.7
+**현재 버전**: 2.0.0-sprint3.8
 **다음 버전**: 2.0.0 (Sprint 3 완료)
 **상태**: ✅ Production Ready | 🚀 Version 2.0 Sprint 3 진행 중
 
 **최신 업데이트**:
+- 2025-01-09: **Version 2.0 Sprint 3.8 완료** 🔧 - 페이지 개선 및 버그 수정
+  - **페이지 개선**
+    - Portfolio 페이지: React Hooks 순서 오류 수정 (useMemo를 early return 전으로 이동)
+    - Roadmap 페이지: PageLayout 적용, 네비게이션 추가, 로드맵 등록 안내 추가
+    - Contact 컴포넌트: 대표자 정보 업데이트 (서민원 (Sinclair Seo), 생각과 행동 대표)
+  - **버그 수정**
+    - Login.tsx: 렌더링 중 navigate 호출 경고 수정 (useEffect로 이동)
+    - Roadmap EmptyState: 관리자 버튼 표시 로직 개선 (isAdminLoading 확인 추가)
+  - **RLS 정책 이슈**
+    - user_roles, roadmap, carts, notifications 테이블 403 Forbidden 오류
+    - fix-rls-policies-all.sql 파일에 정책 포함되어 있으나 Supabase 적용 필요
+  - 총 파일: 4개 수정 (Portfolio.tsx, Roadmap.tsx, Login.tsx, Contact.tsx)
 - 2025-01-09: **Version 2.0 Sprint 3.7 완료** 🧪 - E2E 테스트 안정화 및 Known Issue 문서화
   - **테스트 결과**: 26/31 통과 (83.9% 성공률)
   - **테스트 수정**

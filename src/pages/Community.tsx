@@ -108,7 +108,7 @@ const Community = () => {
                 GitHub Discussions
               </a>
               <a
-                href="mailto:sinclairseo@gmail.com"
+                href="mailto:sinclair.seo@ideaonaction.ai"
                 className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
               >
                 이메일 보내기

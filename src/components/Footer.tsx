@@ -49,8 +49,8 @@ const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     icon: Mail,
-    href: "mailto:sinclairseo@gmail.com",
-    label: "이메일 보내기: sinclairseo@gmail.com",
+    href: "mailto:sinclair.seo@ideaonaction.ai",
+    label: "이메일 보내기: sinclair.seo@ideaonaction.ai",
     isExternal: false
   }
 ];

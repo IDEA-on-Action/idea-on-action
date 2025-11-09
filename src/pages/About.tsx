@@ -46,7 +46,7 @@ const About = () => {
       name: "서민원",
       role: "Founder & CEO",
       bio: "생각과 행동 사이의 간극을 줄이는 것이 목표입니다. 스타트업 창업자이자 풀스택 개발자로, 아이디어를 직접 구현하는 것을 즐깁니다.",
-      email: "sinclairseo@gmail.com",
+      email: "sinclair.seo@ideaonaction.ai",
       github: "https://github.com/IDEA-on-Action"
     }
   };

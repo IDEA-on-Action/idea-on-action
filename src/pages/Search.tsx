@@ -12,8 +12,7 @@ import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import { PageLayout, HeroSection, Section } from '@/components/layouts'
 import { SearchResultCard } from '@/components/search'
 import { useSearch } from '@/hooks/useSearch'
 import { Input } from '@/components/ui/input'
@@ -88,21 +87,14 @@ export default function Search() {
         />
       </Helmet>
 
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
-        <Header />
+      <PageLayout>
+        <HeroSection
+          title={t('search:title')}
+          description={t('common:description')}
+        />
 
-        <main className="flex-1 container mx-auto px-4 py-16 space-y-8">
-          {/* 검색 헤더 */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {t('search:title')}
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('common:description')}
-            </p>
-          </div>
-
-          {/* 검색 입력 */}
+        {/* 검색 입력 */}
+        <Section maxWidth="4xl">
           <div className="glass-card p-6">
             <form onSubmit={handleSearch} className="flex gap-2">
               <div className="relative flex-1">
@@ -163,9 +155,11 @@ export default function Search() {
               </div>
             )}
           </div>
+        </Section>
 
-          {/* 검색 결과 */}
-          {query && (
+        {/* 검색 결과 */}
+        {query && (
+          <Section>
             <div>
               {/* 로딩 상태 */}
               {isLoading && (
@@ -226,10 +220,12 @@ export default function Search() {
                 </div>
               )}
             </div>
-          )}
+          </Section>
+        )}
 
-          {/* 초기 상태 (검색어 없음) */}
-          {!query && (
+        {/* 초기 상태 (검색어 없음) */}
+        {!query && (
+          <Section>
             <div className="text-center py-16 space-y-4">
               <SearchIcon className="h-16 w-16 mx-auto text-muted-foreground opacity-50" />
               <h3 className="text-lg font-semibold">{t('search:results.minLength')}</h3>
@@ -237,11 +233,9 @@ export default function Search() {
                 {t('common:description')}
               </p>
             </div>
-          )}
-        </main>
-
-        <Footer />
-      </div>
+          </Section>
+        )}
+      </PageLayout>
     </>
   )
 }

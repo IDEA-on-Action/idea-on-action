@@ -3,12 +3,54 @@
 > 프로젝트 작업 목록 및 진행 상황 관리
 
 **마지막 업데이트**: 2025-01-09
-**현재 Phase**: ✅ Version 2.0 Sprint 3.7 완료 (E2E 테스트 안정화)
-**프로젝트 버전**: 2.0.0-sprint3.7
+**현재 Phase**: ✅ Version 2.0 Sprint 3.8 완료 (페이지 개선 및 버그 수정)
+**프로젝트 버전**: 2.0.0-sprint3.8
 
 ---
 
 ## ✅ 완료된 작업
+
+### Version 2.0 Sprint 3.8: 페이지 개선 및 버그 수정 ✅ 완료 (2025-01-09)
+**목표**: 페이지 개선 및 React 경고/오류 수정
+**완료일**: 2025-01-09
+**총 소요**: 1시간
+
+#### 주요 수정 사항 ✅
+- [x] **Portfolio 페이지 개선**
+  - React Hooks 순서 오류 수정 (useMemo를 early return 전으로 이동)
+  - "Rendered more hooks than during the previous render" 오류 해결
+
+- [x] **Roadmap 페이지 리팩토링**
+  - PageLayout, HeroSection, Section 컴포넌트 적용
+  - LoadingState, ErrorState, EmptyState 컴포넌트 적용
+  - 네비게이션 추가 (Header/Footer 표시)
+  - 로드맵 등록 안내 추가 (관리자 버튼 표시)
+
+- [x] **Contact 컴포넌트 업데이트**
+  - 대표자 정보 업데이트: "서민원 (Sinclair Seo)"
+  - 직책 업데이트: "생각과 행동 대표"
+
+- [x] **Login.tsx 버그 수정**
+  - 렌더링 중 navigate 호출 경고 수정
+  - useEffect로 리다이렉트 로직 이동
+
+- [x] **관리자 버튼 표시 로직 개선**
+  - Roadmap EmptyState에서 isAdminLoading 확인 추가
+  - isAdmin === true 명시적 확인
+
+#### 결과 ✅
+- React 경고: 1개 수정 (Login.tsx)
+- React 오류: 1개 수정 (Portfolio.tsx)
+- 페이지 개선: 2개 (Portfolio, Roadmap)
+- 수정 파일: 4개 (Portfolio.tsx, Roadmap.tsx, Login.tsx, Contact.tsx)
+
+#### 남은 이슈 ⚠️
+- RLS 정책 적용 필요: user_roles, roadmap, carts, notifications 테이블
+- fix-rls-policies-all.sql 파일에 정책 포함되어 있으나 Supabase Dashboard에서 수동 적용 필요
+
+**다음 단계**: RLS 정책 적용 또는 Version 2.0 Sprint 3.9
+
+---
 
 ### Version 2.0 Sprint 3.7: E2E 테스트 안정화 및 Known Issue 문서화 ✅ 완료 (2025-01-09)
 **목표**: Newsletter 및 Status E2E 테스트 안정화, RLS 정책 수정

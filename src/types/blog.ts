@@ -21,12 +21,9 @@ export type PostTagRelation = Database['public']['Tables']['post_tag_relations']
 // Extended types with relations
 export interface BlogPostWithRelations extends BlogPost {
   author?: {
-    id: string
-    email?: string
-    user_metadata?: {
-      full_name?: string
-      avatar_url?: string
-    }
+    user_id: string
+    display_name?: string | null
+    avatar_url?: string | null
   }
   category?: PostCategory
   tags?: PostTag[]
