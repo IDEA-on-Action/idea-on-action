@@ -9,19 +9,178 @@
 
 ---
 
-## [Unreleased] - Phase 14 완료
+## [Unreleased] - Version 2.0 진행 중
 
 ### Completed
 - **Phase 14: 고급 분석 대시보드** (완료 - 100%) ✅
   - [x] Week 1: 사용자 행동 분석 ✅
   - [x] Week 2: 매출 차트 & KPI ✅
   - [x] Week 3: 실시간 대시보드 ✅
+  - [x] 테스트 마무리 (2025-11-09) ✅
+    - E2E 테스트 28개 확인 (Analytics 9, Revenue 9, Realtime 10)
+    - 유닛 테스트 35개 작성 (useRevenue 10, useRealtimeDashboard 10, useAnalyticsEvents 15)
+    - 컴포넌트 테스트 47개 확인 (Hero 13, Features 15, Services 19)
+    - 문서 아카이브 업데이트 (phase14-analytics.md)
+    - **총 355개 테스트** (E2E 200, Unit 127, Visual 28)
+
+- **Version 2.0 Sprint 2: Supabase Integration & Community** ✅ (완료 - 2025-11-09)
+  - [x] Stage 1: Supabase Schema (7개 마이그레이션) ✅
+  - [x] Stage 2: React Query Hooks (5개 훅 + types) ✅
+  - [x] Stage 3: Page Data Source Conversion (6개 페이지) ✅
+  - [x] Stage 4: Giscus Integration ✅
+  - [x] Stage 5: Work with Us Form ✅
+  - [x] Stage 6: Newsletter Widget (스킵 - 선택사항) ⏭️
+  - [x] Stage 7: Build Verification (0 errors) ✅
+  - [x] Stage 8: Component Integration (Sprint 2.5) ✅
 
 ### Planned
-- **Phase 15: 모니터링 & 성능 개선**
-  - [ ] Week 1: APM 통합 (Datadog/New Relic)
-  - [ ] Week 2: 로그 수집 시스템
-  - [ ] Week 3: 성능 최적화
+- **Version 2.0: 커뮤니티형 프로덕트 스튜디오** 🚀
+  - [x] Sprint 1: Structure & Static Data (Week 1) ✅
+  - [x] Sprint 2: Supabase Integration & Community (Week 2) ✅
+  - [ ] Sprint 3: Automation & Open Metrics (Week 3)
+
+---
+
+## [2.0.0-sprint2.5] - 2025-11-09
+
+### Added
+- **Stage 8: Component Integration (Sprint 2.5)** 🔗 ✅
+  - `docs/guides/giscus-setup.md` - Giscus 설정 가이드
+    - GitHub Discussions 활성화 방법
+    - Giscus 앱 설치 절차
+    - 카테고리 생성 가이드
+    - 설정값 적용 예제
+    - 트러블슈팅 가이드
+
+### Changed
+- **컴포넌트 통합** (3개 페이지)
+  - `src/pages/Community.tsx` - GiscusComments 임베드
+    - "Coming Soon" 섹션 → 실제 댓글 시스템
+    - Features 섹션 재구성
+    - GitHub 계정 로그인 안내
+  - `src/pages/WorkWithUs.tsx` - WorkWithUsForm 임베드
+    - "Coming Soon" 섹션 → 실제 제안서 폼
+    - 8개 필드 폼 (name, email, company, package, budget, message, preferred_contact, phone)
+    - Success/error toasts 통합
+  - `src/pages/BlogPost.tsx` - 댓글 섹션 추가
+    - GiscusComments 임베드
+    - mapping='specific' (포스트별 개별 Discussion)
+
+### Fixed
+- `src/pages/Status.tsx` - 필드명 오류 수정
+  - Line 196: `activity.createdAt` → `activity.created_at`
+  - 런타임 에러 방지
+
+### Technical
+- **Build**: 0 errors, 24.55s (+2초)
+- **Bundle**: ~3003 KiB (+6 KiB)
+  - Community-DDTnBGHC.js: 4.31 kB (새 파일)
+  - WorkWithUs-kHmrtkxe.js: 11.15 kB (+7 kB)
+  - pages-cms-BCRTeJ3V.js: 35.15 kB (+0.15 kB)
+- **Total Files**: 3개 수정, 1개 생성
+
+---
+
+## [2.0.0-sprint2] - 2025-11-09
+
+### Added
+- **Version 2.0 Sprint 2: Supabase Integration & Community** 🚀 ✅
+  - **Stage 1: Supabase Schema**
+    - `supabase/migrations/20250109000001_create_projects.sql` - Portfolio 프로젝트 테이블
+      - id (TEXT PK), slug (UNIQUE), title, status, summary, description, metrics (JSONB)
+      - tech (JSONB), team (JSONB), links (JSONB), timeline (JSONB), tags (TEXT[])
+      - RLS: Public SELECT, Admin INSERT/UPDATE/DELETE
+    - `supabase/migrations/20250109000002_create_roadmap.sql` - 분기별 로드맵 테이블
+      - quarter (TEXT UNIQUE), theme, goal, progress, milestones (JSONB[]), kpis (JSONB)
+      - risk_level, owner, start_date, end_date
+    - `supabase/migrations/20250109000003_create_logs.sql` - Now 활동 로그 테이블
+      - type ('release', 'learning', 'decision'), title, content, project_id (FK), tags (TEXT[])
+      - 인덱스: type, created_at, project_id, tags (GIN)
+    - `supabase/migrations/20250109000004_create_bounties.sql` - Lab 바운티 테이블
+      - difficulty ('초급', '중급', '고급'), reward, skills_required (TEXT[]), applicants (UUID[])
+      - SQL 함수: apply_to_bounty(bounty_id) SECURITY DEFINER
+    - `supabase/migrations/20250109000005_create_proposals.sql` - Work with Us 제안서 테이블
+      - name, email, company, package, budget, message, status, user_id
+      - RLS: Users can view own, Admins can view/update all
+      - Auto-assign user_id on INSERT if authenticated
+    - `supabase/migrations/20250109000006_extend_user_profiles.sql` - 뉴스레터 구독 확장
+      - newsletter_subscribed, newsletter_subscribed_at, newsletter_email
+      - VIEW: newsletter_subscribers (활성 구독자 조회)
+      - SQL 함수: subscribe_to_newsletter(), unsubscribe_from_newsletter()
+    - `supabase/migrations/20250109000007_seed_initial_data.sql` - 초기 데이터 삽입
+      - 3개 프로젝트, 5개 로드맵, 10개 로그, 4개 바운티
+      - ON CONFLICT DO NOTHING (멱등성)
+  - **Stage 2: React Query Hooks**
+    - `src/types/v2.ts` - TypeScript 타입 정의
+      - Project, Roadmap, Log, Bounty, Proposal 인터페이스
+      - ProposalFormValues, Milestone, KPI 타입
+    - `src/hooks/useProjects.ts` - 프로젝트 CRUD 훅 (9개 함수)
+      - useProjects(), useProject(slug), useProjectsByStatus()
+      - useCreateProject(), useUpdateProject(), useDeleteProject()
+    - `src/hooks/useRoadmap.ts` - 로드맵 CRUD 훅 (6개 함수)
+      - useRoadmap(), useRoadmapByQuarter()
+      - useCreateRoadmap(), useUpdateRoadmap(), useDeleteRoadmap()
+    - `src/hooks/useLogs.ts` - 로그 CRUD 훅 (8개 함수)
+      - useLogs(limit?), useLogsByType(), useLogsByProject()
+      - useCreateLog(), useUpdateLog(), useDeleteLog()
+    - `src/hooks/useBounties.ts` - 바운티 CRUD 훅 (8개 함수)
+      - useBounties(), useBounty(id), useBountiesByStatus()
+      - useApplyToBounty() - RPC 호출
+      - useCreateBounty(), useUpdateBounty(), useDeleteBounty(), useAssignBounty()
+    - `src/hooks/useProposals.ts` - 제안서 CRUD 훅 (6개 함수)
+      - useProposals(), useMyProposals(), useProposalsByStatus()
+      - useSubmitProposal(), useUpdateProposalStatus(), useDeleteProposal()
+  - **Stage 3: Page Data Source Conversion**
+    - `src/pages/Roadmap.tsx` - JSON → useRoadmap() 훅 전환
+      - Loading/Error/Empty 상태 추가
+      - useEffect로 초기 quarter 선택
+    - `src/pages/Portfolio.tsx` - JSON → useProjects() 훅 전환
+      - useMemo로 filteredProjects, projectCounts 최적화
+    - `src/pages/PortfolioDetail.tsx` - JSON → useProject(slug) 전환
+      - enabled 옵션으로 slug 존재 시에만 쿼리
+    - `src/pages/Now.tsx` - JSON → useLogs() 전환
+      - created_at 필드명 수정 (createdAt → created_at)
+    - `src/pages/Lab.tsx` - JSON → useBounties() 전환
+      - bounties 상수로 null safety 보장
+    - `src/pages/Status.tsx` - JSON → useProjects, useBounties, useLogs(20) 전환
+      - 3개 훅 로딩/에러 상태 병합
+      - 안전한 폴백 (|| [])
+  - **Stage 4: Giscus Integration**
+    - `src/components/community/GiscusComments.tsx` - GitHub Discussions 댓글
+      - useTheme()로 다크 모드 자동 전환
+      - 설정 플레이스홀더 (repo, repoId, category, categoryId)
+      - cleanup on unmount (iframe 제거)
+  - **Stage 5: Work with Us Form**
+    - `src/components/forms/WorkWithUsForm.tsx` - 제안서 폼
+      - React Hook Form + Zod validation
+      - useSubmitProposal() mutation
+      - Success/error toasts (sonner)
+      - 8개 필드: name, email, company, package, budget, message, preferred_contact, phone
+
+### Changed
+- **삭제된 파일** (4개)
+  - `src/data/projects.json`
+  - `src/data/roadmap.json`
+  - `src/data/logs.json`
+  - `src/data/bounties.json`
+- **수정된 파일** (6개)
+  - `src/pages/Roadmap.tsx` - 데이터 소스 전환, 상태 UI 추가
+  - `src/pages/Portfolio.tsx` - 데이터 소스 전환, useMemo 최적화
+  - `src/pages/PortfolioDetail.tsx` - 데이터 소스 전환
+  - `src/pages/Now.tsx` - 데이터 소스 전환, 필드명 수정
+  - `src/pages/Lab.tsx` - 데이터 소스 전환
+  - `src/pages/Status.tsx` - 데이터 소스 전환, 다중 훅 통합
+
+### Fixed
+- Import 경로 수정 (5개 훅 파일)
+  - `@/lib/supabase` → `@/integrations/supabase/client`
+  - sed 명령으로 일괄 수정
+
+### Technical
+- **Build**: 0 errors, 22.56s
+- **Bundle**: ~2997 KiB (56 entries precached by PWA)
+- **PWA**: Service Worker 자동 생성
+- **Total Files**: 13개 생성, 6개 수정, 4개 삭제
 
 ---
 

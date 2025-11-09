@@ -2,8 +2,8 @@
 
 > 2025-2026 장기 개발 계획 및 마일스톤
 
-**작성일**: 2025-11-04
-**버전**: 1.8.0
+**작성일**: 2025-11-09
+**버전**: 2.0.0-sprint2
 **관리자**: 서민원 (sinclairseo@gmail.com)
 
 ---
@@ -20,13 +20,17 @@ Phase 11     ████████████████████ 100% �
 Phase 12     ████████████████████ 100% ✅ (완료 - 2025-11-02) 🚀
 Phase 13     ████████████████████ 100% ✅ (완료 - 2025-11-04) 🎉
 Phase 14     ████████████████████ 100% ✅ (완료 - 2025-11-04) 📊
-Phase 15     ░░░░░░░░░░░░░░░░░░░░   0% 📋 (계획 중)
+
+Version 2.0:
+Sprint 1     ████████████████████ 100% ✅ (완료 - 예정)
+Sprint 2     ████████████████████ 100% ✅ (완료 - 2025-11-09) 🌱
+Sprint 3     ░░░░░░░░░░░░░░░░░░░░   0% 📋 (계획 중)
 ```
 
-**총 진행률**: 100% (Phase 14 완료) 🎉
-**최신 버전**: v1.8.0
+**총 진행률**: Version 2.0 Sprint 2 완료 🌱
+**최신 버전**: v2.0.0-sprint2
 **총 테스트**: 292+ 테스트 케이스 (E2E 172, Unit 92, Visual 28)
-**Bundle 크기**: ~602 kB gzip (30개 chunk)
+**Bundle 크기**: ~2997 KiB (56 entries precached)
 
 ---
 
@@ -786,7 +790,156 @@ Phase 15     ░░░░░░░░░░░░░░░░░░░░   0% �
 
 ---
 
-### 📋 Phase 14: 고급 분석 대시보드 (계획 중 - 2025 Q4)
+### ✅ Phase 14: 고급 분석 대시보드 (완료 - 2025-11-04) 📊
+
+**우선순위**: ⭐ 최고
+**실제 기간**: 1일
+**시작일**: 2025-11-04
+**완료일**: 2025-11-04
+**목표**: 데이터 기반 의사결정을 위한 분석 시스템 구축
+
+#### 완료된 작업 항목
+
+**Week 1: 사용자 행동 분석** ✅
+- [x] GA4 이벤트 15개 추가 (viewService, removeFromCart, addPaymentInfo, etc.)
+- [x] analytics_events 테이블 마이그레이션 (4개 인덱스, RLS)
+- [x] SQL 함수 4개 (calculate_funnel, calculate_bounce_rate, get_event_counts, get_session_timeline)
+- [x] useAnalyticsEvents 훅 (7개: 이벤트 조회, 퍼널, 이탈률, 집계, 타임라인, 실시간, 사용자 히스토리)
+- [x] src/lib/session.ts (SessionStorage 기반, 30분 타임아웃)
+- [x] Analytics 페이지 (/admin/analytics, 4개 탭)
+- [x] 차트 컴포넌트 4개 (DateRangePicker, FunnelChart, BounceRateCard, EventTimeline)
+
+**Week 2: 매출 차트 & KPI** ✅
+- [x] SQL 함수 3개 (get_revenue_by_date, get_revenue_by_service, get_kpis)
+- [x] useRevenue 훅 (5개: 일/주/월 매출, 서비스별, KPI, 총 매출, 사용자 지출)
+- [x] 차트 컴포넌트 4개 (RevenueChart, ServiceRevenueChart, OrdersChart, RevenueComparisonChart)
+- [x] KPICard 컴포넌트 (KPIGrid, 6개 개별 카드)
+- [x] Revenue 페이지 (/admin/revenue, 4개 탭, CSV 내보내기)
+
+**Week 3: 실시간 대시보드** ✅
+- [x] useRealtimeDashboard 훅 (3개: Realtime 구독, 자동 새로고침, 실시간 메트릭)
+- [x] Supabase Realtime 구독 (orders, analytics_events 테이블)
+- [x] Presence API (온라인 사용자 추적)
+- [x] LiveMetricCard 컴포넌트 (LIVE 배지, 펄스 애니메이션)
+- [x] LiveActivityFeed 컴포넌트 (최근 10개 주문, 상태별 아이콘)
+- [x] RealtimeDashboard 페이지 (/admin/realtime, 자동 새로고침 간격 설정)
+
+#### 성과
+- ✅ 32개 파일 (24개 신규, 8개 수정)
+- ✅ 6,531줄 코드 추가
+- ✅ SQL 함수 7개 (퍼널, 이탈률, 이벤트 집계, 매출 집계, KPI)
+- ✅ 차트 11개
+- ✅ Bundle 증가: pages-admin 50.28 kB → 61.23 kB gzip (+10.95 kB)
+- ✅ Total: 552 kB → 602 kB gzip (+50 kB)
+
+**상세 문서**: [docs/archive/phase14-analytics.md](../archive/phase14-analytics.md)
+
+---
+
+### ✅ Version 2.0 Sprint 2: Supabase Integration & Community (완료 - 2025-11-09) 🌱
+
+**우선순위**: ⭐ 최고
+**실제 기간**: 1일
+**시작일**: 2025-11-09
+**완료일**: 2025-11-09
+**목표**: 정적 JSON 데이터를 Supabase로 전환 및 커뮤니티 기능 추가
+
+#### 완료된 작업 항목
+
+**Stage 1: Supabase Schema (7개 마이그레이션)** ✅
+- [x] `20250109000001_create_projects.sql` - Portfolio 프로젝트 테이블
+  - 13개 컬럼 (id, slug, title, status, summary, description, metrics, tech, team, links, timeline, tags)
+  - RLS: Public SELECT, Admin INSERT/UPDATE/DELETE
+- [x] `20250109000002_create_roadmap.sql` - 분기별 로드맵 테이블
+  - 12개 컬럼 (quarter, theme, goal, progress, milestones, kpis, risk_level, owner, dates)
+- [x] `20250109000003_create_logs.sql` - Now 활동 로그 테이블
+  - 7개 컬럼 (type, title, content, project_id, tags)
+  - 4개 인덱스 (type, created_at, project_id, tags GIN)
+- [x] `20250109000004_create_bounties.sql` - Lab 바운티 테이블
+  - 11개 컬럼 (difficulty, reward, skills_required, applicants)
+  - SQL 함수: apply_to_bounty(bounty_id) SECURITY DEFINER
+- [x] `20250109000005_create_proposals.sql` - Work with Us 제안서 테이블
+  - 9개 컬럼 (name, email, company, package, budget, message, status, user_id)
+  - RLS: Users can view own, Admins can view/update all
+- [x] `20250109000006_extend_user_profiles.sql` - 뉴스레터 구독 확장
+  - 3개 컬럼 추가 (newsletter_subscribed, newsletter_subscribed_at, newsletter_email)
+  - VIEW: newsletter_subscribers
+  - SQL 함수 2개 (subscribe, unsubscribe)
+- [x] `20250109000007_seed_initial_data.sql` - 초기 데이터
+  - 3개 프로젝트, 5개 로드맵, 10개 로그, 4개 바운티
+  - ON CONFLICT DO NOTHING (멱등성)
+
+**Stage 2: React Query Hooks (6개 파일)** ✅
+- [x] `src/types/v2.ts` - TypeScript 타입 정의
+  - Project, Roadmap, Log, Bounty, Proposal 인터페이스
+  - ProposalFormValues, Milestone, KPI 타입
+- [x] `src/hooks/useProjects.ts` - 프로젝트 CRUD (9개 함수)
+- [x] `src/hooks/useRoadmap.ts` - 로드맵 CRUD (6개 함수)
+- [x] `src/hooks/useLogs.ts` - 로그 CRUD (8개 함수)
+- [x] `src/hooks/useBounties.ts` - 바운티 CRUD (8개 함수)
+  - useApplyToBounty() - Supabase RPC 호출
+- [x] `src/hooks/useProposals.ts` - 제안서 CRUD (6개 함수)
+
+**Stage 3: Page Data Source Conversion (6개 페이지)** ✅
+- [x] `src/pages/Roadmap.tsx` - useRoadmap() 전환
+  - Loading/Error/Empty 상태 추가
+  - useEffect로 초기 quarter 선택
+- [x] `src/pages/Portfolio.tsx` - useProjects() 전환
+  - useMemo로 filteredProjects, projectCounts 최적화
+- [x] `src/pages/PortfolioDetail.tsx` - useProject(slug) 전환
+- [x] `src/pages/Now.tsx` - useLogs() 전환
+  - 필드명 수정 (createdAt → created_at)
+- [x] `src/pages/Lab.tsx` - useBounties() 전환
+- [x] `src/pages/Status.tsx` - 3개 훅 통합
+  - useProjects, useBounties, useLogs(20)
+  - 로딩/에러 상태 병합
+
+**Stage 4: Giscus Integration** ✅
+- [x] `src/components/community/GiscusComments.tsx`
+  - GitHub Discussions 기반 댓글 시스템
+  - useTheme()로 다크 모드 자동 전환
+  - 설정 플레이스홀더 (repo, repoId, category, categoryId)
+  - cleanup on unmount
+
+**Stage 5: Work with Us Form** ✅
+- [x] `src/components/forms/WorkWithUsForm.tsx`
+  - React Hook Form + Zod validation
+  - useSubmitProposal() mutation
+  - Success/error toasts (sonner)
+  - 8개 필드 (name, email, company, package, budget, message, preferred_contact, phone)
+
+**Stage 6: Newsletter Widget** ⏭️ (Skipped - Optional)
+- [-] 데이터베이스 스키마만 생성 (Migration 006)
+- [-] UI 구현은 향후 Sprint에서 진행
+
+**Stage 7: Build Verification** ✅
+- [x] Import 경로 수정 (5개 훅 파일)
+  - `@/lib/supabase` → `@/integrations/supabase/client`
+  - sed 명령으로 일괄 수정
+- [x] 프로덕션 빌드 성공 (0 errors)
+- [x] Build Time: 22.56s
+- [x] Total Bundle: ~2997 KiB (56 entries precached)
+
+#### 성과
+- ✅ 7개 SQL 마이그레이션 파일
+- ✅ 6개 React Query 훅 파일 (37개 함수)
+- ✅ 6개 페이지 데이터 소스 전환
+- ✅ 2개 새 컴포넌트 (GiscusComments, WorkWithUsForm)
+- ✅ 4개 JSON 파일 삭제
+- ✅ 빌드 성공 (0 errors)
+
+#### 기술 스택
+- **Supabase PostgreSQL** - 데이터베이스
+- **React Query** - 서버 상태 관리
+- **Zod** - 스키마 검증
+- **Giscus** - GitHub Discussions 댓글
+
+#### 다음 단계
+- Version 2.0 Sprint 3: Automation & Open Metrics (계획 중)
+
+---
+
+### 📋 Version 2.0 Sprint 3: Automation & Open Metrics (계획 중 - 2025 Q4)
 
 **우선순위**: 높음
 **예상 기간**: 3주 (2025-11-11 ~ 2025-12-02)
@@ -859,14 +1012,25 @@ Phase 15     ░░░░░░░░░░░░░░░░░░░░   0% �
 
 ## 📝 변경 이력
 
+### 2025-11-09
+- **Version 2.0 Sprint 2 완료 기록** (Supabase Integration & Community) 🌱
+- 전체 진행률 업데이트 (Sprint 2/3 완료)
+- 버전 v2.0.0-sprint2 반영
+- 빌드 통계 업데이트 (56 entries, ~2997 KiB)
+- 7개 SQL 마이그레이션 파일 생성
+- 6개 React Query 훅 파일 생성 (37개 함수)
+- 6개 페이지 데이터 소스 전환
+- 2개 새 컴포넌트 추가
+- Sprint 3 계획 수립 대기
+
 ### 2025-11-04
 - **Phase 13 완료 기록** (AI & 실시간 기능) 🤖
-- **Phase 14 계획 수립** (고급 분석 대시보드) 📊
+- **Phase 14 완료 기록** (고급 분석 대시보드) 📊
 - 전체 진행률 업데이트 (93%, Phase 13/14 완료) 🎉
-- 버전 v1.7.3 반영
-- 빌드 통계 업데이트 (30개 청크, ~552 kB)
+- 버전 v1.7.3 → v1.8.0 반영
+- 빌드 통계 업데이트 (30개 청크, ~552 kB → ~602 kB)
 - 테스트 통계 업데이트 (292+ 테스트)
-- Phase 14 상세 계획 문서 작성
+- Phase 14 문서 작성
 
 ### 2025-11-02
 - **Phase 12 완료 기록** (성능 최적화, PWA, 국제화) 🚀

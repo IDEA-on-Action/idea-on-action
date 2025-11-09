@@ -1,11 +1,14 @@
 /**
- * Google Analytics 4 (GA4) 통합
+ * Google Tag Manager (GTM) 및 Google Analytics 4 (GA4) 통합
  * 페이지뷰, 이벤트, 전환 추적
+ * 
+ * GTM을 사용하므로 dataLayer를 통해 이벤트를 전송합니다.
+ * GTM에서 GA4 태그를 설정하면 자동으로 전송됩니다.
  */
 
 import { devLog, devWarn } from '@/lib/errors'
 
-// GA4 타입 정의
+// GTM/GA4 타입 정의
 declare global {
   interface Window {
     gtag?: (
@@ -17,45 +20,42 @@ declare global {
   }
 }
 
-// GA4 초기화
-export function initGA4() {
-  const measurementId = import.meta.env.VITE_GA4_MEASUREMENT_ID;
-
-  if (!measurementId) {
-    devWarn("GA4 Measurement ID가 설정되지 않았습니다.");
-    return;
-  }
-
-  // GA4 스크립트 로드
-  const script1 = document.createElement("script");
-  script1.async = true;
-  script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script1);
-
-  // GA4 초기화 스크립트
-  const script2 = document.createElement("script");
-  script2.innerHTML = `
+/**
+ * dataLayer 초기화 (GTM이 자동으로 생성하지만 안전을 위해)
+ */
+function ensureDataLayer() {
+  if (typeof window !== 'undefined') {
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '${measurementId}', {
-      send_page_view: false, // 수동으로 페이지뷰 추적
-      cookie_flags: 'SameSite=None;Secure',
-    });
-  `;
-  document.head.appendChild(script2);
+  }
+}
 
-  devLog("GA4 초기화 완료:", measurementId);
+// GTM 사용 시 initGA4는 필요 없음 (GTM이 자동 처리)
+// 레거시 호환성을 위해 빈 함수로 유지
+export function initGA4() {
+  ensureDataLayer();
+  devLog("GTM을 사용 중입니다. GA4는 GTM을 통해 관리됩니다.");
 }
 
 // 페이지뷰 추적
 export function trackPageView(path: string, title?: string) {
-  if (!window.gtag) return;
-
-  window.gtag("event", "page_view", {
-    page_path: path,
-    page_title: title || document.title,
-  });
+  ensureDataLayer();
+  
+  // GTM dataLayer를 통해 전송
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: 'page_view',
+      page_path: path,
+      page_title: title || document.title,
+    });
+  }
+  
+  // gtag가 있으면 사용 (GTM이 제공할 수 있음)
+  if (window.gtag) {
+    window.gtag("event", "page_view", {
+      page_path: path,
+      page_title: title || document.title,
+    });
+  }
 }
 
 // 커스텀 이벤트 추적
@@ -63,9 +63,20 @@ export function trackEvent(
   eventName: string,
   parameters?: Record<string, unknown>
 ) {
-  if (!window.gtag) return;
-
-  window.gtag("event", eventName, parameters);
+  ensureDataLayer();
+  
+  // GTM dataLayer를 통해 전송
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: eventName,
+      ...parameters,
+    });
+  }
+  
+  // gtag가 있으면 사용 (GTM이 제공할 수 있음)
+  if (window.gtag) {
+    window.gtag("event", eventName, parameters);
+  }
 }
 
 // 전환 추적 (구매, 회원가입 등)
@@ -74,13 +85,26 @@ export function trackConversion(
   value?: number,
   currency = "KRW"
 ) {
-  if (!window.gtag) return;
-
-  window.gtag("event", "conversion", {
-    send_to: conversionId,
-    value: value,
-    currency: currency,
-  });
+  ensureDataLayer();
+  
+  // GTM dataLayer를 통해 전송
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: 'conversion',
+      send_to: conversionId,
+      value: value,
+      currency: currency,
+    });
+  }
+  
+  // gtag가 있으면 사용 (GTM이 제공할 수 있음)
+  if (window.gtag) {
+    window.gtag("event", "conversion", {
+      send_to: conversionId,
+      value: value,
+      currency: currency,
+    });
+  }
 }
 
 // E-commerce 이벤트 추적

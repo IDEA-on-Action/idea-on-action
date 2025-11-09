@@ -38,11 +38,12 @@ const BRAND_INFO = {
 } as const;
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
-  { label: "서비스", href: "/services" },
+  { label: "회사소개", href: "/about" },
+  { label: "로드맵", href: "/roadmap" },
+  { label: "포트폴리오", href: "/portfolio" },
+  { label: "실험실", href: "/lab" },
   { label: "블로그", href: "/blog" },
-  { label: "기술", href: "#features" },
-  { label: "회사소개", href: "#about" },
-  { label: "문의", href: "#contact" }
+  { label: "협업하기", href: "/work-with-us" }
 ];
 
 const Header = ({ className = "" }: HeaderProps) => {

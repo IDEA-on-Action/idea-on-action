@@ -16,9 +16,78 @@
 2. **carts 테이블 403**: 권한 거부 (RLS 정책 문제)
 3. **user_roles 테이블 403**: 권한 거부 (RLS 정책 문제)
 
+### 에러 메시지가 나오는 이유
+
+개발 모드에서 이러한 에러 메시지가 표시되는 이유는:
+
+1. **RLS 정책이 적용되지 않음**: Supabase 데이터베이스에 RLS 정책이 실제로 적용되지 않았습니다.
+2. **개발 모드 경고**: `src/lib/errors.ts`의 `handleSupabaseError` 함수가 개발 모드에서만 경고를 표시하도록 설정되어 있습니다.
+3. **정상적인 동작**: 에러가 발생해도 앱은 크래시하지 않고, fallback 값을 반환하여 계속 작동합니다.
+
+**해결 방법**: 아래의 자동 스크립트를 사용하여 RLS 정책을 확인하고 적용하세요.
+
 ---
 
 ## 🎯 해결 방법
+
+### 방법 0: 자동 스크립트 사용 (가장 빠름) ⚡
+
+프로젝트에 포함된 자동 스크립트를 사용하면 RLS 정책을 쉽게 확인하고 적용할 수 있습니다.
+
+#### Step 1: RLS 정책 상태 확인
+
+```bash
+npm run check:rls
+```
+
+이 명령어는 다음을 확인합니다:
+- 각 테이블의 존재 여부
+- RLS 활성화 상태
+- RLS 정책 개수 및 목록
+- 문제가 있는 테이블 식별
+
+**예상 출력**:
+```
+🔍 RLS 정책 상태 확인 중...
+
+📋 notifications 테이블 확인 중...
+   ✅ RLS: 활성화
+   ✅ 정책: 4개 (예상: 4개)
+   정책 목록:
+     - Users can view their own notifications (SELECT)
+     - Users can update their own notifications (UPDATE)
+     - Users can delete their own notifications (DELETE)
+     - Service role can insert notifications (INSERT)
+
+...
+
+📊 요약
+============================================================
+총 테이블: 6
+✅ 정상: 6
+```
+
+#### Step 2: RLS 정책 적용
+
+문제가 발견되면 다음 명령어로 자동으로 적용할 수 있습니다:
+
+```bash
+npm run fix:rls
+```
+
+이 명령어는 `supabase/migrations/fix-rls-policies-all.sql` 파일을 Supabase에 적용합니다.
+
+**참고**: Supabase CLI가 연결되어 있지 않은 경우, 스크립트가 대체 방법을 안내합니다.
+
+#### Step 3: 다시 확인
+
+```bash
+npm run check:rls
+```
+
+모든 테이블이 정상 상태인지 확인합니다.
+
+---
 
 ### 방법 1: Supabase Dashboard (권장)
 
@@ -428,6 +497,49 @@ supabase db push
 - [Supabase RLS 가이드](https://supabase.com/docs/guides/auth/row-level-security)
 - [프로젝트 마이그레이션 가이드](../supabase/MIGRATION_GUIDE.md)
 - [데이터베이스 문서](../../database/README.md)
+
+## 🔧 자동 스크립트 상세 정보
+
+### check-rls-policies.js
+
+**위치**: `scripts/check-rls-policies.js`
+
+**기능**:
+- Supabase CLI를 사용하여 RLS 정책 상태 확인
+- 각 테이블의 RLS 활성화 여부 확인
+- 정책 개수 및 목록 조회
+- 문제가 있는 테이블 식별
+
+**사용법**:
+```bash
+npm run check:rls
+```
+
+**출력 예시**:
+- ✅ 정상: 모든 정책이 올바르게 설정됨
+- ❌ 테이블 없음: 테이블이 존재하지 않음
+- ⚠️ RLS 비활성화: RLS가 활성화되지 않음
+- ⚠️ 정책 없음: RLS는 활성화되었지만 정책이 없음
+- ⚠️ 정책 부족: 정책이 있지만 예상 개수보다 적음
+
+### apply-rls-policies.js
+
+**위치**: `scripts/apply-rls-policies.js`
+
+**기능**:
+- `supabase/migrations/fix-rls-policies-all.sql` 파일 읽기
+- Supabase CLI를 사용하여 SQL 실행
+- 적용 결과 확인 및 보고
+
+**사용법**:
+```bash
+npm run fix:rls
+```
+
+**주의사항**:
+- Supabase CLI가 연결되어 있어야 합니다
+- 연결되지 않은 경우, 스크립트가 대체 방법을 안내합니다
+- 프로덕션 환경에서는 반드시 백업 후 실행하세요
 
 ---
 

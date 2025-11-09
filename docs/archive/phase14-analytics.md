@@ -1671,35 +1671,66 @@ PWA: 43 entries (2912.92 KiB) cached
 - vendor-charts: **105.30 kB gzip** (recharts 라이브러리)
 - Total: 552 kB → **602 kB gzip** (+50 kB, +9.1%)
 
-### 테스트 작성 계획
+### 테스트 작성 완료 ✅
 
-#### E2E 테스트 (예정)
-- [ ] analytics.spec.ts (8개)
-  - Analytics 페이지 접근
-  - 날짜 범위 선택
+#### E2E 테스트 (28개 작성 완료)
+- ✅ **analytics.spec.ts** (9개)
+  - 비인증 사용자 리다이렉트
+  - 비관리자 403 Forbidden
+  - 관리자 페이지 접근
+  - DateRangePicker 표시
   - 탭 전환 (개요/퍼널/행동/타임라인)
-  - 차트 렌더링 확인
-  - CSV 내보내기
-- [ ] revenue.spec.ts (6개)
-  - Revenue 페이지 접근
-  - 일/주/월 탭 전환
+  - BounceRate 카드 표시
+  - Funnel 차트 렌더링
+  - EventTimeline 표시
+  - 날짜 범위 선택 핸들링
+- ✅ **revenue.spec.ts** (9개)
+  - 비인증 사용자 리다이렉트
+  - 비관리자 403 Forbidden
+  - 관리자 페이지 접근
+  - Interval 탭 전환 (일별/주별/월별)
   - KPI 카드 표시
-  - 서비스별 매출 차트
-- [ ] realtime.spec.ts (4개)
-  - RealtimeDashboard 페이지 접근
-  - 실시간 메트릭 표시
+  - Revenue 차트 렌더링
+  - 서비스별 매출 탭
+  - CSV 내보내기 버튼
+  - 통화 형식 값 표시
+- ✅ **realtime.spec.ts** (10개)
+  - 비인증 사용자 리다이렉트
+  - 비관리자 403 Forbidden
+  - 관리자 대시보드 접근
+  - LIVE 배지 표시
+  - 실시간 메트릭 카드
+  - 온라인 사용자 카운트
   - 활동 피드 렌더링
-  - 새로고침 간격 설정
+  - 새로고침 간격 선택기
+  - 자동 새로고침 동작
+  - 시간 정보 표시
 
-#### 유닛 테스트 (예정)
-- [ ] useAnalyticsEvents.test.ts (7개)
-  - 각 훅 함수별 테스트
-- [ ] useRevenue.test.ts (5개)
-  - 매출 조회 훅 테스트
-- [ ] useRealtimeDashboard.test.ts (3개)
-  - Realtime 훅 테스트
+#### 유닛 테스트 (35개 작성 완료)
+- ✅ **useRevenue.test.tsx** (10개)
+  - useRevenueByDate: 3개 (정상 조회, 간격 변경, 에러 처리)
+  - useRevenueByService: 1개 (정상 조회)
+  - useKPIs: 2개 (정상 조회, 빈 데이터)
+  - useTotalRevenue: 2개 (정상 계산, 빈 주문)
+  - useUserTotalSpent: 2개 (사용자 지출 계산, 주문 없음)
+- ✅ **useRealtimeDashboard.test.tsx** (10개)
+  - useRealtimeDashboard: 3개 (주문 로드, Realtime 구독, cleanup)
+  - useAutoRefresh: 3개 (쿼리 무효화, cleanup, 기본 간격)
+  - useRealtimeMetrics: 4개 (초기 값, Presence 구독, 세션 조회, cleanup)
+- ✅ **useAnalyticsEvents.test.tsx** (15개) - 신규 작성
+  - useAnalyticsEvents: 3개 (정상 조회, 필터 적용, 에러 처리)
+  - useFunnelAnalysis: 2개 (퍼널 계산, 전환율 0)
+  - useBounceRate: 2개 (이탈률 계산, 세션 0)
+  - useEventCounts: 2개 (이벤트 집계, topN 제한)
+  - useSessionTimeline: 2개 (타임라인 조회, sessionId 없음)
+  - useRealtimeEvents: 2개 (실시간 이벤트, 10개 제한)
+  - useUserEventHistory: 2개 (사용자 히스토리, userId 없음)
 
-**목표**: E2E 18개, Unit 15개 추가 (총 325+ 테스트)
+**최종 결과**:
+- E2E: 28개 (기존 172개 + Phase 14 28개 = **200개**)
+- Unit: 35개 (기존 92개 + Phase 14 35개 = **127개**)
+- Visual: 28개
+- **총 355개 테스트** (Phase 14 완료 후)
 
 ---
 

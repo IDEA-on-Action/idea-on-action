@@ -2,13 +2,105 @@
 
 > 프로젝트 작업 목록 및 진행 상황 관리
 
-**마지막 업데이트**: 2025-11-04
-**현재 Phase**: ✅ Phase 14 완료 (고급 분석 대시보드)
-**프로젝트 버전**: 1.8.0
+**마지막 업데이트**: 2025-11-09
+**현재 Phase**: ✅ Version 2.0 Sprint 2 완료 (Supabase Integration & Community)
+**프로젝트 버전**: 2.0.0-sprint2
 
 ---
 
 ## ✅ 완료된 작업
+
+### Version 2.0 Sprint 2: Supabase Integration & Community ✅ 완료 (2025-11-09)
+**목표**: 정적 데이터를 Supabase로 전환 및 커뮤니티 기능 추가
+**완료일**: 2025-11-09
+**총 소요**: 1일
+
+#### Stage 1: Supabase Schema ✅
+- [x] 7개 SQL 마이그레이션 파일 생성
+  - [x] 20250109000001_create_projects.sql (Portfolio 프로젝트)
+  - [x] 20250109000002_create_roadmap.sql (분기별 로드맵)
+  - [x] 20250109000003_create_logs.sql (Now 활동 로그)
+  - [x] 20250109000004_create_bounties.sql (Lab 바운티)
+  - [x] 20250109000005_create_proposals.sql (Work with Us 제안서)
+  - [x] 20250109000006_extend_user_profiles.sql (뉴스레터)
+  - [x] 20250109000007_seed_initial_data.sql (초기 데이터)
+- [x] RLS 정책 설정 (Public Read, Admin Write)
+- [x] 인덱스 최적화 (GIN, B-tree)
+- [x] Helper 함수 (apply_to_bounty, subscribe_to_newsletter)
+
+#### Stage 2: React Query Hooks ✅
+- [x] TypeScript 타입 정의 (src/types/v2.ts)
+- [x] 5개 React Query 훅 생성
+  - [x] src/hooks/useProjects.ts (9개 함수)
+  - [x] src/hooks/useRoadmap.ts (6개 함수)
+  - [x] src/hooks/useLogs.ts (8개 함수)
+  - [x] src/hooks/useBounties.ts (8개 함수)
+  - [x] src/hooks/useProposals.ts (6개 함수)
+- [x] React Query 캐싱 전략 (staleTime: 1-5분)
+- [x] Mutation invalidation 패턴
+
+#### Stage 3: Page Data Source Conversion ✅
+- [x] 6개 페이지 Supabase 훅 전환
+  - [x] src/pages/Roadmap.tsx
+  - [x] src/pages/Portfolio.tsx
+  - [x] src/pages/PortfolioDetail.tsx
+  - [x] src/pages/Now.tsx
+  - [x] src/pages/Lab.tsx
+  - [x] src/pages/Status.tsx
+- [x] Loading/Error/Empty 상태 UI 추가
+- [x] useMemo 최적화 (필터링, 정렬)
+- [x] 4개 JSON 파일 삭제
+  - [x] src/data/projects.json
+  - [x] src/data/roadmap.json
+  - [x] src/data/logs.json
+  - [x] src/data/bounties.json
+
+#### Stage 4: Giscus Integration ✅
+- [x] src/components/community/GiscusComments.tsx
+- [x] 다크 모드 자동 전환 (useTheme)
+- [x] 설정 가이드 포함
+- [x] cleanup on unmount
+
+#### Stage 5: Work with Us Form ✅
+- [x] src/components/forms/WorkWithUsForm.tsx
+- [x] React Hook Form + Zod 검증
+- [x] useSubmitProposal mutation
+- [x] Success/error toasts
+
+#### Stage 6: Newsletter Widget ⏭️ (Skipped - Optional)
+- [-] 데이터베이스 스키마만 생성 (Migration 006)
+- [-] UI 구현은 향후 Sprint에서 진행
+
+#### Stage 7: Build Verification ✅
+- [x] Import 경로 수정 (@/lib/supabase → @/integrations/supabase/client)
+- [x] sed 명령으로 5개 파일 일괄 수정
+- [x] 프로덕션 빌드 성공 (0 errors)
+- [x] Build Time: 22.56s
+- [x] Total Bundle: ~2997 KiB (56 entries precached)
+
+#### Stage 8: Component Integration (Sprint 2.5) ✅
+- [x] Status.tsx 필드명 오류 수정 (activity.createdAt → created_at)
+- [x] Community.tsx에 GiscusComments 통합
+- [x] WorkWithUs.tsx에 WorkWithUsForm 통합
+- [x] BlogPost.tsx에 GiscusComments 추가
+- [x] Giscus 설정 가이드 작성 (docs/guides/giscus-setup.md)
+- [x] 프로덕션 빌드 검증 (0 errors, 24.55s)
+- [x] Total Bundle: ~3003 KiB (56 entries precached)
+
+#### 성과
+- ✅ 7개 SQL 마이그레이션 파일
+- ✅ 6개 React Query 훅 파일
+- ✅ 6개 페이지 데이터 소스 전환
+- ✅ 2개 새 컴포넌트 (GiscusComments, WorkWithUsForm)
+- ✅ 3개 페이지 컴포넌트 통합 (Community, WorkWithUs, BlogPost)
+- ✅ 1개 버그 수정 (Status.tsx)
+- ✅ 1개 가이드 문서 (Giscus 설정)
+- ✅ 4개 JSON 파일 삭제
+- ✅ 빌드 성공 (0 errors)
+
+**다음 단계**: Version 2.0 Sprint 3 (Automation & Open Metrics)
+
+---
 
 ### Phase 1-8 ✅
 - [x] 프로덕션 배포 & 기본 인프라

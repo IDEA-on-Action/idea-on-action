@@ -12,7 +12,7 @@ import { ChatWidget } from "./components/chat";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
 import { initSentry } from "./lib/sentry";
-import { initGA4, trackPageView } from "./lib/analytics";
+import { trackPageView } from "./lib/analytics";
 import * as Sentry from "@sentry/react";
 
 // Loading component
@@ -78,6 +78,17 @@ const TwoFactorSetup = lazy(() => import("./pages/TwoFactorSetup"));
 const TwoFactorVerify = lazy(() => import("./pages/TwoFactorVerify"));
 const Forbidden = lazy(() => import("./pages/Forbidden"));
 
+// Lazy load (Code Split) - Version 2.0 pages
+const About = lazy(() => import("./pages/About"));
+const Roadmap = lazy(() => import("./pages/Roadmap"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const PortfolioDetail = lazy(() => import("./pages/PortfolioDetail"));
+const Now = lazy(() => import("./pages/Now"));
+const Lab = lazy(() => import("./pages/Lab"));
+const Community = lazy(() => import("./pages/Community"));
+const WorkWithUs = lazy(() => import("./pages/WorkWithUs"));
+const Status = lazy(() => import("./pages/Status"));
+
 // Lazy load (Code Split) - Admin pages (separate chunk)
 const AdminLayout = lazy(() => import("./components/layouts/AdminLayout"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
@@ -100,8 +111,8 @@ const RealtimeDashboard = lazy(() => import("./pages/admin/RealtimeDashboard"));
 // Sentry 초기화
 initSentry();
 
-// Google Analytics 4 초기화
-initGA4();
+// Google Tag Manager는 index.html에 직접 포함되어 있음
+// GTM이 자동으로 dataLayer를 초기화하고 GA4를 관리합니다
 
 const queryClient = new QueryClient();
 
@@ -148,6 +159,17 @@ const App = () => (
               <Route path="/2fa/setup" element={<TwoFactorSetup />} />
               <Route path="/2fa/verify" element={<TwoFactorVerify />} />
               <Route path="/forbidden" element={<Forbidden />} />
+
+              {/* Version 2.0 Routes */}
+              <Route path="/about" element={<About />} />
+              <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
+              <Route path="/now" element={<Now />} />
+              <Route path="/lab" element={<Lab />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/work-with-us" element={<WorkWithUs />} />
+              <Route path="/status" element={<Status />} />
 
               {/* Admin Routes */}
               <Route

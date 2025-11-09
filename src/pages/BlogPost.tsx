@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet-async'
 import { ArrowLeft, Calendar, Clock, Eye, User, Tag, Share2 } from 'lucide-react'
 import { useBlogPostBySlug, useIncrementViewCount } from '@/hooks/useBlogPosts'
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
+import { GiscusComments } from '@/components/community/GiscusComments'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -208,6 +209,18 @@ export default function BlogPost() {
               </p>
             </div>
           )}
+
+          {/* Comments Section */}
+          <div className="my-12">
+            <h2 className="text-2xl font-bold mb-6">댓글</h2>
+            <GiscusComments
+              repo="IDEA-on-Action/idea-on-action"
+              repoId="R_kgDOQBAuJw"
+              category="Blog Comments"
+              categoryId="DIC_kwDOQBAuJ84CxmNn"
+              mapping="specific"
+            />
+          </div>
 
           {/* Back to Blog */}
           <div className="text-center">
