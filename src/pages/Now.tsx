@@ -1,8 +1,10 @@
 import { Helmet } from "react-helmet-async";
-import { Clock, FileText, Lightbulb, Rocket, TrendingUp, AlertCircle } from "lucide-react";
+import { Clock, FileText, Lightbulb, Rocket, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLogs } from "@/hooks/useLogs";
+import { PageLayout, HeroSection, Section } from "@/components/layouts";
+import { LoadingState, ErrorState, EmptyState } from "@/components/shared";
 
 const Now = () => {
   const { data: logsData, isLoading, error } = useLogs();
@@ -25,31 +27,14 @@ const Now = () => {
     decision: "outline"
   };
 
-  // Loading state
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
-  // Error state
   if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="glass-card p-8 max-w-md text-center">
-          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">데이터 로드 실패</h2>
-          <p className="text-muted-foreground">
-            {error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}
-          </p>
-        </Card>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
-  // Sort logs by date (most recent first) - already sorted by hook
   const sortedLogs = logsData || [];
 
   return (
@@ -65,29 +50,21 @@ const Now = () => {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10"></div>
-          <div className="container mx-auto max-w-6xl relative">
-            <div className="text-center space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-4">
-                <Clock className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold">실시간 업데이트</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-                Now
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                지금 이 순간, 우리가 하고 있는 일들
-              </p>
-            </div>
-          </div>
-        </section>
+      <PageLayout>
+        <HeroSection
+          badge={{ icon: Clock, text: "실시간 업데이트" }}
+          title="Now"
+          description="지금 이 순간, 우리가 하고 있는 일들"
+        />
 
-        {/* Activity Feed */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-4xl">
+        <Section maxWidth="4xl">
+          {sortedLogs.length === 0 ? (
+            <EmptyState
+              icon={FileText}
+              title="활동 내역이 없습니다"
+              description="아직 등록된 활동이 없습니다."
+            />
+          ) : (
             <div className="space-y-6">
               {sortedLogs.map((log, index) => {
                 const IconComponent = typeIcons[log.type as keyof typeof typeIcons] || FileText;
@@ -104,7 +81,6 @@ const Now = () => {
                       </div>
 
                       <div className="flex-1 space-y-3">
-                        {/* Header */}
                         <div className="flex items-start justify-between gap-4">
                           <h3 className="text-xl font-bold flex-1">{log.title}</h3>
                           <Badge variant={typeVariants[log.type]}>
@@ -112,12 +88,10 @@ const Now = () => {
                           </Badge>
                         </div>
 
-                        {/* Content */}
                         <p className="text-foreground/80 leading-relaxed">
                           {log.content}
                         </p>
 
-                        {/* Footer */}
                         <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -148,12 +122,11 @@ const Now = () => {
                 );
               })}
             </div>
-          </div>
-        </section>
+          )}
+        </Section>
 
-        {/* CTA Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-          <div className="container mx-auto max-w-4xl text-center space-y-6">
+        <Section variant="gradient" maxWidth="4xl">
+          <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">주간 리캡 구독하기</h2>
             <p className="text-lg text-foreground/80">
               매주 일요일, 한 주간의 활동을 요약해서 보내드립니다.
@@ -162,8 +135,8 @@ const Now = () => {
               Sprint 2에서 Newsletter 기능이 추가됩니다.
             </p>
           </div>
-        </section>
-      </div>
+        </Section>
+      </PageLayout>
     </>
   );
 };

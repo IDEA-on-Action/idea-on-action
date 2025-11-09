@@ -32,11 +32,12 @@ export function useIsAdmin() {
         .maybeSingle()
 
       if (error) {
-        return handleSupabaseError(error, {
+        const result = handleSupabaseError(error, {
           table: 'user_roles',
           operation: '관리자 확인',
           fallbackValue: false,
-        }) || false
+        })
+        return result !== null ? result : false
       }
 
       // role.name이 'admin'인지 확인

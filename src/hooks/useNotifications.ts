@@ -58,11 +58,12 @@ export function useNotifications(): UseNotificationsReturn {
         .limit(50)
 
       if (error) {
-        return handleSupabaseError(error, {
+        const result = handleSupabaseError(error, {
           table: 'notifications',
           operation: '알림 조회',
           fallbackValue: [],
-        }) || []
+        })
+        return result !== null ? result : []
       }
       return data as Notification[]
     },

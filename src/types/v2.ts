@@ -85,7 +85,7 @@ export interface Log {
   project_id?: string | null;
   author_id?: string | null;
   tags: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }
@@ -104,7 +104,7 @@ export interface Bounty {
   assignee_id?: string | null;
   applicants: string[];
   project_id?: string | null;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }

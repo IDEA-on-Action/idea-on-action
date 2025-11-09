@@ -79,12 +79,13 @@ export const GiscusComments = ({
     script.crossOrigin = 'anonymous';
     script.async = true;
 
-    containerRef.current.appendChild(script);
+    const container = containerRef.current;
+    container.appendChild(script);
 
     return () => {
       // Cleanup
-      if (containerRef.current) {
-        const iframe = containerRef.current.querySelector('iframe.giscus-frame');
+      if (container) {
+        const iframe = container.querySelector('iframe.giscus-frame');
         if (iframe) {
           iframe.remove();
         }

@@ -18,15 +18,17 @@ const Roadmap = () => {
     }
   }, [roadmapData, selectedQuarter]);
 
-  const getRiskBadgeVariant = (risk: string[]) => {
-    if (risk.includes("high")) return "destructive";
-    if (risk.includes("medium")) return "warning";
+  const getRiskBadgeVariant = (riskLevel?: string) => {
+    if (!riskLevel) return "secondary";
+    if (riskLevel === "high") return "destructive";
+    if (riskLevel === "medium") return "default";
     return "secondary";
   };
 
-  const getRiskLabel = (risk: string[]) => {
-    if (risk.includes("high")) return "높음";
-    if (risk.includes("medium")) return "중간";
+  const getRiskLabel = (riskLevel?: string) => {
+    if (!riskLevel) return "낮음";
+    if (riskLevel === "high") return "높음";
+    if (riskLevel === "medium") return "중간";
     return "낮음";
   };
 
@@ -149,22 +151,30 @@ const Roadmap = () => {
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-2 flex-1">
                           <div className="flex items-center gap-2">
-                            <h2 className="text-3xl font-bold">{quarter.goal}</h2>
+                            <h2 className="text-3xl font-bold">{quarter.theme}</h2>
                           </div>
-                          <p className="text-muted-foreground">{quarter.period}</p>
+                          <p className="text-muted-foreground">
+                            {quarter.start_date && quarter.end_date
+                              ? `${new Date(quarter.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' })} - ${new Date(quarter.end_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' })}`
+                              : quarter.quarter}
+                          </p>
                           <p className="text-foreground/80 leading-relaxed">
-                            {quarter.description}
+                            {quarter.description || ''}
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
-                          <Badge variant={getRiskBadgeVariant(quarter.risks)}>
-                            <AlertCircle className="w-3 h-3 mr-1" />
-                            리스크: {getRiskLabel(quarter.risks)}
-                          </Badge>
-                          <Badge variant="outline">
-                            <Users className="w-3 h-3 mr-1" />
-                            {quarter.owner}
-                          </Badge>
+                          {quarter.risk_level && (
+                            <Badge variant={getRiskBadgeVariant(quarter.risk_level)}>
+                              <AlertCircle className="w-3 h-3 mr-1" />
+                              리스크: {getRiskLabel(quarter.risk_level)}
+                            </Badge>
+                          )}
+                          {quarter.owner && (
+                            <Badge variant="outline">
+                              <Users className="w-3 h-3 mr-1" />
+                              {quarter.owner}
+                            </Badge>
+                          )}
                         </div>
                       </div>
 
@@ -178,7 +188,7 @@ const Roadmap = () => {
                       </div>
 
                       {/* KPIs */}
-                      {quarter.kpis && (
+                      {quarter.kpis && Object.keys(quarter.kpis).length > 0 && (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
                           {Object.entries(quarter.kpis).map(([key, value]) => (
                             <div key={key} className="space-y-1">
@@ -188,12 +198,12 @@ const Roadmap = () => {
                               <div className="flex items-baseline gap-2">
                                 <span className="text-2xl font-bold">
                                   {typeof value === 'object' && value !== null && 'current' in value
-                                    ? value.current
-                                    : value}
+                                    ? (value as { current: number }).current
+                                    : typeof value === 'number' ? value : String(value)}
                                 </span>
                                 {typeof value === 'object' && value !== null && 'target' in value && (
                                   <span className="text-sm text-muted-foreground">
-                                    / {value.target}
+                                    / {(value as { target: number }).target}
                                   </span>
                                 )}
                               </div>
@@ -212,7 +222,8 @@ const Roadmap = () => {
                     </h3>
 
                     <div className="grid md:grid-cols-3 gap-6">
-                      {quarter.milestones.map((milestone) => (
+                      {quarter.milestones && quarter.milestones.length > 0 ? (
+                        quarter.milestones.map((milestone) => (
                         <Card
                           key={milestone.id}
                           className="glass-card p-6 space-y-4 hover-lift"
@@ -224,28 +235,37 @@ const Roadmap = () => {
                             </Badge>
                           </div>
 
-                          <div className="text-sm text-muted-foreground">
-                            <Calendar className="w-4 h-4 inline mr-1" />
-                            {new Date(milestone.dueDate).toLocaleDateString('ko-KR', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </div>
+                          {milestone.dueDate && (
+                            <div className="text-sm text-muted-foreground">
+                              <Calendar className="w-4 h-4 inline mr-1" />
+                              {new Date(milestone.dueDate).toLocaleDateString('ko-KR', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
+                            </div>
+                          )}
 
-                          <ul className="space-y-2">
-                            {milestone.tasks.map((task, index) => (
-                              <li
-                                key={index}
-                                className="text-sm text-foreground/70 flex items-start gap-2"
-                              >
-                                <span className="text-primary mt-1">•</span>
-                                <span>{task}</span>
-                              </li>
+                          {milestone.tasks && milestone.tasks.length > 0 && (
+                            <ul className="space-y-2">
+                              {milestone.tasks.map((task, index) => (
+                                <li
+                                  key={index}
+                                  className="text-sm text-foreground/70 flex items-start gap-2"
+                                >
+                                  <span className="text-primary mt-1">•</span>
+                                  <span>{task}</span>
+                                </li>
                             ))}
                           </ul>
+                          )}
                         </Card>
-                      ))}
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center py-8 text-muted-foreground">
+                          등록된 마일스톤이 없습니다.
+                        </div>
+                      )}
                     </div>
                   </div>
                 </TabsContent>

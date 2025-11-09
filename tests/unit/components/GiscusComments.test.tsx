@@ -3,6 +3,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { GiscusComments } from '@/components/community/GiscusComments';
 import { useTheme } from '@/hooks/useTheme';
 
+type Theme = 'light' | 'dark' | 'system';
+
+interface UseThemeReturn {
+  theme: Theme;
+  resolvedTheme: 'light' | 'dark';
+  setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
+}
+
 // Mock useTheme hook
 vi.mock('@/hooks/useTheme', () => ({
   useTheme: vi.fn(),
@@ -41,7 +50,8 @@ describe('GiscusComments', () => {
       theme: 'light',
       setTheme: vi.fn(),
       resolvedTheme: 'light',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     // Execute
     render(<GiscusComments repoId="CONFIGURE_REPO_ID" categoryId="CONFIGURE_CATEGORY_ID" />);
@@ -57,7 +67,8 @@ describe('GiscusComments', () => {
       theme: 'light',
       setTheme: vi.fn(),
       resolvedTheme: 'light',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     const appendChildSpy = vi.spyOn(HTMLElement.prototype, 'appendChild');
 
@@ -83,7 +94,8 @@ describe('GiscusComments', () => {
       theme: 'dark',
       setTheme: vi.fn(),
       resolvedTheme: 'dark',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     const createdScripts: HTMLScriptElement[] = [];
     document.createElement = vi.fn((tagName: string) => {
@@ -117,7 +129,8 @@ describe('GiscusComments', () => {
       theme: 'light',
       setTheme: vi.fn(),
       resolvedTheme: 'light',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     const createdScripts: HTMLScriptElement[] = [];
     document.createElement = vi.fn((tagName: string) => {
@@ -151,7 +164,8 @@ describe('GiscusComments', () => {
       theme: 'light',
       setTheme: vi.fn(),
       resolvedTheme: 'light',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     const querySelectorSpy = vi.spyOn(document, 'querySelector');
     const removeSpy = vi.fn();
@@ -162,7 +176,7 @@ describe('GiscusComments', () => {
       classList: {
         contains: vi.fn(() => true),
       },
-    } as any;
+    } as unknown as HTMLIFrameElement;
 
     querySelectorSpy.mockReturnValue(mockIframe);
 
@@ -190,7 +204,8 @@ describe('GiscusComments', () => {
       theme: 'light',
       setTheme: vi.fn(),
       resolvedTheme: 'light',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     const createdScripts: HTMLScriptElement[] = [];
     document.createElement = vi.fn((tagName: string) => {
@@ -224,7 +239,8 @@ describe('GiscusComments', () => {
       theme: 'light',
       setTheme: vi.fn(),
       resolvedTheme: 'light',
-    } as any);
+      toggleTheme: vi.fn(),
+    } as UseThemeReturn);
 
     const createdScripts: HTMLScriptElement[] = [];
     document.createElement = vi.fn((tagName: string) => {

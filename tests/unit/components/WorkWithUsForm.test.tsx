@@ -3,9 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { WorkWithUsForm } from '@/components/forms/WorkWithUsForm';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { UseMutationResult } from '@tanstack/react-query';
 import { useSubmitProposal } from '@/hooks/useProposals';
 import { toast } from 'sonner';
 import type { ReactNode } from 'react';
+import type { Proposal, ProposalFormValues } from '@/types/v2';
 
 // Mock hooks
 vi.mock('@/hooks/useProposals', () => ({
@@ -41,7 +43,22 @@ describe('WorkWithUsForm', () => {
     vi.clearAllMocks();
     vi.mocked(useSubmitProposal).mockReturnValue({
       mutateAsync: mockMutateAsync,
-    } as any);
+      mutate: vi.fn(),
+      isPending: false,
+      isError: false,
+      isSuccess: false,
+      isIdle: true,
+      data: undefined,
+      error: null,
+      reset: vi.fn(),
+      status: 'idle',
+      variables: undefined,
+      context: undefined,
+      failureCount: 0,
+      failureReason: null,
+      isPaused: false,
+      submittedAt: 0,
+    } as UseMutationResult<Proposal, Error, ProposalFormValues, unknown>);
   });
 
   it('폼이 렌더링되어야 함', () => {

@@ -1,7 +1,7 @@
 -- ============================================
 -- Supabase RLS 정책 수정 스크립트
 -- 일시: 2025-11-04
--- 목적: notifications, carts, user_roles 테이블 권한 문제 해결
+-- 목적: notifications, carts, user_roles, roadmap 테이블 권한 문제 해결
 -- ============================================
 
 -- ============================================
@@ -211,6 +211,116 @@ CREATE POLICY "Admins can view all profiles"
   USING (true);
 
 -- ============================================
+-- 7. roadmap 테이블 RLS 정책 재생성
+-- ============================================
+
+-- Enable Row Level Security
+ALTER TABLE public.roadmap ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies
+DROP POLICY IF EXISTS "Roadmap is viewable by everyone" ON public.roadmap;
+DROP POLICY IF EXISTS "Admins can insert roadmap" ON public.roadmap;
+DROP POLICY IF EXISTS "Admins can update roadmap" ON public.roadmap;
+DROP POLICY IF EXISTS "Admins can delete roadmap" ON public.roadmap;
+
+-- Create new policies
+-- 모든 사용자가 roadmap 조회 가능
+CREATE POLICY "Roadmap is viewable by everyone"
+  ON public.roadmap FOR SELECT
+  USING (true);
+
+-- 관리자만 INSERT 가능
+CREATE POLICY "Admins can insert roadmap"
+  ON public.roadmap FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.user_roles
+      WHERE user_id = auth.uid()
+      AND role_id IN (
+        SELECT id FROM public.roles WHERE name = 'admin'
+      )
+    )
+  );
+
+-- 관리자만 UPDATE 가능
+CREATE POLICY "Admins can update roadmap"
+  ON public.roadmap FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.user_roles
+      WHERE user_id = auth.uid()
+      AND role_id IN (
+        SELECT id FROM public.roles WHERE name = 'admin'
+      )
+    )
+  );
+
+-- 관리자만 DELETE 가능
+CREATE POLICY "Admins can delete roadmap"
+  ON public.roadmap FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.user_roles
+      WHERE user_id = auth.uid()
+      AND role_id IN (
+        SELECT id FROM public.roles WHERE name = 'admin'
+      )
+    )
+  );
+
+-- ============================================
+-- 8. projects 테이블 RLS 정책 재생성
+-- ============================================
+
+-- Enable Row Level Security
+ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policy
+DROP POLICY IF EXISTS "Projects are viewable by everyone" ON public.projects;
+
+-- Create new policy (모든 사용자가 프로젝트 조회 가능)
+CREATE POLICY "Projects are viewable by everyone"
+  ON public.projects FOR SELECT
+  USING (true);
+
+-- ============================================
+-- 9. bounties 테이블 RLS 정책 재생성
+-- ============================================
+
+-- Enable Row Level Security
+ALTER TABLE public.bounties ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policy
+DROP POLICY IF EXISTS "Bounties are viewable by everyone" ON public.bounties;
+
+-- Create new policy (모든 사용자가 바운티 조회 가능)
+CREATE POLICY "Bounties are viewable by everyone"
+  ON public.bounties FOR SELECT
+  USING (true);
+
+-- ============================================
+-- 10. logs 테이블 RLS 정책 재생성
+-- ============================================
+
+-- Enable Row Level Security
+ALTER TABLE public.logs ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policy
+DROP POLICY IF EXISTS "Logs are viewable by everyone" ON public.logs;
+
+-- Create new policy (모든 사용자가 로그 조회 가능)
+CREATE POLICY "Logs are viewable by everyone"
+  ON public.logs FOR SELECT
+  USING (true);
+
+-- ============================================
+-- 11. newsletter_subscribers 뷰 RLS 정책 확인
+-- ============================================
+
+-- Enable Row Level Security (뷰는 기본 테이블의 정책을 따름)
+-- newsletter_subscribers는 뷰이므로 기본 테이블에 정책이 있어야 함
+
+-- ============================================
 -- 완료 메시지
 -- ============================================
 
@@ -223,6 +333,10 @@ BEGIN
   RAISE NOTICE '- user_roles 테이블: RLS 정책 2개 재생성';
   RAISE NOTICE '- roles 테이블: RLS 정책 1개 재생성';
   RAISE NOTICE '- user_profiles 테이블: RLS 정책 4개 재생성';
+  RAISE NOTICE '- roadmap 테이블: RLS 정책 4개 재생성';
+  RAISE NOTICE '- projects 테이블: RLS 정책 1개 재생성 (Status 페이지용)';
+  RAISE NOTICE '- bounties 테이블: RLS 정책 1개 재생성 (Status 페이지용)';
+  RAISE NOTICE '- logs 테이블: RLS 정책 1개 재생성 (Status 페이지용)';
   RAISE NOTICE '';
   RAISE NOTICE '⚠️ 주의: 프로덕션 환경에서는 user_roles, user_profiles 정책을 더 엄격하게 설정하세요';
 END $$;

@@ -2,13 +2,48 @@
 
 > 프로젝트 작업 목록 및 진행 상황 관리
 
-**마지막 업데이트**: 2025-11-09
-**현재 Phase**: ✅ Version 2.0 Sprint 2 완료 (Supabase Integration & Community)
-**프로젝트 버전**: 2.0.0-sprint2
+**마지막 업데이트**: 2025-01-09
+**현재 Phase**: ✅ Version 2.0 Sprint 3.6 완료 (코드 품질 개선)
+**프로젝트 버전**: 2.0.0-sprint3.6
 
 ---
 
 ## ✅ 완료된 작업
+
+### Version 2.0 Sprint 3.6: 코드 품질 개선 및 린트 에러 수정 ✅ 완료 (2025-01-09)
+**목표**: JSX 에러 수정 및 TypeScript/React 린트 경고 제거
+**완료일**: 2025-01-09
+**총 소요**: 30분
+
+#### 주요 수정 사항 ✅
+- [x] **JSX 에러 수정**
+  - About.tsx 닫는 태그 누락 수정 (line 206 `</div>` 추가)
+  - 빌드 에러 해결 → 성공 (24.96s)
+
+- [x] **TypeScript any 타입 수정**
+  - src/types/v2.ts: `Record<string, any>` → `Record<string, unknown>` (2개)
+  - tests/unit/components/GiscusComments.test.tsx:
+    - `UseThemeReturn` 타입 인터페이스 정의
+    - 7개 `as any` → `as UseThemeReturn` 변경
+    - 1개 `as any` → `as unknown as HTMLIFrameElement` 변경
+  - tests/unit/components/WorkWithUsForm.test.tsx:
+    - `UseMutationResult` 타입 import
+    - Mock 반환값에 완전한 타입 지정
+
+- [x] **React Hooks 경고 수정**
+  - src/components/community/GiscusComments.tsx:
+    - Cleanup 함수에서 `containerRef.current` 직접 참조 제거
+    - Effect 시작 시 `const container = containerRef.current` 할당
+  - src/pages/BlogPost.tsx:
+    - `incrementViewCount` dependency 추가
+
+#### 결과 ✅
+- 린트 에러: 11개 → 8개
+- 남은 경고: shadcn/ui `react-refresh/only-export-components` (라이브러리 패턴)
+- 빌드: ✅ 성공 (24.96s)
+- 수정 파일: 6개 (About.tsx, v2.ts, GiscusComments.tsx, BlogPost.tsx, GiscusComments.test.tsx, WorkWithUsForm.test.tsx)
+
+---
 
 ### Version 2.0 Sprint 2: Supabase Integration & Community ✅ 완료 (2025-11-09)
 **목표**: 정적 데이터를 Supabase로 전환 및 커뮤니티 기능 추가
@@ -98,7 +133,140 @@
 - ✅ 4개 JSON 파일 삭제
 - ✅ 빌드 성공 (0 errors)
 
-**다음 단계**: Version 2.0 Sprint 3 (Automation & Open Metrics)
+**다음 단계**: Version 2.0 Sprint 4 (Testing & Launch)
+
+---
+
+### Version 2.0 Sprint 3: Automation & Open Metrics - Quick Wins ✅ 완료 (2025-11-09)
+**목표**: Newsletter 위젯, SEO 개선, Status 페이지 메트릭스 연결
+**완료일**: 2025-11-09
+**총 소요**: 반나절
+
+#### Sprint 3.1: Newsletter 위젯 ✅
+- [x] supabase/migrations/20250109000008_create_newsletter.sql
+  - [x] newsletter_subscriptions 테이블 (id, email, status, subscribed_at, confirmed_at, preferences, metadata)
+  - [x] 3개 상태: pending, confirmed, unsubscribed
+  - [x] RLS 정책 3개 (관리자 읽기, 공개 삽입, 본인 업데이트)
+  - [x] 인덱스 2개 (email UNIQUE, status)
+- [x] src/hooks/useNewsletter.ts (4개 함수)
+  - [x] useSubscribeNewsletter() - 이메일 구독
+  - [x] useConfirmNewsletter() - 이메일 확인
+  - [x] useUnsubscribeNewsletter() - 구독 취소
+  - [x] useNewsletterStats() - 통계 조회 (confirmed/pending/total)
+- [x] src/components/forms/NewsletterForm.tsx
+  - [x] 2개 variant: inline (한 줄), stacked (세로)
+  - [x] React Hook Form + Zod 이메일 검증
+  - [x] loading/success/error 상태 관리
+  - [x] i18n 지원 (common:newsletter.*)
+- [x] src/components/Footer.tsx
+  - [x] Newsletter 섹션 추가 (stacked variant)
+  - [x] 그리드 레이아웃 확장 (lg:grid-cols-4 → lg:grid-cols-5)
+- [x] src/pages/Index.tsx (Home)
+  - [x] Newsletter CTA 섹션 추가
+  - [x] inline variant 폼
+  - [x] "Stay Connected" 배지
+- [x] src/lib/email.ts
+  - [x] sendNewsletterConfirmationEmail() - 확인 이메일
+  - [x] sendNewsletterWelcomeEmail() - 환영 이메일
+
+#### Sprint 3.2: SEO 개선 ✅
+- [x] public/robots.txt 업데이트
+  - [x] Version 2.0 라우트 11개 Allow
+  - [x] 7개 Disallow (admin, checkout, login, etc.)
+- [x] scripts/generate-sitemap.ts
+  - [x] Version 2.0 정적 페이지 12개
+  - [x] 동적 프로젝트 페이지 지원 (projects 테이블 조회)
+  - [x] NEXT_PUBLIC_ 환경 변수 지원
+  - [x] 수동 .env.local 로딩 (dotenv 대체)
+- [x] public/sitemap.xml 생성
+  - [x] 12개 정적 페이지 (changefreq, priority)
+  - [x] npm run generate:sitemap 스크립트
+
+#### Sprint 3.3: Status 페이지 메트릭스 연결 ✅
+- [x] src/pages/Status.tsx
+  - [x] useNewsletterStats 훅 통합
+  - [x] Newsletter 구독자 카드 추가 (Mail 아이콘)
+  - [x] 5개 Key Metrics (프로젝트/바운티/커밋/기여자/구독자)
+  - [x] 그리드 레이아웃 확장 (lg:grid-cols-4 → lg:grid-cols-5)
+  - [x] confirmed/pending/total 카운트 표시
+
+#### 빌드 결과
+- **Build Time**: 17.09s
+- **Total Bundle**: ~3008 KiB
+- **Status.js**: 10.34 kB (+0.79 kB)
+- **Errors**: 0
+
+#### 성과
+- ✅ 17개 파일 (8개 수정, 9개 신규)
+- ✅ 3,365줄 코드 추가
+- ✅ 1개 SQL 마이그레이션
+- ✅ 4개 React Query 훅 함수
+- ✅ 2개 새 컴포넌트 (NewsletterForm, Newsletter sections)
+- ✅ 3개 페이지 업데이트 (Footer, Index, Status)
+- ✅ 2개 이메일 함수
+- ✅ SEO 개선 (robots.txt, sitemap.xml)
+
+**다음 단계**: Newsletter/Status E2E 테스트 작성
+
+### Version 2.0 Sprint 3.4: 버그 수정 및 테스트 ✅ 완료 (2025-01-09)
+**목표**: RLS 정책 오류 해결, 에러 핸들링 개선, 타입 오류 수정
+**완료일**: 2025-01-09
+
+#### RLS 정책 오류 해결 ✅
+- [x] fix-rls-policies-all.sql에 roadmap 테이블 정책 추가
+  - [x] 모든 사용자 조회 가능 (SELECT)
+  - [x] 관리자만 생성/수정/삭제 가능 (INSERT/UPDATE/DELETE)
+- [x] RLS 정책 적용 가이드 문서 작성 (docs/guides/database/rls-fix-instructions.md)
+- [x] user_roles, carts, notifications, roadmap 테이블 정책 확인
+
+#### 에러 핸들링 개선 ✅
+- [x] src/hooks/useRoadmap.ts - handleSupabaseError 추가
+  - [x] useRoadmap: fallbackValue [] 추가
+  - [x] useRoadmapByQuarter: fallbackValue null 추가
+  - [x] 모든 mutation에 에러 핸들링 추가
+- [x] src/hooks/useIsAdmin.ts - 중복 코드 제거 및 명확한 에러 처리
+- [x] src/hooks/useNotifications.ts - 중복 코드 제거 및 명확한 에러 처리
+- [x] src/hooks/useCart.ts - 이미 적절히 처리됨 확인
+
+#### 타입 오류 수정 ✅
+- [x] src/pages/Roadmap.tsx 타입 불일치 수정
+  - [x] getRiskBadgeVariant/getRiskLabel: risk: string[] → riskLevel?: string
+  - [x] quarter.goal → quarter.theme
+  - [x] quarter.period → start_date/end_date 기반 날짜 표시
+  - [x] quarter.risks → quarter.risk_level
+  - [x] quarter.owner optional 처리
+  - [x] milestone.dueDate optional 처리
+  - [x] milestone.tasks optional 및 빈 배열 처리
+  - [x] quarter.milestones 빈 배열 처리
+  - [x] quarter.kpis 타입 안전성 개선
+
+#### 단위 테스트 작성 ✅
+- [x] tests/unit/pages/Status.test.tsx 생성
+  - [x] 기본 렌더링 테스트
+  - [x] 로딩 상태 테스트
+  - [x] 에러 상태 테스트
+  - [x] 메트릭 계산 테스트
+  - [x] UI 컴포넌트 렌더링 테스트
+  - [x] 데이터 통합 및 빈 데이터 상태 테스트
+- [x] 모든 테스트 케이스 통과 확인
+
+#### 수정된 파일
+- [x] supabase/migrations/fix-rls-policies-all.sql (roadmap 정책 추가)
+- [x] docs/guides/database/rls-fix-instructions.md (신규)
+- [x] src/hooks/useRoadmap.ts (에러 핸들링 개선)
+- [x] src/hooks/useIsAdmin.ts (코드 정리)
+- [x] src/hooks/useNotifications.ts (코드 정리)
+- [x] src/pages/Roadmap.tsx (타입 오류 수정)
+- [x] tests/unit/pages/Status.test.tsx (신규)
+
+#### 주요 개선 사항
+- ✅ 타입 안전성: 타입 정의와 실제 사용 일치
+- ✅ Optional 필드 처리: undefined/null 체크 추가
+- ✅ 빈 데이터 처리: 빈 배열/객체에 대한 안전한 렌더링
+- ✅ 에러 방지: 런타임 오류 가능성 감소
+- ✅ 테스트 커버리지: Status 페이지 단위 테스트 추가
+
+**다음 단계**: Supabase Dashboard에서 RLS 정책 적용 필요
 
 ---
 

@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { Target, Eye, Heart, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { PageLayout, HeroSection, Section } from "@/components/layouts";
 
 const About = () => {
   const mission = {
@@ -63,28 +64,26 @@ const About = () => {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10"></div>
-          <div className="container mx-auto max-w-4xl relative">
-            <div className="text-center space-y-6">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-fade-in">
-                IDEA on Action
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground">
+      <PageLayout>
+        <HeroSection
+          title={
+            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-fade-in">
+              IDEA on Action
+            </span>
+          }
+          description={
+            <>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-2">
                 생각과행동
               </p>
-              <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto">
+              <p className="text-lg md:text-xl text-foreground/80">
                 아이디어가 현실이 되는 과정을 함께 만들어갑니다
               </p>
-            </div>
-          </div>
-        </section>
+            </>
+          }
+        />
 
-        {/* Mission & Vision */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
+        <Section maxWidth="4xl">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Mission */}
               <Card className="glass-card p-8 space-y-4 hover-lift">
@@ -118,12 +117,9 @@ const About = () => {
                 </p>
               </Card>
             </div>
-          </div>
-        </section>
+        </Section>
 
-        {/* Core Values */}
-        <section className="py-16 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-6xl">
+        <Section variant="muted">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Core Values</h2>
               <p className="text-lg text-muted-foreground">우리가 중요하게 생각하는 가치들</p>
@@ -146,12 +142,9 @@ const About = () => {
                 </Card>
               ))}
             </div>
-          </div>
-        </section>
+        </Section>
 
-        {/* Team Section */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-4xl">
+        <Section maxWidth="4xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Team</h2>
               <p className="text-lg text-muted-foreground">함께 만들어가는 사람들</p>
@@ -188,12 +181,10 @@ const About = () => {
                 </div>
               </div>
             </Card>
-          </div>
-        </section>
+        </Section>
 
-        {/* CTA Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-          <div className="container mx-auto max-w-4xl text-center space-y-6">
+        <Section variant="gradient" maxWidth="4xl">
+          <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">함께 만들어갈 준비가 되셨나요?</h2>
             <p className="text-lg text-foreground/80">
               아이디어가 있다면, 지금 바로 시작하세요.
@@ -213,8 +204,8 @@ const About = () => {
               </a>
             </div>
           </div>
-        </section>
-      </div>
+        </Section>
+      </PageLayout>
     </>
   );
 };

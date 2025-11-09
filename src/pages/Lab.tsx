@@ -1,8 +1,10 @@
 import { Helmet } from "react-helmet-async";
-import { Beaker, Award, Clock, Target, Users, DollarSign, AlertCircle } from "lucide-react";
+import { Beaker, Award, Clock, Target, Users, DollarSign, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useBounties } from "@/hooks/useBounties";
+import { PageLayout, HeroSection, Section } from "@/components/layouts";
+import { LoadingState, ErrorState, EmptyState } from "@/components/shared";
 
 const Lab = () => {
   const { data: bountiesData, isLoading, error } = useBounties();
@@ -26,28 +28,12 @@ const Lab = () => {
     "고급": "text-red-600"
   };
 
-  // Loading state
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
-  // Error state
   if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="glass-card p-8 max-w-md text-center">
-          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">데이터 로드 실패</h2>
-          <p className="text-muted-foreground">
-            {error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}
-          </p>
-        </Card>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
   const bounties = bountiesData || [];
@@ -65,66 +51,55 @@ const Lab = () => {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10"></div>
-          <div className="container mx-auto max-w-6xl relative">
-            <div className="text-center space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-4">
-                <Beaker className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold">Experiments & Bounties</span>
+      <PageLayout>
+        <HeroSection
+          badge={{ icon: Beaker, text: "Experiments & Bounties" }}
+          title="Lab"
+          description="아이디어를 실험하고, 보상을 받으며 성장하세요"
+        />
+
+        <Section variant="muted" className="py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="glass-card p-4 text-center">
+              <div className="text-3xl font-bold text-primary">{bounties.length}</div>
+              <div className="text-sm text-muted-foreground mt-1">총 바운티</div>
+            </Card>
+            <Card className="glass-card p-4 text-center">
+              <div className="text-3xl font-bold text-green-600">
+                {bounties.filter(b => b.status === "open").length}
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-                Lab
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                아이디어를 실험하고, 보상을 받으며 성장하세요
-              </p>
-            </div>
+              <div className="text-sm text-muted-foreground mt-1">모집중</div>
+            </Card>
+            <Card className="glass-card p-4 text-center">
+              <div className="text-3xl font-bold text-secondary">
+                {bounties.filter(b => b.status === "assigned").length}
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">진행중</div>
+            </Card>
+            <Card className="glass-card p-4 text-center">
+              <div className="text-3xl font-bold text-accent">
+                {bounties.reduce((sum, b) => sum + b.reward, 0).toLocaleString()}원
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">총 보상금</div>
+            </Card>
           </div>
-        </section>
+        </Section>
 
-        {/* Stats */}
-        <section className="py-8 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-6xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-primary">{bounties.length}</div>
-                <div className="text-sm text-muted-foreground mt-1">총 바운티</div>
-              </Card>
-              <Card className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-green-600">
-                  {bounties.filter(b => b.status === "open").length}
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">모집중</div>
-              </Card>
-              <Card className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-secondary">
-                  {bounties.filter(b => b.status === "assigned").length}
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">진행중</div>
-              </Card>
-              <Card className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-accent">
-                  {bounties.reduce((sum, b) => sum + b.reward, 0).toLocaleString()}원
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">총 보상금</div>
-              </Card>
-            </div>
+        <Section>
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold mb-2">바운티 프로그램</h2>
+            <p className="text-muted-foreground">
+              스킬을 발휘하고 보상을 받으세요. 모든 기여는 가치있습니다.
+            </p>
           </div>
-        </section>
 
-        {/* Bounties */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-2">바운티 프로그램</h2>
-              <p className="text-muted-foreground">
-                스킬을 발휘하고 보상을 받으세요. 모든 기여는 가치있습니다.
-              </p>
-            </div>
-
+          {bounties.length === 0 ? (
+            <EmptyState
+              icon={Package}
+              title="바운티가 없습니다"
+              description="아직 등록된 바운티가 없습니다."
+            />
+          ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {bounties.map((bounty, index) => (
                 <Card
@@ -202,16 +177,14 @@ const Lab = () => {
                 </Card>
               ))}
             </div>
-          </div>
-        </section>
+          )}
+        </Section>
 
-        {/* How it Works */}
-        <section className="py-16 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">어떻게 참여하나요?</h2>
-              <p className="text-muted-foreground">간단한 4단계로 시작하세요</p>
-            </div>
+        <Section variant="muted">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">어떻게 참여하나요?</h2>
+            <p className="text-muted-foreground">간단한 4단계로 시작하세요</p>
+          </div>
 
             <div className="grid md:grid-cols-4 gap-6">
               {[
@@ -245,12 +218,10 @@ const Lab = () => {
                 </Card>
               ))}
             </div>
-          </div>
-        </section>
+        </Section>
 
-        {/* CTA Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-          <div className="container mx-auto max-w-4xl text-center space-y-6">
+        <Section variant="gradient" maxWidth="4xl">
+          <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">준비되셨나요?</h2>
             <p className="text-lg text-foreground/80">
               지금 바로 첫 바운티에 도전하세요!
@@ -262,8 +233,8 @@ const Lab = () => {
               문의하기
             </a>
           </div>
-        </section>
-      </div>
+        </Section>
+      </PageLayout>
     </>
   );
 };

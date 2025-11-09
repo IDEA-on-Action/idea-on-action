@@ -38,6 +38,7 @@ const BRAND_INFO = {
 } as const;
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
+  { label: "홈", href: "/" },
   { label: "회사소개", href: "/about" },
   { label: "로드맵", href: "/roadmap" },
   { label: "포트폴리오", href: "/portfolio" },
@@ -77,6 +78,7 @@ const Header = ({ className = "" }: HeaderProps) => {
 
   const renderNavigationItem = (item: NavigationItem, index: number) => {
     const isExternal = item.isExternal || (isHomePage && item.href.startsWith('#'));
+    const isActive = !isExternal && location.pathname === item.href;
     const Component = isExternal ? 'a' : Link;
     const props = isExternal 
       ? { href: item.href }
@@ -86,8 +88,13 @@ const Header = ({ className = "" }: HeaderProps) => {
       <Component
         key={index}
         {...props}
-        className="text-foreground/80 hover:text-foreground transition-colors"
+        className={`transition-colors ${
+          isActive 
+            ? 'text-foreground font-medium border-b-2 border-primary' 
+            : 'text-foreground/80 hover:text-foreground'
+        }`}
         aria-label={`${item.label} 페이지로 이동`}
+        aria-current={isActive ? 'page' : undefined}
       >
         {item.label}
       </Component>
@@ -123,6 +130,7 @@ const Header = ({ className = "" }: HeaderProps) => {
         <div className="hidden md:flex items-center gap-8">
           {NAVIGATION_ITEMS.map((item, index) => {
             const isExternal = isHomePage && item.href.startsWith('#');
+            const isActive = !isExternal && location.pathname === item.href;
             const Component = isExternal ? 'a' : Link;
             const props = isExternal 
               ? { href: item.href }
@@ -132,8 +140,13 @@ const Header = ({ className = "" }: HeaderProps) => {
               <Component
                 key={index}
                 {...props}
-                className="text-foreground/80 hover:text-foreground transition-colors"
+                className={`transition-colors ${
+                  isActive 
+                    ? 'text-foreground font-medium border-b-2 border-primary pb-1' 
+                    : 'text-foreground/80 hover:text-foreground'
+                }`}
                 aria-label={`${item.label} 페이지로 이동`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 {item.label}
               </Component>
@@ -263,6 +276,7 @@ const Header = ({ className = "" }: HeaderProps) => {
 
             {NAVIGATION_ITEMS.map((item, index) => {
               const isExternal = isHomePage && item.href.startsWith('#');
+              const isActive = !isExternal && location.pathname === item.href;
               const Component = isExternal ? 'a' : Link;
               const props = isExternal
                 ? { href: item.href }
@@ -272,8 +286,13 @@ const Header = ({ className = "" }: HeaderProps) => {
                 <Component
                   key={index}
                   {...props}
-                  className="block text-foreground/80 hover:text-foreground transition-colors py-2"
+                  className={`block transition-colors py-2 ${
+                    isActive 
+                      ? 'text-primary font-medium' 
+                      : 'text-foreground/80 hover:text-foreground'
+                  }`}
                   aria-label={`${item.label} 페이지로 이동`}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   {item.label}
                 </Component>

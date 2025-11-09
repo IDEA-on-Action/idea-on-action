@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, AlertCircle } from 'lucide-react'
+import { Loader2, AlertCircle, Home } from 'lucide-react'
 import logoSymbol from '@/assets/logo-symbol.png'
 
 export default function Login() {
@@ -89,9 +89,13 @@ export default function Login() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
         <Card className="w-full max-w-md glass-card">
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+            <Link 
+              to="/" 
+              className="flex justify-center mb-4 hover:opacity-80 transition-opacity"
+              aria-label="홈페이지로 이동"
+            >
               <img src={logoSymbol} alt="VIBE WORKING" className="h-16 w-16" />
-            </div>
+            </Link>
             <CardTitle className="text-2xl">VIBE WORKING</CardTitle>
             <CardDescription>로그인하여 서비스를 이용하세요</CardDescription>
           </CardHeader>
@@ -247,6 +251,20 @@ export default function Login() {
             <p className="text-xs text-center text-muted-foreground">
               관리자 계정: admin / demian00
             </p>
+
+            {/* 홈으로 돌아가기 */}
+            <div className="pt-4 border-t">
+              <Button
+                variant="ghost"
+                className="w-full"
+                asChild
+              >
+                <Link to="/">
+                  <Home className="mr-2 h-4 w-4" />
+                  홈으로 돌아가기
+                </Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

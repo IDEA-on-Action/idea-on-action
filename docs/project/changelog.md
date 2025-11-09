@@ -33,11 +33,85 @@
   - [x] Stage 7: Build Verification (0 errors) ✅
   - [x] Stage 8: Component Integration (Sprint 2.5) ✅
 
+- **Version 2.0 Sprint 3: Automation & Open Metrics (Option A - Quick Wins)** ✅ (완료 - 2025-01-09)
+  - [x] Sprint 3.1: Newsletter 위젯 ✅
+  - [x] Sprint 3.2: SEO 개선 (robots.txt, sitemap.xml) ✅
+  - [x] Sprint 3.3: Status 페이지 메트릭스 연결 ✅
+  - [x] Sprint 3.4: 버그 수정 및 테스트 (RLS 정책, 에러 핸들링, 타입 오류) ✅
+  - [x] Sprint 3.5: 메뉴 구조 개선 및 디자인 시스템 구축 ✅
+  - [x] Sprint 3.6: 코드 품질 개선 및 린트 에러 수정 ✅
+
 ### Planned
 - **Version 2.0: 커뮤니티형 프로덕트 스튜디오** 🚀
   - [x] Sprint 1: Structure & Static Data (Week 1) ✅
   - [x] Sprint 2: Supabase Integration & Community (Week 2) ✅
-  - [ ] Sprint 3: Automation & Open Metrics (Week 3)
+  - [x] Sprint 3: Automation & Open Metrics - Quick Wins (Week 3) ✅
+
+---
+
+## [2.0.0-sprint3] - 2025-11-09
+
+### Added
+- **Sprint 3.1: Newsletter 위젯** 📧 ✅
+  - `supabase/migrations/20250109000008_create_newsletter.sql` - Newsletter 테이블
+    - newsletter_subscriptions 테이블 (id, email, status, subscribed_at, confirmed_at, preferences, metadata)
+    - 3개 상태: pending, confirmed, unsubscribed
+    - RLS 정책 3개 (관리자 읽기, 공개 삽입, 본인 업데이트)
+    - 인덱스 3개 (email, status, subscribed_at)
+  - `src/hooks/useNewsletter.ts` - Newsletter 관리 훅
+    - useSubscribeNewsletter() - 구독 신청 (중복 이메일 처리)
+    - useConfirmNewsletter() - 구독 확인
+    - useUnsubscribeNewsletter() - 구독 취소
+    - useNewsletterStats() - 통계 조회 (관리자용)
+  - `src/components/forms/NewsletterForm.tsx` - Newsletter 폼 컴포넌트
+    - Inline 변형 (Home CTA용)
+    - Stacked 변형 (Footer용)
+    - 이메일 유효성 검사
+    - 로딩 상태 표시
+  - `src/lib/email.ts` - Newsletter 이메일 함수
+    - sendNewsletterConfirmationEmail() - 구독 확인 이메일
+    - sendNewsletterWelcomeEmail() - 환영 이메일
+
+- **Sprint 3.2: SEO 개선** 🔍 ✅
+  - `public/sitemap.xml` - 동적 사이트맵 생성
+    - 12개 정적 페이지 (/, /about, /roadmap, /portfolio, /now, /lab, /community, /work-with-us, /status, /services, /blog, /notices)
+    - 동적 페이지 지원 (Projects, Blog Posts, Services)
+    - changefreq, priority 설정
+
+### Changed
+- **Sprint 3.1: Newsletter 통합**
+  - `src/components/Footer.tsx` - Newsletter 섹션 추가
+    - lg:col-span-2 (브랜드 섹션 확장)
+    - Stacked 폼 배치
+  - `src/pages/Index.tsx` - Newsletter CTA 섹션 추가
+    - "Stay Connected" 배지
+    - Inline 폼 배치
+    - 개인정보 보호 안내
+
+- **Sprint 3.2: SEO 최적화**
+  - `public/robots.txt` - Version 2.0 페이지 추가
+    - Allow 경로 11개 (/, /about, /roadmap, /portfolio, /now, /lab, /community, /work-with-us, /status, /services, /blog, /notices)
+    - Disallow 경로 7개 (/admin/, /login, /profile, /2fa/, /checkout/, /orders/)
+  - `scripts/generate-sitemap.ts` - 사이트맵 생성 스크립트 개선
+    - Version 2.0 정적 페이지 12개 추가
+    - Projects 동적 페이지 지원
+    - NEXT_PUBLIC_ 환경 변수 호환성
+    - 수동 .env.local 로딩 구현
+
+- **Sprint 3.3: Status 페이지 메트릭스**
+  - `src/pages/Status.tsx` - Newsletter 메트릭스 추가
+    - useNewsletterStats 훅 통합
+    - Newsletter 구독자 카드 추가 (confirmed/pending/total)
+    - Key Metrics 그리드 확장 (4개 → 5개)
+    - lg:grid-cols-4 → lg:grid-cols-5
+
+### Technical
+- **Build**: 0 errors, 17.09s
+- **Bundle**: ~3008 KiB (+1 KiB)
+  - Status-BXcp0idw.js: 10.34 kB (+0.79 kB)
+  - pages-ecommerce-DQxBjvyI.js: 61.52 kB (+0.38 kB)
+- **Total Files**: 17개 (8개 수정, 9개 신규)
+- **Total Code**: 3,365줄 추가
 
 ---
 

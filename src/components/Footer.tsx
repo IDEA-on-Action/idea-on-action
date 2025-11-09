@@ -1,4 +1,5 @@
 import { Github, Linkedin, Mail, LucideIcon } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import logoSymbol from "@/assets/logo-symbol.png";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
 
@@ -58,17 +59,17 @@ const FOOTER_SECTIONS: FooterSection[] = [
   {
     title: "솔루션",
     links: [
-      { label: "AI 컨설팅", href: "#services" },
-      { label: "워크플로우 자동화", href: "#services" },
-      { label: "데이터 분석", href: "#services" }
+      { label: "AI 컨설팅", href: "/services" },
+      { label: "워크플로우 자동화", href: "/services" },
+      { label: "데이터 분석", href: "/services" }
     ]
   },
   {
     title: "회사",
     links: [
-      { label: "회사소개", href: "#about" },
-      { label: "기술", href: "#features" },
-      { label: "문의", href: "#contact" }
+      { label: "회사소개", href: "/about" },
+      { label: "로드맵", href: "/roadmap" },
+      { label: "협업하기", href: "/work-with-us" }
     ]
   },
   {
@@ -84,7 +85,7 @@ const FOOTER_SECTIONS: FooterSection[] = [
         href: "https://www.ideaonaction.ai", 
         isExternal: true 
       },
-      { label: "블로그", href: "#" }
+      { label: "블로그", href: "/blog" }
     ]
   }
 ];
@@ -96,13 +97,19 @@ const COPYRIGHT_INFO = {
 } as const;
 
 const Footer = ({ className = "" }: FooterProps) => {
+  const location = useLocation();
+
   return (
     <footer className={`border-t border-border bg-card/30 backdrop-blur-sm ${className}`}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
+            <Link
+              to="/"
+              className="flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity"
+              aria-label="홈페이지로 이동"
+            >
               <img
                 src={BRAND_INFO.logo}
                 alt={BRAND_INFO.logoAlt}
@@ -114,7 +121,7 @@ const Footer = ({ className = "" }: FooterProps) => {
                 <span className="font-bold text-lg leading-tight">{BRAND_INFO.name}</span>
                 <span className="text-xs text-muted-foreground">{BRAND_INFO.tagline}</span>
               </div>
-            </div>
+            </Link>
             <p className="text-sm text-muted-foreground mb-4">
               {BRAND_INFO.description}
             </p>
@@ -153,19 +160,32 @@ const Footer = ({ className = "" }: FooterProps) => {
             <div key={sectionIndex}>
               <h4 className="font-semibold mb-4">{section.title}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground" role="list">
-                {section.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
-                    <a
-                      href={link.href}
-                      target={link.isExternal ? "_blank" : undefined}
-                      rel={link.isExternal ? "noopener noreferrer" : undefined}
-                      className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm"
-                      aria-label={`${link.label} 페이지로 이동`}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
+                {section.links.map((link, linkIndex) => {
+                  const isActive = !link.isExternal && location.pathname === link.href;
+                  const Component = link.isExternal ? 'a' : Link;
+                  const props = link.isExternal
+                    ? {
+                        href: link.href,
+                        target: "_blank",
+                        rel: "noopener noreferrer"
+                      }
+                    : { to: link.href };
+
+                  return (
+                    <li key={linkIndex}>
+                      <Component
+                        {...props}
+                        className={`hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm ${
+                          isActive ? 'text-primary font-medium' : ''
+                        }`}
+                        aria-label={`${link.label} 페이지로 이동`}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        {link.label}
+                      </Component>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

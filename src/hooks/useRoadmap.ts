@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { handleSupabaseError } from '@/lib/errors';
 import type { Roadmap } from '@/types/v2';
 
 /**
@@ -14,8 +15,18 @@ export const useRoadmap = () => {
         .select('*')
         .order('start_date', { ascending: true });
 
-      if (error) throw error;
-      return data as Roadmap[];
+      if (error) {
+        const result = handleSupabaseError(error, {
+          table: 'roadmap',
+          operation: '로드맵 조회',
+          fallbackValue: [],
+        });
+        if (result !== null) {
+          return result;
+        }
+        throw error;
+      }
+      return (data as Roadmap[]) || [];
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -32,10 +43,20 @@ export const useRoadmapByQuarter = (quarter: string) => {
         .from('roadmap')
         .select('*')
         .eq('quarter', quarter)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      return data as Roadmap;
+      if (error) {
+        const result = handleSupabaseError(error, {
+          table: 'roadmap',
+          operation: '로드맵 조회',
+          fallbackValue: null,
+        });
+        if (result !== null) {
+          return result;
+        }
+        throw error;
+      }
+      return (data as Roadmap) || null;
     },
     enabled: !!quarter,
   });
@@ -55,7 +76,13 @@ export const useCreateRoadmap = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        handleSupabaseError(error, {
+          table: 'roadmap',
+          operation: '로드맵 생성',
+        });
+        throw error;
+      }
       return data as Roadmap;
     },
     onSuccess: () => {
@@ -79,7 +106,13 @@ export const useUpdateRoadmap = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        handleSupabaseError(error, {
+          table: 'roadmap',
+          operation: '로드맵 수정',
+        });
+        throw error;
+      }
       return data as Roadmap;
     },
     onSuccess: (data) => {
@@ -102,7 +135,13 @@ export const useDeleteRoadmap = () => {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        handleSupabaseError(error, {
+          table: 'roadmap',
+          operation: '로드맵 삭제',
+        });
+        throw error;
+      }
       return id;
     },
     onSuccess: () => {

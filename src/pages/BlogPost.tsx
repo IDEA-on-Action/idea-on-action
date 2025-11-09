@@ -8,7 +8,7 @@
 import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { ArrowLeft, Calendar, Clock, Eye, User, Tag, Share2 } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Eye, User, Tag, Share2, Home } from 'lucide-react'
 import { useBlogPostBySlug, useIncrementViewCount } from '@/hooks/useBlogPosts'
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { GiscusComments } from '@/components/community/GiscusComments'
@@ -28,7 +28,7 @@ export default function BlogPost() {
     if (post?.id) {
       incrementViewCount.mutate(post.id)
     }
-  }, [post?.id])
+  }, [post?.id, incrementViewCount])
 
   if (isLoading) {
     return (

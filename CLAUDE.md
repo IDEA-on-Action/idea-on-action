@@ -2,12 +2,74 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-11-09
-**현재 버전**: 1.8.0
-**다음 버전**: 2.0.0 (계획 중)
-**상태**: ✅ Production Ready | 🚀 Version 2.0 전환 준비
+**마지막 업데이트**: 2025-01-09
+**현재 버전**: 2.0.0-sprint3.6
+**다음 버전**: 2.0.0 (Sprint 3 완료)
+**상태**: ✅ Production Ready | 🚀 Version 2.0 Sprint 3 진행 중
 
 **최신 업데이트**:
+- 2025-01-09: **Version 2.0 Sprint 3.6 완료** 🔧 - 코드 품질 개선 및 린트 에러 수정
+  - **JSX 에러 수정**
+    - About.tsx 닫는 태그 누락 수정 (line 206)
+    - 빌드 에러 해결 (24.96s 성공)
+  - **TypeScript any 타입 수정**
+    - v2.ts: Record<string, any> → Record<string, unknown> (2개)
+    - GiscusComments.test.tsx: UseThemeReturn 타입 정의 및 적용 (7개)
+    - WorkWithUsForm.test.tsx: UseMutationResult 타입 적용 (1개)
+  - **React Hooks 경고 수정**
+    - GiscusComments.tsx: containerRef cleanup 함수 수정
+    - BlogPost.tsx: incrementViewCount dependency 추가
+  - 총 파일: 5개 수정 (About.tsx, v2.ts, GiscusComments.tsx, BlogPost.tsx, GiscusComments.test.tsx, WorkWithUsForm.test.tsx)
+  - 린트 에러: 11개 → 8개 (shadcn/ui 경고만 남음)
+- 2025-11-09: **Version 2.0 Sprint 3.5 완료** 🎨 - 메뉴 구조 개선 및 디자인 시스템 구축
+  - **메뉴 구조 개선**
+    - Header, Footer 링크 수정 (React Router Link 통일)
+    - 현재 페이지 표시 기능 추가 (active link highlighting)
+    - 접근성 개선 (aria-current 속성 추가)
+    - 메뉴 구조 분석 문서 작성
+  - **디자인 시스템 구축**
+    - 공통 레이아웃 컴포넌트 3개 생성 (PageLayout, HeroSection, Section)
+    - 공통 상태 컴포넌트 3개 생성 (LoadingState, ErrorState, EmptyState)
+    - 디자인 시스템 가이드 문서 작성 (docs/guides/design-system.md)
+    - 디자인 일관성 분석 문서 작성
+  - **페이지 리팩토링**
+    - Now.tsx, Lab.tsx, About.tsx 공통 컴포넌트 적용
+    - 일관된 Hero 섹션 및 Section 스타일 적용
+    - 통일된 로딩/에러/빈 상태 처리
+  - 총 파일: 12개 (6개 수정, 6개 신규)
+- 2025-01-09: **Version 2.0 Sprint 3.4 완료** 🐛 - 버그 수정 및 테스트
+  - **RLS 정책 오류 해결**
+    - fix-rls-policies-all.sql에 roadmap 테이블 정책 추가
+    - RLS 정책 적용 가이드 문서 작성
+  - **에러 핸들링 개선**
+    - useRoadmap, useIsAdmin, useNotifications 훅 개선
+    - handleSupabaseError를 통한 일관된 에러 처리
+  - **타입 오류 수정**
+    - Roadmap.tsx 타입 불일치 수정 (risk, goal, period, owner 등)
+    - Optional 필드 안전 처리 추가
+  - **단위 테스트 추가**
+    - Status.tsx 단위 테스트 작성 (로딩/에러/메트릭/렌더링 테스트)
+  - 총 파일: 7개 (6개 수정, 1개 신규)
+- 2025-11-09: **Version 2.0 Sprint 2-3 완료** 🎉 - Quick Wins 달성
+  - **Sprint 2.5** - Component Integration
+    - GiscusComments 통합 (Community, BlogPost)
+    - WorkWithUsForm 통합 (WorkWithUs)
+    - Status 페이지 버그 수정 (createdAt → created_at)
+  - **Sprint 3.1** - Newsletter 위젯
+    - newsletter_subscriptions 테이블 & RLS 정책
+    - useNewsletter 훅 (구독/확인/취소/통계)
+    - NewsletterForm 컴포넌트 (inline/stacked)
+    - Footer & Home 통합
+  - **Sprint 3.2** - SEO 개선
+    - robots.txt 업데이트 (11개 Allow, 7개 Disallow)
+    - sitemap.xml 동적 생성 (12개 정적 + 동적 페이지)
+    - NEXT_PUBLIC_ 환경 변수 지원
+  - **Sprint 3.3** - Status 페이지 메트릭스 연결
+    - Newsletter 구독자 메트릭 카드 추가
+    - 5개 Key Metrics (프로젝트/바운티/커밋/기여자/구독자)
+  - 총 파일: 17개 (8개 수정, 9개 신규)
+  - 총 코드: 3,365줄 추가
+  - Bundle: ~3008 KiB
 - 2025-11-09: **Version 2.0 계획 수립** 🌱 - 커뮤니티형 프로덕트 스튜디오로 진화
   - Vision: "아이디어 실험실이자 커뮤니티형 프로덕트 스튜디오"
   - 3 Sprint Plan (3주): Structure → Integration → Automation
