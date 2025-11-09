@@ -115,8 +115,12 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Vendor chunks - React ecosystem
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+          // Vendor chunks - React ecosystem (including React Query)
+          if (
+            id.includes('node_modules/react') ||
+            id.includes('node_modules/react-dom') ||
+            id.includes('node_modules/@tanstack/react-query')
+          ) {
             return 'vendor-react';
           }
 
@@ -133,11 +137,6 @@ export default defineConfig(({ mode }) => ({
           // Vendor chunks - React Router
           if (id.includes('node_modules/react-router')) {
             return 'vendor-router';
-          }
-
-          // Vendor chunks - React Query
-          if (id.includes('node_modules/@tanstack/react-query')) {
-            return 'vendor-query';
           }
 
           // Vendor chunks - Charts (Recharts)
