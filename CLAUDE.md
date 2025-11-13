@@ -2,13 +2,42 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-01-09
+**마지막 업데이트**: 2025-11-13
 **현재 버전**: 2.0.0-sprint3.8.1
 **다음 버전**: 2.0.0 (Sprint 3 완료)
 **상태**: ✅ Production Ready | 🚀 Version 2.0 Sprint 3 진행 중
+**개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
-- 2025-01-09: **전체 프로젝트 리팩토링 완료** 🎉 - 코드 품질 전반 개선
+- 2025-11-13: **P0 긴급 이슈 해결 완료** 🚨 - Roadmap/Newsletter RLS 정책 수정
+  - **문제**: Roadmap 페이지 401 오류, Newsletter 구독 401 오류
+  - **근본 원인**:
+    - roadmap 테이블: anon 역할 SELECT 권한 누락
+    - user_roles, roles 테이블: anon 역할 SELECT 권한 누락
+    - newsletter_subscriptions: RLS 정책 중복 (7개) + anon SELECT 정책 부재
+  - **해결 방법**:
+    - `GRANT SELECT ON roadmap TO anon;` (roadmap 조회 권한)
+    - `GRANT SELECT ON user_roles, roles TO anon;` (INSERT RETURNING용)
+    - Newsletter RLS 정책 정리: 7개 중복 → 4개 명확한 정책
+  - **결과**:
+    - ✅ Roadmap 페이지 정상 동작 (로드맵 데이터 표시)
+    - ✅ Newsletter 구독 성공 ("뉴스레터 구독 신청 완료!" 토스트)
+    - ✅ 프로덕션 사이트 안정화 (401 오류 모두 해결)
+  - **생성된 파일**:
+    - STEP1-schema-inspection.sql (스키마 조회)
+    - FINAL-FIX-roadmap-grant.sql (roadmap GRANT)
+    - FIX-user-roles-grant.sql (user_roles GRANT)
+    - FINAL-newsletter-rls-cleanup.sql (Newsletter RLS 정리)
+  - **교훈**: PostgreSQL RLS = GRANT 권한 + RLS 정책 (둘 다 필요)
+  - 상세 보고서: docs/daily-summary-2025-11-13.md
+- 2025-11-13: **SDD (Spec-Driven Development) 방법론 적용** 📋 - 명세 주도 개발 체계 도입
+  - **SDD 4단계 프로세스**: Specify → Plan → Tasks → Implement
+  - **디렉토리 구조**: spec/, plan/, tasks/, constitution.md 추가
+  - **Constitution (프로젝트 헌법)**: 협상 불가능한 원칙 정의
+  - **컨텍스트 관리**: 명세 기반 컨텍스트 절식 (Context Isolation)
+  - **문서화 원칙**: 코드보다 의도를 먼저 정의
+  - CLAUDE.md에 SDD 방법론 통합
+- 2025-11-09: **전체 프로젝트 리팩토링 완료** 🎉 - 코드 품질 전반 개선
   - **TypeScript 설정 강화**: strictNullChecks, noImplicitAny, noUnusedLocals, noUnusedParameters 활성화
   - **에러 처리 통일**: 모든 훅에서 useSupabaseQuery/useSupabaseMutation 래퍼 사용 (6개 훅 리팩토링)
   - **페이지 컴포넌트 표준화**: PageLayout, LoadingState, ErrorState 일관성 있게 적용 (3개 페이지)
@@ -144,23 +173,195 @@
 
 ---
 
-## 🤖 AI 협업 규칙 (프롬프트 가이드)
+## 🎯 SDD (Spec-Driven Development) 방법론
 
-### SOT (Skeleton of Thought) 원칙
-모든 작업 전에 사고의 뼈대를 먼저 구성합니다.
+### 개요
+IDEA on Action 프로젝트는 **명세 주도 개발(Spec-Driven Development)**을 적용하여, 코드보다 의도를 먼저 정의하고 AI와 협업하는 체계적인 개발 프로세스를 따릅니다.
 
-**5단계 프로세스**:
-1. **문제 정의** - 무엇을 해결하려는가?
-2. **현황 파악** - 관련 파일/코드는 어디에?
-3. **구조 설계** - 어떤 순서로 진행할까?
-4. **영향 범위** - 변경이 미치는 범위는?
-5. **검증 계획** - 어떻게 확인할까?
+### SDD란?
+코드 작성 전에 **명세서(Specification)**를 먼저 작성하는 개발 방법론으로, 명세서가 개발자와 AI의 **단일 진실 소스(Single Source of Truth)** 역할을 수행합니다.
+
+```
+전통적 접근: 코드 중심 → 문서는 사후 보강
+SDD 접근: 명세 중심 → 코드는 명세의 구현체
+```
+
+### SDD의 핵심 원칙
+
+#### 1. 명세가 원본(Source)이다
+- 코드는 명세의 **표현물(Artifact)**
+- 명세와 구현의 간극을 최소화
+- 변경 시 명세를 먼저 업데이트
+
+#### 2. 의도와 구현의 분리
+- **"무엇을(What)"**: 변하지 않는 의도와 목표
+- **"어떻게(How)"**: 유연한 구현 방식
+- 스펙 변경 → 플랜 재생성 → 코드 리빌드
+
+#### 3. 검증 중심 개발
+- 각 단계마다 검증 후 다음 단계로
+- 작은 변경 단위로 리뷰 및 테스트
+- 테스트 가능한 작업 단위로 분해
+
+#### 4. 컨텍스트 보존
+- 의사결정의 맥락과 이유를 문서화
+- AI와의 대화 컨텍스트를 명세로 결정화
+- 휘발성 정보를 영구 문서로 변환
+
+---
+
+## 🔄 SDD 4단계 프로세스
+
+### Stage 1: Specify (명세 작성) - "무엇을/왜"
+
+**목적**: 프로젝트의 의도, 목표, 요구사항을 명확히 정의
+
+**산출물**: `/spec/` 디렉토리
+- `requirements.md` - 사용자 요구사항, 사용자 여정
+- `acceptance-criteria.md` - 성공 기준, 검증 방법
+- `constraints.md` - 비기능 요구사항, 제약사항
+
+**작성 원칙**:
+- ✅ 사용자 관점에서 작성
+- ✅ 기능보다 가치에 집중
+- ✅ 구체적인 예시 포함
+- ❌ 기술 스택 언급 금지
+- ❌ 구현 방법 언급 금지
+
+### Stage 2: Plan (계획 수립) - "어떻게(제약 포함)"
+
+**목적**: 기술적 접근 방법과 아키텍처 결정
+
+**산출물**: `/plan/` 디렉토리
+- `architecture.md` - 시스템 구조, 컴포넌트 설계
+- `tech-stack.md` - 기술 스택, 라이브러리 선택 이유
+- `implementation-strategy.md` - 구현 순서, 우선순위
+
+**작성 원칙**:
+- ✅ 기술적 제약사항 명시
+- ✅ 아키텍처 결정 이유 기록
+- ✅ 보안, 성능, 확장성 고려
+- ✅ 기존 시스템과의 통합 방안
+- ✅ 레거시 코드 패턴 준수
+
+### Stage 3: Tasks (작업 분해) - "쪼갠 일감"
+
+**목적**: 구현 가능한 작은 단위로 분해
+
+**산출물**: `/tasks/` 디렉토리
+- `sprint-N.md` - 스프린트별 작업 목록
+- `backlog.md` - 백로그 작업 목록
+
+**작업 크기 기준**:
+- ⏱️ **1~3시간 단위** 권장
+- ✅ 독립적으로 구현 가능
+- ✅ 독립적으로 테스트 가능
+- ✅ 명확한 완료 기준 존재
+
+### Stage 4: Implement (구현) - "코드 작성"
+
+**목적**: 작업 단위로 코드 작성 및 검증
+
+**프로세스**:
+1. **태스크 선택**: `/tasks/` 에서 하나 선택
+2. **새 대화 시작**: 컨텍스트 오염 방지
+3. **구현**: AI와 협업하여 코드 작성
+4. **테스트**: 단위/통합 테스트 실행
+5. **검증**: 완료 기준 충족 확인
+6. **커밋**: 작은 단위로 커밋
+7. **리뷰**: 코드 리뷰 및 피드백
+
+**구현 원칙**:
+- ✅ TDD (Test-Driven Development) 적용
+- ✅ Red → Green → Refactor 사이클
+- ✅ 최소한의 코드로 테스트 통과
+- ✅ 린트/타입 에러 즉시 수정
+- ✅ 커밋 메시지에 태스크 ID 포함
+
+---
+
+## 📜 Constitution (프로젝트 헌법)
+
+프로젝트의 **협상 불가능한 원칙**을 정의합니다. 모든 의사결정은 이 원칙에 부합해야 합니다.
+
+### 핵심 가치
+1. **사용자 우선**: 모든 기능은 사용자 가치 제공이 목적
+2. **투명성**: 의사결정 과정과 이유를 문서화
+3. **품질**: 테스트 커버리지 80% 이상 유지
+4. **접근성**: WCAG 2.1 AA 준수
+5. **성능**: Lighthouse 점수 90+ 유지
+
+### 기술 원칙
+1. **TypeScript Strict Mode**: 엄격한 타입 체크
+2. **TDD**: 테스트 먼저, 구현 나중
+3. **컴포넌트 단일 책임**: 한 가지 역할만 수행
+4. **명시적 에러 처리**: try-catch 또는 Error Boundary
+5. **반응형 디자인**: 모바일 퍼스트
+
+### 코드 스타일
+1. **PascalCase**: 컴포넌트, 타입, 인터페이스
+2. **camelCase**: 함수, 변수, 훅
+3. **kebab-case**: 파일명, CSS 클래스
+4. **UPPER_SNAKE_CASE**: 상수
+5. **Import 순서**: React → 외부 라이브러리 → 내부 모듈 → 스타일
+
+### 문서화 원칙
+1. **명세 우선**: 구현 전 명세 작성
+2. **변경 시 명세 먼저**: 코드 변경 전 명세 업데이트
+3. **커밋 메시지**: Conventional Commits 준수
+4. **코드 주석**: Why, not What
+5. **README**: 프로젝트 시작 가이드 포함
+
+---
+
+## 🤖 AI 협업 규칙 (SDD 적용)
+
+### SOT (Skeleton of Thought) + SDD 통합
+
+모든 작업은 **SDD 4단계 프로세스**를 따르며, SOT로 각 단계를 구조화합니다.
+
+**통합 프로세스**:
+```
+1. 문제 정의 → Specify (명세 작성)
+2. 현황 파악 → Plan (계획 수립)
+3. 구조 설계 → Tasks (작업 분해)
+4. 영향 범위 → Implement (구현)
+5. 검증 계획 → Verify (검증)
+```
+
+### 작업 전 체크리스트
+
+#### Specify 단계
+- [ ] 사용자 스토리 작성
+- [ ] 성공 기준 정의
+- [ ] 제약사항 확인
+- [ ] 관련 명세 검토
+
+#### Plan 단계
+- [ ] 아키텍처 설계 검토
+- [ ] 기술 스택 선택 및 기록
+- [ ] 구현 전략 수립
+- [ ] 보안/성능 고려사항 점검
+
+#### Tasks 단계
+- [ ] 작업을 1~3시간 단위로 분해
+- [ ] 각 작업의 완료 기준 정의
+- [ ] 의존성 관계 파악
+- [ ] 우선순위 결정
+
+#### Implement 단계
+- [ ] 새 대화(세션) 시작
+- [ ] 관련 명세/플랜/태스크 확인
+- [ ] TDD 사이클 적용
+- [ ] 린트/타입 에러 해결
+- [ ] 테스트 통과 확인
+- [ ] 커밋 및 푸시
 
 ### 작업 후 문서 업데이트 체크리스트
-모든 작업 완료 후 반드시 확인:
 
 **필수 문서**:
 - [ ] `CLAUDE.md` - 프로젝트 현황 업데이트
+- [ ] 관련 명세 파일 (`spec/`, `plan/`, `tasks/`)
 - [ ] `project-todo.md` - 완료 항목 체크
 
 **중요 문서**:
@@ -170,11 +371,23 @@
 **선택 문서**:
 - [ ] 관련 가이드 문서 (필요시)
 
-### 작업 패턴
-1. **SOT 적용** → 계획 수립
-2. **구현** → 코드 작성
-3. **검증** → 빌드/테스트
-4. **문서화** → 체크리스트 확인
+### 컨텍스트 관리 원칙
+
+#### 컨텍스트 절식 (Context Isolation)
+- **태스크마다 새 대화 시작**: 이전 대화의 오염 방지
+- **명세 참조로 컨텍스트 제공**: 대화 히스토리 대신 명세 파일 공유
+- **관련 파일만 공유**: 전체 코드베이스가 아닌 필요한 파일만
+
+#### 컨텍스트 제공 방법
+```markdown
+# 새 대화 시작 시 제공할 정보
+
+1. 관련 명세: spec/requirements.md#feature-name
+2. 관련 플랜: plan/architecture.md#component-structure
+3. 현재 태스크: tasks/sprint-N.md#task-ID
+4. 관련 파일: src/components/Component.tsx
+5. Constitution: constitution.md
+```
 
 ---
 
@@ -261,22 +474,36 @@ npm run release:major  # 메이저 버전
 ## 📁 프로젝트 구조
 
 ```
-IdeaonAction-Homepage/
-├── src/                # 소스 코드
-│   ├── components/     # React 컴포넌트
-│   ├── pages/          # 페이지 (Index, ServiceList, Admin...)
-│   ├── hooks/          # 커스텀 훅 (useAuth, useTheme...)
-│   └── lib/            # 유틸리티
-├── docs/               # 프로젝트 문서
-│   ├── guides/         # 실무 가이드
-│   ├── project/        # 로드맵, 변경 로그
-│   └── archive/        # 히스토리 보관
-├── tests/              # 테스트 (E2E 60개, Visual 28개, Unit 15개)
-│   ├── e2e/            # E2E 테스트
-│   ├── unit/           # 유닛 테스트
-│   └── fixtures/       # 테스트 데이터
-├── scripts/            # 개발 스크립트
-└── public/             # 정적 파일
+idea-on-action/
+├── spec/                    # Stage 1: Specify (명세)
+│   ├── requirements.md      # 사용자 요구사항
+│   ├── acceptance-criteria.md  # 성공 기준
+│   └── constraints.md       # 제약사항
+├── plan/                    # Stage 2: Plan (계획)
+│   ├── architecture.md      # 아키텍처 설계
+│   ├── tech-stack.md        # 기술 스택
+│   └── implementation-strategy.md  # 구현 전략
+├── tasks/                   # Stage 3: Tasks (작업)
+│   ├── sprint-1.md          # 스프린트 1 작업
+│   ├── sprint-2.md          # 스프린트 2 작업
+│   ├── sprint-3.md          # 스프린트 3 작업
+│   └── backlog.md           # 백로그
+├── constitution.md          # 프로젝트 헌법 (불변 원칙)
+├── src/                     # Stage 4: Implement (구현)
+│   ├── components/          # React 컴포넌트
+│   ├── pages/               # 페이지 (Index, ServiceList, Admin...)
+│   ├── hooks/               # 커스텀 훅 (useAuth, useTheme...)
+│   └── lib/                 # 유틸리티
+├── docs/                    # 프로젝트 문서
+│   ├── guides/              # 실무 가이드
+│   ├── project/             # 로드맵, 변경 로그
+│   └── archive/             # 히스토리 보관
+├── tests/                   # 테스트
+│   ├── e2e/                 # E2E 테스트
+│   ├── unit/                # 유닛 테스트
+│   └── fixtures/            # 테스트 데이터
+├── scripts/                 # 개발 스크립트
+└── public/                  # 정적 파일
 ```
 
 **상세 구조**: [docs/guides/project-structure.md](docs/guides/project-structure.md) | [아카이브 섹션](docs/archive/CLAUDE-sections-2025-10-18.md#프로젝트-구조-전체)
