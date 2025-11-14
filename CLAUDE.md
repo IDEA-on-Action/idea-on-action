@@ -36,9 +36,15 @@
     - 수정: 18개 (Index.tsx, index.html, package.json, CLAUDE.md, project-todo.md 등)
     - 신규: 4개 (weekly-recap.yml, 20251114000001_weekly_recap_function.sql 등)
   - **커밋**: a73f775
+  - **P0 마무리 완료** (2025-11-14):
+    - ✅ GitHub Secret 등록 (SUPABASE_SERVICE_ROLE_KEY) - 이미 등록됨 (2025-11-14)
+    - ✅ OG Image 생성 (1200x630px, 288KB) - Playwright 자동 생성
+      - 글래스모피즘 디자인 (브랜드 색상 적용)
+      - HTML 템플릿: public/og-template.html
+      - 자동 생성 스크립트: scripts/generate-og-image.js
+      - index.html OG 태그 이미 설정 완료
+    - **커밋**: a352c71
   - **다음 단계**:
-    - GitHub Secret 등록 (SUPABASE_SERVICE_ROLE_KEY) - Weekly Recap 자동화 활성화
-    - OG Image 생성 (1200x630px, /public/og-image.png) - 소셜 미디어 공유 개선
     - Sprint 2 시작 (Supabase 연동 강화, Giscus 댓글, Work with Us 폼)
 - 2025-11-14: **Version 2.0 Sprint 3.9 완료** 🎉 - Weekly Recap 자동화 구현 (Task 3.1)
   - **작업**: GitHub Actions Cron으로 Weekly Recap 자동 생성
