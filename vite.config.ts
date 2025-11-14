@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "robots.txt", "logo-full.png", "logo-symbol.png"],
+      includeAssets: ["favicon.ico", "robots.txt", "logo-full.png", "logo-symbol.png", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
         name: "VIBE WORKING - AI 기반 워킹 솔루션",
         short_name: "VIBE WORKING",
