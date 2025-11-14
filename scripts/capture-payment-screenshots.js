@@ -156,23 +156,54 @@ async function login(page) {
 
   try {
     await page.goto(`${BASE_URL}/login`, {
-      waitUntil: 'domcontentloaded',
-      timeout: 10000,
+      waitUntil: 'networkidle',
+      timeout: 15000,
     });
     
-    // 로그인 폼이 로드될 때까지 대기
-    await page.waitForSelector('input[type="email"]', { timeout: 5000 });
+    // 로그인 폼이 로드될 때까지 대기 (더 유연한 셀렉터 사용)
+    // 이메일 입력 필드: placeholder에 "이메일" 또는 "email"이 포함된 input, 또는 type="text"인 input
+    const emailSelector = 'input[placeholder*="이메일" i], input[placeholder*="email" i], input[type="text"], input[type="email"]';
+    await page.waitForSelector(emailSelector, { timeout: 10000 });
     
-    await page.fill('input[type="email"]', TEST_EMAIL);
+    // 페이지가 완전히 로드될 때까지 추가 대기
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
+    
+    // 이메일 입력 (placeholder에 "이메일"이 포함된 필드를 우선적으로 찾고, 없으면 첫 번째 텍스트 입력 필드)
+    const emailInputWithPlaceholder = page.locator('input[placeholder*="이메일" i], input[placeholder*="email" i]').first();
+    const emailInputFallback = page.locator('input[type="text"], input[type="email"]').first();
+    
+    // placeholder가 있는 입력 필드가 보이면 사용, 아니면 fallback 사용
+    try {
+      if (await emailInputWithPlaceholder.isVisible({ timeout: 2000 })) {
+        await emailInputWithPlaceholder.fill(TEST_EMAIL);
+      } else {
+        await emailInputFallback.fill(TEST_EMAIL);
+      }
+    } catch {
+      // 둘 다 실패하면 fallback 사용
+      await emailInputFallback.fill(TEST_EMAIL);
+    }
+    
+    // 비밀번호 입력
     await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
+    
+    // 로그인 버튼 클릭
+    const submitButton = page.locator('button[type="submit"]:has-text("로그인"), button[type="submit"]').first();
+    await submitButton.click();
 
     // 로그인 완료 대기 (리다이렉트)
-    await page.waitForURL(/\/(?!login)/, { timeout: 10000 });
+    await page.waitForURL(/\/(?!login)/, { timeout: 15000 });
 
     console.log('✅ 로그인 완료\n');
   } catch (error) {
     console.error('❌ 로그인 실패:', error.message);
+    
+    // 디버깅을 위해 현재 페이지 스크린샷 저장
+    const debugPath = join(OUTPUT_DIR, 'login-debug.png');
+    await page.screenshot({ path: debugPath, fullPage: true });
+    console.error(`📁 디버그 스크린샷 저장: ${debugPath}`);
+    
     throw error;
   }
 }

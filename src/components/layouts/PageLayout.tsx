@@ -43,7 +43,7 @@ export const PageLayout = ({
   return (
     <div className={`min-h-screen bg-background flex flex-col ${className}`}>
       {showHeader && <Header />}
-      <main className="flex-1">
+      <main className={`flex-1 ${showHeader ? 'pt-16' : ''}`}>
         <div className={`container mx-auto px-4 sm:px-6 lg:px-8 py-12 ${maxWidthClasses[maxWidth]}`}>
           {(title || description) && (
             <div className="mb-8 text-center">
