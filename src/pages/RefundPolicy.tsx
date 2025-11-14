@@ -6,7 +6,7 @@
 
 import { Helmet } from 'react-helmet-async'
 import { PageLayout } from '@/components/layouts/PageLayout'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { CheckCircle2 } from 'lucide-react'
 
 export default function RefundPolicy() {

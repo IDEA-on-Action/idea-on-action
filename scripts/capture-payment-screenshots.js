@@ -14,6 +14,7 @@ import { chromium } from '@playwright/test';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { mkdirSync } from 'fs';
+import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,11 +24,64 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 const TEST_EMAIL = process.env.TEST_EMAIL || 'admin@ideaonaction.local';
 const TEST_PASSWORD = process.env.TEST_PASSWORD || 'demian00';
 const OUTPUT_DIR = join(__dirname, '..', 'public', 'blog-screenshots', 'payment-process');
-const MAX_RETRIES = 5;
+const MAX_RETRIES = 10; // 서버 시작 대기 시간을 고려하여 증가
 const RETRY_DELAY = 2000; // 2초
+const AUTO_START_SERVER = process.env.AUTO_START_SERVER !== 'false'; // 기본값: true
 
 // 출력 디렉토리 생성
 mkdirSync(OUTPUT_DIR, { recursive: true });
+
+// 서버 프로세스 추적
+let serverProcess = null;
+
+/**
+ * 서버 시작
+ */
+async function startServer() {
+  if (!AUTO_START_SERVER) {
+    return null;
+  }
+
+  console.log('🚀 개발 서버 시작 중...');
+  console.log('   (서버는 스크린샷 캡처 완료 후 자동으로 종료됩니다)\n');
+
+  const process = spawn('npm', ['run', 'dev'], {
+    cwd: join(__dirname, '..'),
+    stdio: ['ignore', 'pipe', 'pipe'],
+    shell: true,
+  });
+
+  // 서버 출력을 로그에 표시 (선택사항)
+  process.stdout.on('data', (data) => {
+    const output = data.toString();
+    // Vite 서버 시작 메시지 확인
+    if (output.includes('Local:') || output.includes('ready')) {
+      console.log('   서버 시작 중...');
+    }
+  });
+
+  process.stderr.on('data', (data) => {
+    // 에러는 무시 (일반적으로 Vite는 stderr에도 정상 출력을 보냄)
+  });
+
+  process.on('error', (error) => {
+    console.error('❌ 서버 시작 실패:', error.message);
+  });
+
+  return process;
+}
+
+/**
+ * 서버 종료
+ */
+function stopServer() {
+  if (serverProcess) {
+    console.log('\n🛑 개발 서버 종료 중...');
+    serverProcess.kill('SIGTERM');
+    serverProcess = null;
+    console.log('✅ 서버 종료 완료');
+  }
+}
 
 /**
  * 서버 연결 확인
@@ -54,10 +108,17 @@ async function checkServerConnection(page, retries = MAX_RETRIES) {
         console.error('\n❌ 서버 연결 실패');
         console.error(`   URL: ${BASE_URL}`);
         console.error(`   에러: ${error.message}\n`);
-        console.error('💡 해결 방법:');
-        console.error('   1. 개발 서버를 실행하세요: npm run dev');
-        console.error('   2. 또는 다른 포트를 사용 중이라면 BASE_URL 환경 변수를 설정하세요:');
-        console.error('      BASE_URL=http://localhost:5173 npm run generate:screenshots\n');
+        
+        if (AUTO_START_SERVER && !serverProcess) {
+          console.error('💡 서버 자동 시작이 실패했습니다. 수동으로 서버를 실행해주세요:');
+        } else {
+          console.error('💡 해결 방법:');
+          console.error('   1. 개발 서버를 실행하세요: npm run dev');
+          console.error('   2. 또는 다른 포트를 사용 중이라면 BASE_URL 환경 변수를 설정하세요:');
+          console.error('      BASE_URL=http://localhost:5173 npm run generate:screenshots');
+          console.error('   3. 서버 자동 시작을 비활성화하려면:');
+          console.error('      AUTO_START_SERVER=false npm run generate:screenshots\n');
+        }
         throw new Error(`서버에 연결할 수 없습니다: ${BASE_URL}\n개발 서버가 실행 중인지 확인하세요.`);
       }
     }
@@ -122,7 +183,8 @@ async function login(page) {
 async function capturePaymentScreenshots() {
   console.log('📸 Payment Process Screenshots 캡처 시작\n');
   console.log(`🌐 Base URL: ${BASE_URL}`);
-  console.log(`📧 Test Email: ${TEST_EMAIL}\n`);
+  console.log(`📧 Test Email: ${TEST_EMAIL}`);
+  console.log(`🔧 서버 자동 시작: ${AUTO_START_SERVER ? '활성화' : '비활성화'}\n`);
 
   const browser = await chromium.launch({ headless: false }); // 디버깅을 위해 headless: false
   const context = await browser.newContext({
@@ -132,13 +194,20 @@ async function capturePaymentScreenshots() {
   const page = await context.newPage();
 
   try {
-    // 0. 서버 연결 확인
+    // 0. 서버 시작 (필요한 경우)
+    if (AUTO_START_SERVER) {
+      serverProcess = await startServer();
+      // 서버가 시작될 때까지 대기
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+
+    // 1. 서버 연결 확인
     await checkServerConnection(page);
     
-    // 1. 로그인
+    // 2. 로그인
     await login(page);
 
-    // 2. 서비스 페이지 (장바구니 버튼 보이는 상태)
+    // 3. 서비스 페이지 (장바구니 버튼 보이는 상태)
     console.log('1️⃣ 서비스 페이지 캡처 중...');
     await page.goto(`${BASE_URL}/services`);
     await captureScreenshot(
@@ -147,7 +216,7 @@ async function capturePaymentScreenshots() {
       '서비스 목록 페이지 (장바구니 버튼 포함)'
     );
 
-    // 3. 장바구니에 아이템 추가 (첫 번째 서비스)
+    // 4. 장바구니에 아이템 추가 (첫 번째 서비스)
     console.log('2️⃣ 장바구니에 아이템 추가 중...');
     const firstServiceCard = page.locator('.service-card, [data-testid="service-card"]').first();
     const addToCartButton = firstServiceCard.locator('button:has-text("장바구니")');
@@ -162,7 +231,7 @@ async function capturePaymentScreenshots() {
       await page.click('button:has-text("장바구니")');
     }
 
-    // 4. 장바구니 Drawer 열기
+    // 5. 장바구니 Drawer 열기
     console.log('3️⃣ 장바구니 Drawer 캡처 중...');
     await page.click('button[aria-label="장바구니"], button:has-text("장바구니")');
     await page.waitForTimeout(1000); // Drawer 애니메이션 대기
@@ -172,7 +241,7 @@ async function capturePaymentScreenshots() {
       '장바구니 Drawer (슬라이드 패널)'
     );
 
-    // 5. 체크아웃 페이지로 이동
+    // 6. 체크아웃 페이지로 이동
     console.log('4️⃣ 체크아웃 페이지 캡처 중...');
     await page.click('button:has-text("주문하기"), a[href*="checkout"]');
     await page.waitForURL(/\/checkout/, { timeout: 10000 });
@@ -193,7 +262,7 @@ async function capturePaymentScreenshots() {
       '체크아웃 페이지 (배송 정보 폼 + 주문 요약)'
     );
 
-    // 6. 결제 페이지로 이동 (주문 생성)
+    // 7. 결제 페이지로 이동 (주문 생성)
     console.log('5️⃣ 결제 수단 선택 페이지 캡처 중...');
 
     // 주문하기 버튼 클릭
@@ -208,7 +277,7 @@ async function capturePaymentScreenshots() {
       '결제 수단 선택 페이지 (Kakao Pay / Toss Payments)'
     );
 
-    // 7. 주문 내역 페이지
+    // 8. 주문 내역 페이지
     console.log('6️⃣ 주문 내역 페이지 캡처 중...');
     await page.goto(`${BASE_URL}/orders`);
     await captureScreenshot(
@@ -217,7 +286,7 @@ async function capturePaymentScreenshots() {
       '주문 내역 페이지 (목록 + 필터)'
     );
 
-    // 8. 주문 상세 페이지 (첫 번째 주문)
+    // 9. 주문 상세 페이지 (첫 번째 주문)
     console.log('7️⃣ 주문 상세 페이지 캡처 중...');
     const firstOrderRow = page.locator('table tbody tr, [data-testid="order-item"]').first();
     if (await firstOrderRow.isVisible()) {
@@ -253,11 +322,27 @@ async function capturePaymentScreenshots() {
     throw error;
   } finally {
     await browser.close();
+    // 서버 종료
+    stopServer();
   }
 }
 
 // 실행
 capturePaymentScreenshots().catch((error) => {
   console.error('Fatal error:', error);
+  // 서버가 실행 중이면 종료
+  stopServer();
   process.exit(1);
+});
+
+// 프로세스 종료 시 서버도 함께 종료
+process.on('SIGINT', () => {
+  console.log('\n\n⚠️ 프로세스가 중단되었습니다.');
+  stopServer();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  stopServer();
+  process.exit(0);
 });
