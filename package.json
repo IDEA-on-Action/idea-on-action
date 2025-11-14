@@ -29,6 +29,7 @@
     "release:first": "standard-version --first-release",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:rss": "tsx scripts/generate-rss.ts",
+    "generate:screenshots": "node scripts/capture-payment-screenshots.js",
     "check:rls": "node scripts/check-rls-policies.js",
     "fix:rls": "node scripts/apply-rls-policies.js",
     "verify:gtm": "node scripts/verify-google-tags.js"

@@ -6,33 +6,22 @@
 
 import { Helmet } from 'react-helmet-async'
 import { PageLayout } from '@/components/layouts/PageLayout'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertTriangle } from 'lucide-react'
 
 export default function Privacy() {
   return (
     <>
       <Helmet>
-        <title>개인정보처리방침 - IDEA on Action</title>
+        <title>개인정보처리방침 - 생각과 행동</title>
         <meta
           name="description"
-          content="IDEA on Action 개인정보처리방침입니다."
+          content="생각과 행동 (IDEA on Action) 개인정보처리방침입니다."
         />
       </Helmet>
 
       <PageLayout
         title="개인정보처리방침"
-        description="IDEA on Action은 이용자의 개인정보를 소중히 다룹니다."
+        description="생각과 행동은 이용자의 개인정보를 소중히 다룹니다."
       >
-        {/* 법률 검토 경고 */}
-        <Alert variant="destructive" className="mb-8">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>법률 전문가 검토 필수</AlertTitle>
-          <AlertDescription>
-            이 문서는 템플릿이며, 반드시 법률 전문가(변호사)의 검토를 받아야 합니다.
-            개인정보보호법 위반 시 최대 5천만원의 과태료가 부과될 수 있습니다.
-          </AlertDescription>
-        </Alert>
 
         <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <p className="text-sm text-muted-foreground">
@@ -40,7 +29,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            IDEA on Action(이하 "회사")은 「개인정보 보호법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」,
+            생각과 행동(이하 "회사")은 「개인정보 보호법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」,
             「전자금융거래법」 등 관련 법령을 준수하며, 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록
             다음과 같이 개인정보 처리방침을 수립·공개합니다.
           </p>
@@ -270,7 +259,7 @@ export default function Privacy() {
             <p>
               <strong>사업자 정보</strong>
             </p>
-            <p>상호: IDEA on Action (생각과행동)</p>
+            <p>상호: 생각과 행동 (IDEA on Action)</p>
             <p>대표자: 서민원</p>
             <p>사업자등록번호: 537-05-01511</p>
             <p>주소: 경기도 시흥시 대은로104번길 11 (은행동, 우남아파트) 103동 601호</p>

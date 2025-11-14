@@ -6,30 +6,19 @@
 
 import { Helmet } from 'react-helmet-async'
 import { PageLayout } from '@/components/layouts/PageLayout'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertTriangle } from 'lucide-react'
 
 export default function Terms() {
   return (
     <>
       <Helmet>
-        <title>이용약관 - IDEA on Action</title>
-        <meta name="description" content="IDEA on Action 서비스 이용약관입니다." />
+        <title>이용약관 - 생각과 행동</title>
+        <meta name="description" content="생각과 행동 (IDEA on Action) 서비스 이용약관입니다." />
       </Helmet>
 
       <PageLayout
         title="이용약관"
-        description="IDEA on Action 서비스 이용약관입니다."
+        description="생각과 행동 (IDEA on Action) 서비스 이용약관입니다."
       >
-        {/* 법률 검토 경고 */}
-        <Alert variant="destructive" className="mb-8">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>법률 전문가 검토 필수</AlertTitle>
-          <AlertDescription>
-            이 문서는 템플릿이며, 반드시 법률 전문가(변호사)의 검토를 받아야 합니다.
-            각 기업의 비즈니스 모델과 데이터 처리 방식에 맞춰 수정되어야 합니다.
-          </AlertDescription>
-        </Alert>
 
         <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <p className="text-sm text-muted-foreground">
@@ -38,7 +27,7 @@ export default function Terms() {
 
           <h2>제1조 (목적)</h2>
           <p>
-            이 약관은 IDEA on Action(이하 "회사")이 제공하는 웹사이트 및 관련 서비스(이하 "서비스")의 이용과 관련하여
+            이 약관은 생각과 행동(이하 "회사")이 제공하는 웹사이트 및 관련 서비스(이하 "서비스")의 이용과 관련하여
             회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
           </p>
 
@@ -185,7 +174,7 @@ export default function Terms() {
             <p>
               <strong>사업자 정보</strong>
             </p>
-            <p>상호: IDEA on Action (생각과행동)</p>
+            <p>상호: 생각과 행동 (IDEA on Action)</p>
             <p>대표자: 서민원</p>
             <p>사업자등록번호: 537-05-01511</p>
             <p>주소: 경기도 시흥시 대은로104번길 11 (은행동, 우남아파트) 103동 601호</p>

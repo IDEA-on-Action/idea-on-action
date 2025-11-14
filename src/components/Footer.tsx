@@ -101,7 +101,7 @@ const FOOTER_SECTIONS: FooterSection[] = [
 
 const COPYRIGHT_INFO = {
   year: new Date().getFullYear(),
-  company: "IDEA on Action (생각과행동)",
+  company: "생각과 행동 (IDEA on Action)",
   rights: "All rights reserved."
 } as const;
 
@@ -205,7 +205,7 @@ const Footer = ({ className = "" }: FooterProps) => {
           {/* Business Information */}
           <div className="text-center text-xs text-muted-foreground mb-6 space-y-1">
             <p>
-              <span className="font-semibold">IDEA on Action (생각과행동)</span> | 대표자: 서민원
+              <span className="font-semibold">생각과 행동 (IDEA on Action)</span> | 대표자: 서민원
             </p>
             <p>
               사업자등록번호: 537-05-01511 | 신고번호: 2025-경기시흥-2094

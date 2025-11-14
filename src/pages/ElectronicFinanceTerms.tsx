@@ -6,17 +6,15 @@
 
 import { Helmet } from 'react-helmet-async'
 import { PageLayout } from '@/components/layouts/PageLayout'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertTriangle } from 'lucide-react'
 
 export default function ElectronicFinanceTerms() {
   return (
     <>
       <Helmet>
-        <title>전자금융거래 기본약관 - IDEA on Action</title>
+        <title>전자금융거래 기본약관 - 생각과 행동</title>
         <meta
           name="description"
-          content="IDEA on Action 전자금융거래 기본약관입니다."
+          content="생각과 행동 (IDEA on Action) 전자금융거래 기본약관입니다."
         />
       </Helmet>
 
@@ -24,15 +22,6 @@ export default function ElectronicFinanceTerms() {
         title="전자금융거래 기본약관"
         description="전자금융거래법에 따른 전자결제 서비스 이용약관입니다."
       >
-        {/* 법률 검토 경고 */}
-        <Alert variant="destructive" className="mb-8">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>법률 전문가 검토 필수</AlertTitle>
-          <AlertDescription>
-            이 문서는 템플릿이며, 반드시 법률 전문가(변호사)의 검토를 받아야 합니다.
-            전자금융거래법 위반 시 법적 책임이 발생할 수 있습니다.
-          </AlertDescription>
-        </Alert>
 
         <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <p className="text-sm text-muted-foreground">
@@ -40,7 +29,7 @@ export default function ElectronicFinanceTerms() {
           </p>
 
           <p>
-            IDEA on Action(이하 "회사")은 「전자금융거래법」, 「전자상거래 등에서의 소비자보호에 관한 법률」,
+            생각과 행동(이하 "회사")은 「전자금융거래법」, 「전자상거래 등에서의 소비자보호에 관한 법률」,
             「여신전문금융업법」 등 관련 법령을 준수하며, 전자금융거래 서비스 제공을 위하여 다음과 같이 약관을 제정합니다.
           </p>
 
@@ -273,7 +262,7 @@ export default function ElectronicFinanceTerms() {
             <p>
               <strong>사업자 정보</strong>
             </p>
-            <p>상호: IDEA on Action (생각과행동)</p>
+            <p>상호: 생각과 행동 (IDEA on Action)</p>
             <p>대표자: 서민원</p>
             <p>사업자등록번호: 537-05-01511</p>
             <p>주소: 경기도 시흥시 대은로104번길 11 (은행동, 우남아파트) 103동 601호</p>
