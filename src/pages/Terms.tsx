@@ -31,7 +31,7 @@ export default function Terms() {
           </AlertDescription>
         </Alert>
 
-        <div className="prose prose-slate dark:prose-invert max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <p className="text-sm text-muted-foreground">
             <strong>시행일</strong>: 2025년 11월 14일
           </p>
