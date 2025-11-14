@@ -2,13 +2,73 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-01-14
-**현재 버전**: 2.0.0 (Sprint 3 완료 + 법적 문서 추가)
-**다음 버전**: 2.1.0 (Phase 15 시작 예정)
-**상태**: ✅ Production Ready | 🏛️ 법적 준비 완료 (토스 페이먼츠 필수 문서 4개)
+**마지막 업데이트**: 2025-11-14
+**현재 버전**: 2.0.0-sprint2.2 (Sprint 2 Day 1-2 완료)
+**다음 버전**: 2.0.0-sprint2.5 (Sprint 2 Day 3-5 진행 예정)
+**상태**: ✅ Production Ready | 🚀 Sprint 2 진행 중 (Supabase 연동 & 동적 페이지)
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-14: **Sprint 2 Day 1-2 완료** 🎉 - Supabase 연동 & 동적 페이지 구현 (10개 Task)
+  - **작업**: Supabase 스키마 검증, CRUD 훅 4개 생성, 동적 페이지 5개 구현
+  - **Day 1: Supabase Schema & CRUD** (T-2.1 ~ T-2.5, 6시간)
+    - ✅ T-2.1: Supabase 스키마 검증 및 샘플 데이터 삽입
+      - 기존 5개 테이블 검증 (projects, roadmap, logs, bounties, newsletter_subscriptions)
+      - work_with_us_inquiries 테이블 마이그레이션 생성 (20251114000010)
+      - 샘플 데이터 18개 레코드 삽입 (프로젝트 3개, 로드맵 3개, 로그 3개, 바운티 3개, 뉴스레터 3개, 문의 3개)
+      - Supabase Dashboard에서 수동 실행 완료
+    - ✅ T-2.2: useProjects 훅 생성 (Portfolio용, 210줄)
+      - 7개 훅: 목록, 단일, 상태별, 카테고리별, 생성, 수정, 삭제
+      - React Query staleTime: 5분
+      - 유닛 테스트 10개 작성 (요구사항 5개 초과)
+    - ✅ T-2.3: useRoadmap 훅 생성 (Roadmap용, 140줄)
+      - 5개 훅: 목록, 분기별, 생성, 수정, 삭제
+      - React Query staleTime: 5분
+      - 유닛 테스트 10개 작성
+    - ✅ T-2.4: useLogs 훅 생성 (Now용, 191줄)
+      - 6개 훅: 목록, 타입별, 프로젝트별, 생성, 수정, 삭제
+      - React Query staleTime: 1분 (실시간성 강조)
+      - 유닛 테스트 10+개 작성
+    - ✅ T-2.5: useBounties 훅 생성 (Lab용, 226줄)
+      - 7개 훅: 목록, 상태별, 단일, 지원, 생성, 수정, 삭제, 할당
+      - React Query staleTime: 1분
+      - 유닛 테스트 작성 완료
+  - **Day 2: 동적 페이지 구현** (T-2.6 ~ T-2.10, 10시간)
+    - ✅ T-2.6: Portfolio 페이지 (267줄, 이미 완전 구현됨)
+      - 상태별 필터링 (전체/진행중/검증/출시/대기)
+      - 통계 카드 5개, 프로젝트 카드 그리드 3열
+      - 진행률 Progress 바, 메트릭스 표시
+      - SEO 메타 태그, GA4 이벤트
+    - ✅ T-2.7: Roadmap 페이지 (318줄, 이미 완전 구현됨)
+      - 분기별 탭 네비게이션
+      - Quarter Overview (테마, 기간, 설명, 진행률)
+      - 리스크 레벨 Badge, 담당자 Badge
+      - 마일스톤 카드, KPIs 표시
+    - ✅ T-2.8: Now 페이지 (145줄, 타입 에러 수정)
+      - useLogs 훅 연동
+      - 타임라인 레이아웃 (카드 리스트)
+      - 타입별 아이콘 (release, learning, decision)
+      - **수정**: `log.createdAt` → `log.created_at`, author 필드 제거
+    - ✅ T-2.9: Lab 페이지 (253줄, 타입 에러 수정)
+      - useBounties 훅 연동
+      - 통계 카드 4개, 바운티 카드 그리드 2열
+      - 난이도 표시 (초급/중급/고급, 색상 구분)
+      - **수정**: `estimatedHours` → `estimated_hours`, `skillsRequired` → `skills_required`
+    - ✅ T-2.10: PortfolioDetail 페이지 (371줄, 이미 완전 구현됨)
+      - useProject(slug) 훅 연동
+      - 프로젝트 헤더, 주요 특징, 기술 스택
+      - 프로젝트 지표, 타임라인, 태그
+  - **파일 변경**: 2개 수정 (Now.tsx, Lab.tsx)
+  - **총 코드**: ~1,764줄 (페이지만), ~767줄 (훅만)
+  - **총 테스트**: 40+개 (훅 유닛 테스트)
+  - **빌드**: 32.25초 성공, 106 청크, ~620 KB gzip
+  - **커밋**: a0e99eb
+  - **교훈**:
+    - Supabase 필드명은 snake_case 사용 (created_at, estimated_hours, skills_required)
+    - TypeScript 타입 정의 시 DB 스키마와 정확히 일치 필요
+    - React Query 캐싱 전략: 정적 데이터 5분, 실시간 데이터 1분
+  - **다음 단계**: Sprint 2 Day 3-5 (Giscus 댓글, Work with Us 폼, 테스트 & 문서화)
+
 - 2025-01-14: **법적 문서 및 사업자 정보 추가** 🏛️ - 토스 페이먼츠 준비사항 완료
   - **작업**: Footer 사업자 정보 추가, 법적 문서 4개 페이지 생성
   - **주요 변경**:
