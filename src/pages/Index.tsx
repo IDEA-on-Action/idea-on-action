@@ -209,7 +209,11 @@ const Index = () => {
                     <span className="text-muted-foreground">전체 진행률</span>
                     <span className="font-semibold">{currentRoadmap.progress}%</span>
                   </div>
-                  <Progress value={currentRoadmap.progress} className="h-2" />
+                  <Progress
+                    value={currentRoadmap.progress}
+                    className="h-2"
+                    aria-label={`로드맵 진행률 ${currentRoadmap.progress}%`}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t">

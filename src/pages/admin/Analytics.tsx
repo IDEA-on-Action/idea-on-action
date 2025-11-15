@@ -57,20 +57,20 @@ export default function Analytics() {
       {/* 탭 네비게이션 */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
+          <TabsTrigger value="overview" className="flex items-center gap-2" aria-label="개요">
+            <Activity className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">개요</span>
           </TabsTrigger>
-          <TabsTrigger value="funnel" className="flex items-center gap-2">
-            <TrendingDown className="h-4 w-4" />
+          <TabsTrigger value="funnel" className="flex items-center gap-2" aria-label="퍼널 분석">
+            <TrendingDown className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">퍼널 분석</span>
           </TabsTrigger>
-          <TabsTrigger value="behavior" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
+          <TabsTrigger value="behavior" className="flex items-center gap-2" aria-label="사용자 행동">
+            <BarChart3 className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">사용자 행동</span>
           </TabsTrigger>
-          <TabsTrigger value="events" className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
+          <TabsTrigger value="events" className="flex items-center gap-2" aria-label="이벤트 로그">
+            <Clock className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">이벤트 로그</span>
           </TabsTrigger>
         </TabsList>

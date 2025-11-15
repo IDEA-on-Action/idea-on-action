@@ -135,7 +135,7 @@ const Footer = ({ className = "" }: FooterProps) => {
               {BRAND_INFO.description}
             </p>
             <nav aria-label="소셜 미디어 링크">
-              <div className="flex items-center gap-3 mb-6" role="list">
+              <div className="flex items-center gap-3 mb-6">
                 {SOCIAL_LINKS.map((social, index) => {
                   const Icon = social.icon;
                   return (
