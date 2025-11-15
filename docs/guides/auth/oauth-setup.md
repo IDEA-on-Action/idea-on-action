@@ -54,8 +54,8 @@ https://zykjdneewbzyazfukzyg.supabase.co/auth/v1/callback
    - 만들기 클릭
 
 6. **Client ID & Secret 복사**
-   - Client ID: `123456789-xxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com`
-   - Client Secret: `GOCSPX-xxxxxxxxxxxxxxxxxxxx`
+   - Client ID: `1073580175433-407gbhdutr4r57372q3efg5143tt4lor.apps.googleusercontent.com`
+   - Client Secret: `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`
 
 ### 2. Supabase 설정
 
