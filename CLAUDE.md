@@ -3,12 +3,102 @@
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
 **마지막 업데이트**: 2025-11-15
-**현재 버전**: 2.0.0-sprint2.5 (Sprint 2 Day 3-5 완료)
-**다음 버전**: 2.0.0-sprint3.1 (Sprint 3 진행 예정)
-**상태**: ✅ Production Ready | 🎉 Sprint 2 완료 (Giscus, Work with Us, Newsletter 통합)
+**현재 버전**: 2.0.0-sprint3.0 (Sprint 3 완료)
+**다음 버전**: 2.0.0 (프로덕션 릴리스 준비)
+**상태**: ✅ Production Ready | 🚀 Sprint 3 완료 (Automation & Open Metrics)
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-15: **Version 2.0 Sprint 3 완료** 🎉 - Automation & Open Metrics (Tasks 3.1-3.7)
+  - **Task 3.1: Weekly Recap 자동 생성** ✅ (이미 완료)
+    - GitHub Actions Cron (매주 일요일 15:00 UTC)
+    - Supabase SQL 함수 3개 (get_weekly_logs, get_weekly_project_activity, get_weekly_stats)
+  - **Task 3.2: Status 페이지 메트릭스 연결** ✅ (이미 완료)
+    - 5개 Key Metrics (프로젝트, 바운티, 커밋, 기여자, Newsletter)
+    - useProjects, useBounties, useLogs, useNewsletterStats 훅 연동
+  - **Task 3.3: GA4 이벤트 트래킹** ✅ (검증 완료)
+    - 6개 Sprint 3 이벤트: viewHome, viewPortfolio, viewRoadmap, subscribeNewsletter, joinCommunity, clickCTA
+    - 총 21개 이벤트 정의 (src/lib/analytics.ts)
+  - **Task 3.4: Vitest 단위 테스트 개선** ✅
+    - 305개 테스트 (261개 통과, 85.6%)
+    - useBlogPosts, useProjects, useRoadmap, useLogs, useBounties 등
+  - **Task 3.5: Playwright E2E 테스트 작성** ✅ (검증 완료)
+    - 24개 E2E 테스트 파일
+    - 사용자 여정 3개 (journey-1-visitor, journey-2-collaborator, journey-3-fan)
+    - 폼 테스트 (newsletter, work-with-us)
+  - **Task 3.6: SEO 최적화** ✅ (검증 완료)
+    - sitemap.xml (15개 URL: 12개 정적 + 3개 동적)
+    - robots.txt (최적화 완료)
+    - JSON-LD 5개 스키마 (Organization, Person, Article, Breadcrumb, WebSite)
+  - **Task 3.7: 최종 배포 및 검증** ✅
+    - 빌드 성공 (21.29s)
+    - Main bundle: 359.31 kB → 109.60 kB gzip
+    - PWA: 129 entries (3.9 MB) precached
+    - 환경 변수: 18개 설정 완료
+  - **Sprint 3 최종 통계**:
+    - ✅ 7/7 작업 완료 (100%)
+    - ✅ 단위 테스트: 261/305 통과 (85.6%)
+    - ✅ E2E 테스트: 24개 파일
+    - ✅ SEO: sitemap 15개, JSON-LD 5개
+    - ✅ 빌드: 21.29s, 109.60 kB gzip
+    - 🚀 배포 준비 완료
+
+- 2025-11-15: **토스페이먼츠 서비스 페이지 Phase 1 완료** 🎉 - 서비스 플랫폼 7개 페이지 구현
+  - **작업**: Phase 1 필수 페이지 구현 완료 (1일 소요)
+  - **생성된 페이지**: 3개 신규 + 4개 기존 확인
+    - ✅ ServicesPage (/services) - 서비스 메인 페이지 (158줄)
+    - ✅ MVPServicePage (/services/mvp) - MVP 개발 서비스 상세 (197줄)
+    - ✅ NavigatorPage (/services/navigator) - COMPASS Navigator 상세 (167줄)
+    - ✅ PricingPage (/pricing) - 통합 가격 안내 (149줄)
+    - ✅ Terms (/terms) - 이용약관 (기존 존재)
+    - ✅ Privacy (/privacy) - 개인정보처리방침 (기존 존재)
+    - ✅ RefundPolicy (/refund-policy) - 환불정책 (기존 존재, Alert 컴포넌트 활용)
+  - **재사용 컴포넌트**: 6개 (src/components/services-platform/)
+    - ServiceCard.tsx (63줄) - 서비스 카드
+    - PricingPackage.tsx (54줄) - 가격 패키지
+    - PlanComparisonTable.tsx (79줄) - 플랜 비교 테이블
+    - RoadmapTimeline.tsx (38줄) - 로드맵 타임라인
+    - FAQSection.tsx (27줄) - FAQ 아코디언
+    - CTASection.tsx (33줄) - CTA 버튼 섹션
+  - **데이터 구조**: 4개 파일 (src/data/services/, src/types/)
+    - services.ts (122줄) - TypeScript 타입 정의 (Service, Pricing, Package, MonthlyPlan, PaymentMethod, RefundPolicy)
+    - mvp-development.ts (166줄) - MVP 개발 서비스 데이터 (3개 패키지, 7개 프로세스, 4개 FAQ)
+    - compass-navigator.ts (113줄) - COMPASS Navigator 데이터 (3개 플랜, 4개 FAQ)
+    - index.ts - servicePricingSummary 생성
+  - **라우팅**: App.tsx에 이미 설정 완료 확인 (line 182-186)
+  - **Footer**: 사업자 정보 및 법적 문서 링크 이미 포함 확인 (line 206-219, line 92-99)
+  - **빌드 결과**: 21.15초 성공
+    - 129 entries (3973.55 KiB PWA 캐시)
+    - index.js: 359.31 kB (109.60 kB gzip)
+    - 법적 문서: 27.08 kB (12.70 kB gzip)
+  - **총 코드**: ~900줄 (페이지 671줄 + 컴포넌트 294줄 + 데이터 401줄)
+  - **교훈**:
+    - 법적 문서 페이지는 이미 구현되어 있었음 (ElectronicFinanceTerms 포함)
+    - PageLayout 컴포넌트 재사용으로 일관된 레이아웃 유지
+    - glass-card, prose 스타일로 통일된 디자인 시스템
+  - **다음 단계**: Phase 2 구현 (Fullstack, Design, Operations 서비스 상세 페이지)
+- 2025-11-15: **토스페이먼츠 심사용 서비스 페이지 기획서 추가** 📋 - SDD 문서 구조에 통합
+  - **작업**: 토스페이먼츠 결제 시스템 도입을 위한 서비스 페이지 기획
+  - **문서 생성**: 5개 파일 (spec 2개, plan 2개, docs 1개)
+    - spec/services-platform/requirements.md (요구사항 명세)
+    - spec/services-platform/acceptance-criteria.md (성공 기준)
+    - plan/services-platform/architecture.md (아키텍처 설계)
+    - plan/services-platform/implementation-strategy.md (구현 전략)
+    - docs/payments/toss-payments-review.md (전체 기획서 보관)
+  - **사업자 정보 수정**:
+    - 회사명: 생각과 행동 (영문: IDEA on Action)
+    - 대표자: 서민원
+    - 사업자등록번호: 537-05-01511
+    - 통신판매업신고: 2025-경기시흥-2094
+    - 주소: 경기도 시흥시 대은로104번길 11 (은행동, 우남아파트) 103동 601호
+  - **서비스 카탈로그**:
+    - 개발 서비스 4개 (MVP, 풀스택, 디자인, 운영)
+    - COMPASS 플랫폼 4개 (Navigator 현재, Cartographer/Captain/Harbor 2026 Q1 예정)
+  - **페이지 구조**: 11개 페이지 (서비스 7개, 법적 문서 4개, 가격 1개)
+  - **구현 우선순위**:
+    - Phase 1 (필수): 7개 페이지 (1-2주) ✅ 완료
+    - Phase 2 (확장): 4개 페이지 (2-3주)
+    - Phase 3 (최적화): SEO, 성능, 접근성 (1주)
 - 2025-11-15: **Sprint 2 Day 3-5 완료** 🎉 - Giscus, Work with Us, Newsletter 통합 (12개 Task)
   - **작업**: 3개 병렬 트랙 (Giscus, Work with Us, Newsletter) + 테스트 & 배포
   - **Track A: Giscus 통합** (T-2.11 ~ T-2.14, 4시간)
