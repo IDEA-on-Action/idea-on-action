@@ -317,9 +317,28 @@ curl https://www.ideaonaction.ai/robots.txt
 - **커밋**: 19c26ef
 - **빌드**: 23.45s, 150 PWA entries (4.06 MB)
 
+**4. Services 페이지 접근성 개선** (완료: 2025-11-15)
+- **변경 파일**: src/pages/Services.tsx
+- **개선 사항**:
+  - 폼 요소 레이블 연결 (aria-labelledby)
+    - Select (정렬) → "sort-label"
+    - Tabs (카테고리) → "category-label"
+  - ARIA 속성 추가
+    - main: aria-label="서비스 목록"
+    - 로딩 상태: aria-label="카테고리 로딩 중"
+    - 빈 상태: role="status"
+    - 장식용 아이콘: aria-hidden="true"
+- **효과**:
+  - 스크린 리더가 폼 컨트롤을 정확히 인식
+  - 상태 변화 명확 전달
+  - WCAG 2.1 AA 준수 향상
+- **예상 효과**: Lighthouse Accessibility 84% → 85%+
+- **커밋**: 63fdf21
+- **빌드**: 35.41s, 150 PWA entries (4.06 MB)
+
 ### ⏳ 진행 중인 작업
 
-**4. Performance 개선** (진행 중)
+**5. Performance 개선** (진행 중)
 - [ ] LCP (Largest Contentful Paint) 최적화
   - [x] 이미지 lazy loading 추가 (완료)
   - [x] 폰트 preload 추가 (완료)
@@ -331,11 +350,10 @@ curl https://www.ideaonaction.ai/robots.txt
 - [x] CLS (Cumulative Layout Shift) 최적화 (완료)
   - [x] 이미지 width/height 속성 추가 (완료)
   - [ ] 광고/위젯 공간 예약
-
-**4. Accessibility 개선** (대기 중)
-- [ ] Services 페이지 접근성 진단 (84% → 85%+)
-- [ ] ARIA 레이블 추가
-- [ ] 키보드 네비게이션 개선
+- [x] Accessibility 최적화 (완료)
+  - [x] Services 페이지 접근성 (84% → 85%+)
+  - [x] ARIA 레이블 추가
+  - [ ] 키보드 네비게이션 개선 (선택)
 
 ---
 
