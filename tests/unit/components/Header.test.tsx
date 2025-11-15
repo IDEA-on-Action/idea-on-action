@@ -64,7 +64,7 @@ describe('Header Component', () => {
     );
     
     // Desktop navigation items should be visible
-    expect(screen.getAllByText('서비스').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('회사소개').length).toBeGreaterThan(0);
     expect(screen.getByText('기술')).toBeInTheDocument();
     expect(screen.getByText('회사소개')).toBeInTheDocument();
     expect(screen.getByText('문의')).toBeInTheDocument();
@@ -118,7 +118,7 @@ describe('Header Component', () => {
     fireEvent.click(mobileMenuButton);
     
     await waitFor(() => {
-      expect(screen.getAllByText('서비스').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('회사소개').length).toBeGreaterThan(0);
       expect(screen.getAllByText('기술').length).toBeGreaterThan(0);
       expect(screen.getAllByText('회사소개').length).toBeGreaterThan(0);
       expect(screen.getAllByText('문의').length).toBeGreaterThan(0);
@@ -140,11 +140,11 @@ describe('Header Component', () => {
     });
     
     // Simulate route change - use getAllByText and click the first one (mobile menu)
-    const serviceLinks = screen.getAllByText('서비스');
-    const mobileServiceLink = serviceLinks.find(link => 
+    const aboutLinks = screen.getAllByText('회사소개');
+    const mobileAboutLink = aboutLinks.find(link =>
       link.closest('[class*="mobile"]') || link.closest('[class*="block"]')
-    ) || serviceLinks[0];
-    fireEvent.click(mobileServiceLink);
+    ) || aboutLinks[0];
+    fireEvent.click(mobileAboutLink);
     
     await waitFor(() => {
       expect(screen.getByLabelText('메뉴 열기')).toBeInTheDocument();
@@ -235,7 +235,7 @@ describe('Header Component', () => {
     );
     
     // Check for responsive navigation
-    const desktopNav = screen.getByText('서비스').closest('div');
+    const desktopNav = screen.getByText('회사소개').closest('div');
     expect(desktopNav).toHaveClass('hidden', 'md:flex');
     
     // Check for mobile menu button
