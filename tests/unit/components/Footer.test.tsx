@@ -56,44 +56,50 @@ describe('Footer Component', () => {
 
   it('displays social media links', () => {
     render(<Footer />);
-    
+
     expect(screen.getByLabelText('GitHub 프로필 방문하기')).toBeInTheDocument();
     expect(screen.getByLabelText('LinkedIn 프로필 방문하기')).toBeInTheDocument();
-    expect(screen.getByLabelText('이메일 보내기: sinclairseo@gmail.com')).toBeInTheDocument();
+    expect(screen.getByLabelText('이메일 보내기: sinclair.seo@ideaonaction.ai')).toBeInTheDocument();
   });
 
   it('displays footer sections', () => {
     render(<Footer />);
-    
+
     expect(screen.getByText('솔루션')).toBeInTheDocument();
     expect(screen.getByText('회사')).toBeInTheDocument();
     expect(screen.getByText('리소스')).toBeInTheDocument();
+    expect(screen.getByText('법적 정보')).toBeInTheDocument();
+    expect(screen.getByText('뉴스레터 구독')).toBeInTheDocument();
   });
 
   it('displays footer links', () => {
     render(<Footer />);
-    
+
     // 솔루션 섹션
     expect(screen.getByText('AI 컨설팅')).toBeInTheDocument();
     expect(screen.getByText('워크플로우 자동화')).toBeInTheDocument();
     expect(screen.getByText('데이터 분석')).toBeInTheDocument();
-    
+
     // 회사 섹션
     expect(screen.getByText('회사소개')).toBeInTheDocument();
-    expect(screen.getByText('기술')).toBeInTheDocument();
-    expect(screen.getByText('문의')).toBeInTheDocument();
-    
+    expect(screen.getByText('로드맵')).toBeInTheDocument();
+    expect(screen.getByText('협업하기')).toBeInTheDocument();
+
     // 리소스 섹션
     expect(screen.getByText('GitHub')).toBeInTheDocument();
     expect(screen.getByText('웹사이트')).toBeInTheDocument();
     expect(screen.getByText('블로그')).toBeInTheDocument();
+
+    // 법적 정보 섹션
+    expect(screen.getByText('이용약관')).toBeInTheDocument();
+    expect(screen.getByText('개인정보처리방침')).toBeInTheDocument();
   });
 
   it('displays copyright information', () => {
     render(<Footer />);
-    
+
     const currentYear = new Date().getFullYear();
-    expect(screen.getByText(`© ${currentYear} IDEA on Action (생각과행동). All rights reserved.`)).toBeInTheDocument();
+    expect(screen.getByText(`© ${currentYear} 생각과 행동 (IDEA on Action). All rights reserved.`)).toBeInTheDocument();
     expect(screen.getByText('KEEP AWAKE, LIVE PASSIONATE')).toBeInTheDocument();
   });
 
@@ -107,24 +113,24 @@ describe('Footer Component', () => {
 
   it('has proper semantic structure', () => {
     render(<Footer />);
-    
+
     // Check for footer element
     const footer = screen.getByRole('contentinfo');
     expect(footer).toBeInTheDocument();
-    
+
     // Check for headings
     const headings = screen.getAllByRole('heading', { level: 4 });
-    expect(headings).toHaveLength(3); // 솔루션, 회사, 리소스
+    expect(headings).toHaveLength(5); // 솔루션, 회사, 리소스, 법적 정보, 뉴스레터 구독
   });
 
   it('has proper accessibility attributes', () => {
     render(<Footer />);
-    
+
     // Check for proper ARIA labels
     expect(screen.getByLabelText('소셜 미디어 링크')).toBeInTheDocument();
     expect(screen.getByLabelText('GitHub 프로필 방문하기')).toBeInTheDocument();
     expect(screen.getByLabelText('LinkedIn 프로필 방문하기')).toBeInTheDocument();
-    expect(screen.getByLabelText('이메일 보내기: sinclairseo@gmail.com')).toBeInTheDocument();
+    expect(screen.getByLabelText('이메일 보내기: sinclair.seo@ideaonaction.ai')).toBeInTheDocument();
   });
 
   it('has proper external link attributes', () => {
@@ -141,9 +147,9 @@ describe('Footer Component', () => {
 
   it('has proper internal link attributes', () => {
     render(<Footer />);
-    
-    const emailLink = screen.getByLabelText('이메일 보내기: sinclairseo@gmail.com');
-    expect(emailLink).toHaveAttribute('href', 'mailto:sinclairseo@gmail.com');
+
+    const emailLink = screen.getByLabelText('이메일 보내기: sinclair.seo@ideaonaction.ai');
+    expect(emailLink).toHaveAttribute('href', 'mailto:sinclair.seo@ideaonaction.ai');
     expect(emailLink).not.toHaveAttribute('target');
     expect(emailLink).not.toHaveAttribute('rel');
   });
@@ -173,9 +179,9 @@ describe('Footer Component', () => {
 
   it('renders with proper responsive classes', () => {
     render(<Footer />);
-    
+
     const grid = screen.getByRole('contentinfo').querySelector('.grid');
-    expect(grid).toHaveClass('md:grid-cols-4');
+    expect(grid).toHaveClass('md:grid-cols-2');
   });
 
   it('has proper logo attributes', () => {
@@ -236,12 +242,12 @@ describe('Footer Component', () => {
 
   it('has proper link structure for internal navigation', () => {
     render(<Footer />);
-    
+
     const aboutLink = screen.getByText('회사소개');
-    expect(aboutLink.closest('a')).toHaveAttribute('href', '#about');
-    
-    const contactLink = screen.getByText('문의');
-    expect(contactLink.closest('a')).toHaveAttribute('href', '#contact');
+    expect(aboutLink.closest('a')).toHaveAttribute('href', '/about');
+
+    const roadmapLink = screen.getByText('로드맵');
+    expect(roadmapLink.closest('a')).toHaveAttribute('href', '/roadmap');
   });
 
   it('has proper icon rendering', () => {
@@ -253,10 +259,10 @@ describe('Footer Component', () => {
 
   it('has proper section headings', () => {
     render(<Footer />);
-    
+
     const headings = screen.getAllByRole('heading', { level: 4 });
-    expect(headings).toHaveLength(3);
-    
+    expect(headings).toHaveLength(5);
+
     const headingTexts = headings.map(heading => heading.textContent);
     expect(headingTexts).toContain('솔루션');
     expect(headingTexts).toContain('회사');

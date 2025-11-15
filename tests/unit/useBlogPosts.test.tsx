@@ -53,11 +53,24 @@ describe('useBlogPosts', () => {
       }
     ]
 
-    vi.mocked(supabase.from).mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockResolvedValue({ data: mockRawPosts, error: null })
-    } as any)
+    // Mock blog_posts query
+    vi.mocked(supabase.from).mockImplementation((table) => {
+      if (table === 'blog_posts') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          order: vi.fn().mockResolvedValue({ data: mockRawPosts, error: null })
+        } as any
+      }
+      // Mock user_profiles query
+      if (table === 'user_profiles') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          in: vi.fn().mockResolvedValue({ data: [], error: null })
+        } as any
+      }
+      return {} as any
+    })
 
     const { result } = renderHook(() => useBlogPosts(), { wrapper })
 
