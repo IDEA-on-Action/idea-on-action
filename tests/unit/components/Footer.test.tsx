@@ -3,6 +3,15 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Footer from '@/components/Footer';
+import { vi } from 'vitest';
+
+// Mock useNewsletter hook
+vi.mock('@/hooks/useNewsletter', () => ({
+  useSubscribeNewsletter: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+  }),
+}));
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations);

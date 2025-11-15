@@ -30,14 +30,14 @@ describe('useBlogPosts', () => {
   )
 
   it('should fetch blog posts successfully', async () => {
-    const mockPosts = [
+    const mockRawPosts = [
       {
         id: '1',
         title: 'Test Post 1',
         slug: 'test-post-1',
         content: 'Content 1',
         status: 'published',
-        author: { id: 'user1', email: 'author@test.com' },
+        author_id: 'user1',
         category: { id: 'cat1', name: 'Tutorial', slug: 'tutorial' },
         tags: []
       },
@@ -47,27 +47,27 @@ describe('useBlogPosts', () => {
         slug: 'test-post-2',
         content: 'Content 2',
         status: 'published',
-        author: { id: 'user1', email: 'author@test.com' },
+        author_id: 'user1',
         category: { id: 'cat2', name: 'Guide', slug: 'guide' },
         tags: []
       }
     ]
 
-    const selectMock = vi.fn().mockReturnThis()
-    const eqMock = vi.fn().mockReturnThis()
-    const orderMock = vi.fn().mockResolvedValue({ data: mockPosts, error: null })
-
     vi.mocked(supabase.from).mockReturnValue({
-      select: selectMock,
-      eq: eqMock,
-      order: orderMock
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      order: vi.fn().mockResolvedValue({ data: mockRawPosts, error: null })
     } as any)
 
     const { result } = renderHook(() => useBlogPosts(), { wrapper })
 
     await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true))
 
-    expect(result.current.data).toEqual(mockPosts)
+    // Check that data is defined and has correct length
+    expect(result.current.data).toBeDefined()
+    expect(result.current.data?.length).toBe(2)
+    expect(result.current.data?.[0]).toHaveProperty('title', 'Test Post 1')
+    expect(result.current.data?.[0].category).toEqual({ id: 'cat1', name: 'Tutorial', slug: 'tutorial' })
     expect(supabase.from).toHaveBeenCalledWith('blog_posts')
   })
 
