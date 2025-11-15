@@ -1,16 +1,26 @@
 import { render as rtlRender, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Footer from '@/components/Footer';
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations);
 
-// Custom render with Router wrapper
+// Custom render with Router and QueryClient wrapper
 const render = (ui: React.ReactElement, options = {}) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
   return rtlRender(ui, {
     wrapper: ({ children }: { children: React.ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>{children}</BrowserRouter>
+      </QueryClientProvider>
     ),
     ...options,
   });
