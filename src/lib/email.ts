@@ -229,3 +229,90 @@ export async function sendNewsletterWelcomeEmail(
     } as ReactElement,
   })
 }
+
+/**
+ * Work with Us 문의 이메일 전송
+ */
+export interface WorkWithUsEmailData {
+  name: string
+  email: string
+  company?: string
+  package: string
+  budget?: string
+  brief: string
+}
+
+export async function sendWorkWithUsEmail(
+  data: WorkWithUsEmailData
+): Promise<SendEmailResult> {
+  try {
+    // API 키 체크
+    if (!import.meta.env.VITE_RESEND_API_KEY && !import.meta.env.RESEND_API_KEY) {
+      devWarn('RESEND_API_KEY is not set')
+      return {
+        success: false,
+        error: 'Email API key is not configured',
+      }
+    }
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ['sinclairseo@gmail.com'],
+      subject: `[Work with Us] ${data.name} - ${data.package}`,
+      html: `
+        <!DOCTYPE html>
+        <html lang="ko">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+            <h1 style="color: white; margin: 0;">Work with Us 문의</h1>
+          </div>
+          <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+            <table style="width: 100%; border-collapse: collapse; background: white; padding: 20px; border-radius: 8px;">
+              <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">이름</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${data.name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">이메일</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;"><a href="mailto:${data.email}">${data.email}</a></td>
+              </tr>
+              ${data.company ? `
+              <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">회사</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${data.company}</td>
+              </tr>
+              ` : ''}
+              <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">패키지</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;"><strong>${data.package}</strong></td>
+              </tr>
+              ${data.budget ? `
+              <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">예산</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${data.budget}</td>
+              </tr>
+              ` : ''}
+            </table>
+            <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px;">
+              <h3 style="margin-top: 0;">상세 설명</h3>
+              <p style="white-space: pre-wrap;">${data.brief}</p>
+            </div>
+            <p style="text-align: center; color: #6b7280; font-size: 14px; margin-top: 20px;">
+              IDEA on Action | www.ideaonaction.ai
+            </p>
+          </div>
+        </body>
+        </html>
+      `,
+    })
+
+    return { success: true, data: result }
+  } catch (error) {
+    devError(error, { service: 'Email', operation: 'Work with Us 이메일 전송' })
+    return { success: false, error }
+  }
+}

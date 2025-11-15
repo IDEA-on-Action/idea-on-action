@@ -21,28 +21,26 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useSubmitProposal } from '@/hooks/useProposals';
+import { useSubmitWorkInquiry, type WorkInquiry } from '@/hooks/useWorkInquiries';
 import { toast } from 'sonner';
-import type { ProposalFormValues } from '@/types/v2';
 
 const proposalSchema = z.object({
   name: z.string().min(2, '이름은 2자 이상 입력해주세요'),
   email: z.string().email('올바른 이메일 형식이 아닙니다'),
   company: z.string().optional(),
-  package: z.enum(['mvp', 'consulting', 'design', 'other'], {
+  package: z.enum(['MVP', 'Growth', 'Custom'], {
     required_error: '패키지를 선택해주세요',
   }),
   budget: z.string().optional(),
-  message: z.string().min(50, '최소 50자 이상 입력해주세요'),
-  preferred_contact: z.enum(['email', 'phone', 'calendar']).optional(),
-  phone: z.string().optional(),
+  brief: z.string().min(50, '최소 50자 이상 입력해주세요'),
 });
 
+type ProposalFormValues = z.infer<typeof proposalSchema>;
+
 const packageLabels = {
-  mvp: 'MVP 개발',
-  consulting: '기술 컨설팅',
-  design: '디자인 시스템',
-  other: '기타',
+  MVP: 'MVP 개발 - 빠른 시장 검증',
+  Growth: 'Growth 패키지 - 성장 가속화',
+  Custom: 'Custom - 맞춤형 솔루션',
 };
 
 const contactLabels = {
@@ -53,7 +51,7 @@ const contactLabels = {
 
 export const WorkWithUsForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { mutateAsync: submitProposal } = useSubmitProposal();
+  const { mutateAsync: submitInquiry } = useSubmitWorkInquiry();
 
   const form = useForm<ProposalFormValues>({
     resolver: zodResolver(proposalSchema),
@@ -61,20 +59,18 @@ export const WorkWithUsForm = () => {
       name: '',
       email: '',
       company: '',
-      package: 'mvp',
+      package: 'MVP',
       budget: '',
-      message: '',
-      preferred_contact: 'email',
-      phone: '',
+      brief: '',
     },
   });
 
   const onSubmit = async (values: ProposalFormValues) => {
     try {
       setIsSubmitting(true);
-      await submitProposal(values);
-      toast.success('제안서가 성공적으로 전송되었습니다!', {
-        description: '영업일 기준 2-3일 내에 답변드리겠습니다.',
+      await submitInquiry(values as WorkInquiry);
+      toast.success('문의가 접수되었습니다!', {
+        description: '빠른 시일 내에 연락드리겠습니다. 감사합니다!',
       });
       form.reset();
     } catch (error) {
@@ -226,10 +222,10 @@ export const WorkWithUsForm = () => {
           />
         )}
 
-        {/* Message */}
+        {/* Brief */}
         <FormField
           control={form.control}
-          name="message"
+          name="brief"
           render={({ field }) => (
             <FormItem>
               <FormLabel>프로젝트 설명 *</FormLabel>

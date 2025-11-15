@@ -38,10 +38,10 @@ interface GiscusCommentsProps {
  * />
  */
 export const GiscusComments = ({
-  repo = 'IDEA-on-Action/idea-on-action', // TODO: Update with your repo
-  repoId = 'CONFIGURE_REPO_ID', // TODO: Get from https://giscus.app/
-  category = 'General',
-  categoryId = 'CONFIGURE_CATEGORY_ID', // TODO: Get from https://giscus.app/
+  repo = import.meta.env.VITE_GISCUS_REPO || 'IDEA-on-Action/idea-on-action',
+  repoId = import.meta.env.VITE_GISCUS_REPO_ID || 'CONFIGURE_REPO_ID',
+  category = import.meta.env.VITE_GISCUS_CATEGORY_GENERAL || 'General',
+  categoryId = import.meta.env.VITE_GISCUS_CATEGORY_GENERAL_ID || 'CONFIGURE_CATEGORY_ID',
   mapping = 'pathname',
   reactionsEnabled = true,
   lang = 'ko',

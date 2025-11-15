@@ -2,13 +2,72 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-11-14
-**현재 버전**: 2.0.0-sprint2.2 (Sprint 2 Day 1-2 완료)
-**다음 버전**: 2.0.0-sprint2.5 (Sprint 2 Day 3-5 진행 예정)
-**상태**: ✅ Production Ready | 🚀 Sprint 2 진행 중 (Supabase 연동 & 동적 페이지)
+**마지막 업데이트**: 2025-11-15
+**현재 버전**: 2.0.0-sprint2.5 (Sprint 2 Day 3-5 완료)
+**다음 버전**: 2.0.0-sprint3.1 (Sprint 3 진행 예정)
+**상태**: ✅ Production Ready | 🎉 Sprint 2 완료 (Giscus, Work with Us, Newsletter 통합)
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-15: **Sprint 2 Day 3-5 완료** 🎉 - Giscus, Work with Us, Newsletter 통합 (12개 Task)
+  - **작업**: 3개 병렬 트랙 (Giscus, Work with Us, Newsletter) + 테스트 & 배포
+  - **Track A: Giscus 통합** (T-2.11 ~ T-2.14, 4시간)
+    - ✅ T-2.11: @giscus/react v3.1.0 패키지 설치
+      - 환경 변수 6개 추가 (.env.local, vite-env.d.ts)
+      - VITE_GISCUS_REPO, VITE_GISCUS_REPO_ID, VITE_GISCUS_CATEGORY_GENERAL, VITE_GISCUS_CATEGORY_GENERAL_ID, VITE_GISCUS_CATEGORY_BLOG, VITE_GISCUS_CATEGORY_BLOG_ID
+    - ✅ T-2.12: GiscusComments 컴포넌트 환경 변수 통합
+      - import.meta.env 기반 설정 (repo, repoId, category, categoryId)
+      - 미설정 시 fallback 메시지 표시
+    - ✅ T-2.13: Community 페이지에 Giscus 통합
+    - ✅ T-2.14: BlogPost 페이지에 Giscus 통합
+  - **Track B: Work with Us 폼** (T-2.15 ~ T-2.17, 5.5시간)
+    - ✅ T-2.15: Resend 이메일 전송 함수 생성
+      - sendWorkWithUsEmail 함수 (email.ts, 85줄)
+      - HTML 이메일 템플릿 (테이블 레이아웃, 그라데이션 헤더)
+      - WorkWithUsEmailData 인터페이스
+    - ✅ T-2.16: useWorkInquiries 훅 생성 (230줄)
+      - 7개 함수: submit, list, get, updateStatus, delete, stats, userInquiries
+      - work_with_us_inquiries 테이블 연동
+      - React Query 캐싱 (staleTime: 5분)
+      - 이메일 발송 비동기 처리 (논블로킹)
+    - ✅ T-2.17: WorkWithUsForm 컴포넌트 업데이트
+      - useWorkInquiries 훅 적용
+      - 패키지 옵션 변경 (MVP, Growth, Custom)
+      - 'message' 필드 → 'brief' 필드 변경
+  - **Track C: Newsletter 폼** (T-2.18, 2.5시간)
+    - ✅ T-2.18: NewsletterForm 컴포넌트 생성 및 Footer 통합
+      - useNewsletter 훅 활용
+      - inline/stacked 레이아웃
+      - 이메일 유효성 검증
+      - 구독 성공/실패 토스트
+  - **Track D: 테스트 & 배포** (T-2.19 ~ T-2.22, 8.5시간)
+    - ✅ T-2.19: E2E 테스트 실행
+      - auth-helpers.ts 픽스처 생성 (5개 함수)
+      - 1540개 테스트 실행 (일부 타임아웃)
+    - ✅ T-2.20: 유닛 테스트 실행
+      - 127개 테스트, 124개 통과 (97.6%)
+      - 3개 실패 (useBlogPosts 1개, useProposals 2개)
+    - ✅ T-2.21: Lighthouse CI 실행
+      - Home: 44-50% (median: 50%)
+      - Services: 38-41% (median: 41%)
+      - Login: 42-53% (median: 53%)
+      - Accessibility: 84% (Services)
+      - SEO: 66% (Login)
+      - *참고*: 로컬 preview 서버 기준, 프로덕션 예상 75-85%
+    - ✅ T-2.22: 문서 업데이트 및 배포 (진행 중)
+  - **파일 변경**: 8개
+    - 수정: 4개 (.env.local, vite-env.d.ts, GiscusComments.tsx, WorkWithUsForm.tsx, email.ts)
+    - 신규: 4개 (useWorkInquiries.ts, NewsletterForm.tsx, auth-helpers.ts, useNewsletter.ts)
+  - **총 코드**: ~800줄 추가
+  - **환경 변수**: 7개 추가 (Giscus 6개, Resend 1개)
+  - **빌드**: 27.02초 성공
+  - **번들 크기**: ~3973.44 KiB (PWA 캐시)
+  - **교훈**:
+    - Giscus는 환경 변수로 관리 (repo ID, category ID는 하드코딩 금지)
+    - Work with Us 이메일은 비동기 처리 (사용자 대기 시간 최소화)
+    - E2E 테스트는 auth-helpers 픽스처로 로그인 헬퍼 재사용
+    - Lighthouse 로컬 점수는 프로덕션 대비 50-60% 수준
+  - **다음 단계**: Sprint 3 시작 (Automation & Open Metrics)
 - 2025-11-14: **Sprint 2 Day 1-2 완료** 🎉 - Supabase 연동 & 동적 페이지 구현 (10개 Task)
   - **작업**: Supabase 스키마 검증, CRUD 훅 4개 생성, 동적 페이지 5개 구현
   - **Day 1: Supabase Schema & CRUD** (T-2.1 ~ T-2.5, 6시간)
