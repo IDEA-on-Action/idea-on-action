@@ -66,21 +66,9 @@ describe('useServices', () => {
 
   it('서비스 목록을 성공적으로 조회해야 함', async () => {
     // Setup
-    const orderMock = vi.fn().mockResolvedValue({
-      data: mockServices,
-      error: null,
-    });
-
-    const eqMock = vi.fn().mockReturnValue({
-      order: orderMock,
-    });
-
-    const selectMock = vi.fn().mockReturnValue({
-      eq: eqMock,
-    });
-
     vi.mocked(supabase.from).mockReturnValue({
-      select: selectMock,
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockResolvedValue({ data: mockServices, error: null })
     } as any);
 
     // Execute
@@ -191,17 +179,10 @@ describe('useServices', () => {
 
   it('에러 발생 시 에러 상태를 반환해야 함', async () => {
     // Setup
-    const selectMock = vi.fn().mockReturnThis();
-    const eqMock = vi.fn().mockRejectedValue(new Error('Database error'));
-
     vi.mocked(supabase.from).mockReturnValue({
-      select: selectMock,
-      eq: eqMock,
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockRejectedValue(new Error('Database error'))
     } as any);
-
-    selectMock.mockReturnValue({
-      eq: eqMock,
-    });
 
     // Execute
     const { result } = renderHook(() => useServices(), { wrapper });
