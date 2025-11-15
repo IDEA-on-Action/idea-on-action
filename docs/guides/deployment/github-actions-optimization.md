@@ -317,11 +317,11 @@ jobs:
 ### 1. Node 버전 통일
 
 **Before**:
-- ci.yml, deploy-*.yml: Node 18
+- ci.yml, deploy-*.yml, release.yml: Node 18
 - test-*.yml, lighthouse.yml: Node 20
 
 **After**:
-- 모든 워크플로우: **Node 20**
+- **모든 워크플로우: Node 20** (6개 워크플로우 전체)
 
 ### 2. 중복 제거
 
