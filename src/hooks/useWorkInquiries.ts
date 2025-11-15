@@ -9,7 +9,6 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
-import { sendWorkWithUsEmail, type WorkWithUsEmailData } from '@/lib/email'
 import { toast } from 'sonner'
 
 export interface WorkInquiry {
@@ -59,21 +58,23 @@ export function useSubmitWorkInquiry() {
         throw new Error('문의 접수에 실패했습니다. 잠시 후 다시 시도해주세요.')
       }
 
-      // 3. 이메일 발송 (비동기, 논블로킹)
+      // 3. 이메일 발송 (비동기, 논블로킹) - Supabase Edge Function 호출
       // 이메일 발송 실패해도 사용자 경험 차단하지 않음
-      const emailData: WorkWithUsEmailData = {
-        name: data.name,
-        email: data.email,
-        company: data.company,
-        package: data.package,
-        budget: data.budget,
-        brief: data.brief,
-      }
-
-      sendWorkWithUsEmail(emailData).catch((error) => {
-        console.error('Email send failed (non-blocking):', error)
-        // 이메일 발송 실패는 로그만 남기고 사용자에게는 알리지 않음
-      })
+      supabase.functions
+        .invoke('send-work-inquiry-email', {
+          body: {
+            name: data.name,
+            email: data.email,
+            company: data.company,
+            package: data.package,
+            budget: data.budget,
+            brief: data.brief,
+          },
+        })
+        .catch((error) => {
+          console.error('Email send failed (non-blocking):', error)
+          // 이메일 발송 실패는 로그만 남기고 사용자에게는 알리지 않음
+        })
 
       return inquiry as WorkInquiry
     },
