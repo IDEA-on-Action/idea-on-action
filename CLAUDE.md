@@ -9,6 +9,33 @@
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-15: **🔍 Google Search Console SEO 설정 & Sitemap 배포 수정** ✅ (커밋 9faf6d4)
+  - **작업**: Google Search Console 연동 및 sitemap.xml 404 오류 해결
+  - **발견한 문제**:
+    - sitemap.xml, robots.txt가 404 에러 발생
+    - vercel.json의 `rewrites: [{ source: "/(.*)", destination: "/index.html" }]` 설정이 모든 요청을 SPA로 리다이렉트
+    - 정적 파일(sitemap.xml, robots.txt)도 index.html로 넘어가서 404 발생
+  - **해결 방법**:
+    - vercel.json rewrites 정규식 수정: 정적 파일 제외 패턴 추가
+    - 제외 대상: sitemap.xml, robots.txt, 이미지/폰트/CSS/JS 파일
+    - 정규식: `/:path((?!sitemap\\.xml$|robots\\.txt$|.*\\.(ico|png|jpg|jpeg|svg|webp|gif|css|js|json|woff|woff2|ttf|otf)$).*)`
+  - **검증 결과**: ✅
+    - curl 테스트: HTTP 200 OK
+    - sitemap.xml 내용 정상 출력 (15개 URL)
+    - robots.txt 정상 출력 (543 bytes)
+    - Vercel 배포 완료 (X-Vercel-Cache: HIT)
+  - **변경 파일**: 1개
+    - `vercel.json` - rewrites 정규식 수정
+  - **커밋**: 9faf6d4
+  - **배포**: main 브랜치 푸시 완료 → Vercel 자동 배포 완료
+  - **Google Search Console 설정**:
+    - sitemap.xml 제출 완료 (https://www.ideaonaction.ai/sitemap.xml)
+    - 데이터 수집 대기 중 (24-48시간 예상)
+  - **교훈**:
+    - Vercel rewrites는 정적 파일을 명시적으로 제외해야 함
+    - SPA 라우팅은 애플리케이션 경로만 처리해야 함
+    - SEO 파일(sitemap, robots)은 반드시 직접 서빙되어야 함
+    - 정규식 negative lookahead로 제외 패턴 구현 효과적
 - 2025-11-15: **♿ Lighthouse 접근성 개선 85%+ 달성** ✅ - WCAG 2.1 AA 준수 (커밋 a763755)
   - **작업**: 접근성 개선 사항 3개 적용하여 모든 페이지 Lighthouse 접근성 점수 85% 이상 달성
   - **주요 수정**:
