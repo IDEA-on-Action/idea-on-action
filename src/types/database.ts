@@ -78,6 +78,7 @@ export interface CartItem {
   service_id: string
   quantity: number
   price: number // 담을 당시 가격 스냅샷
+  package_name: string | null // 선택한 패키지 이름 (예: "기본 패키지", "스탠다드 패키지")
   created_at: string
   updated_at: string
 }
@@ -147,6 +148,7 @@ export interface OrderItem {
   quantity: number
   unit_price: number
   subtotal: number
+  package_name: string | null // 주문 당시 선택한 패키지 이름
 
   // 전체 서비스 스냅샷
   service_snapshot: Record<string, unknown> | null

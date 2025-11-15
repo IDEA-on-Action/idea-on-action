@@ -24,6 +24,7 @@ interface ImportMetaEnv {
   readonly VITE_TOSS_SECRET_KEY: string
 
   // Resend
+  readonly VITE_RESEND_API_KEY?: string
   readonly VITE_RESEND_FROM_EMAIL: string
 
   // Giscus (댓글 시스템)

@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check, X, ShoppingCart } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -8,10 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { MonthlyPlan } from "@/types/services";
 
 interface PlanComparisonTableProps {
   plans: MonthlyPlan[];
+  onAddToCart?: (plan: MonthlyPlan) => void;
+  isAddingToCart?: boolean;
 }
 
 const featureLabels: Record<string, string> = {
@@ -28,6 +31,8 @@ const featureLabels: Record<string, string> = {
 
 export default function PlanComparisonTable({
   plans,
+  onAddToCart,
+  isAddingToCart,
 }: PlanComparisonTableProps) {
   // 모든 플랜의 features 키를 수집
   const allFeatureKeys = Array.from(
@@ -107,6 +112,25 @@ export default function PlanComparisonTable({
               ))}
             </TableRow>
           ))}
+
+          {/* 장바구니 담기 버튼 행 */}
+          {onAddToCart && (
+            <TableRow>
+              <TableCell className="font-medium">선택</TableCell>
+              {plans.map((plan) => (
+                <TableCell key={plan.name} className="text-center">
+                  <Button
+                    onClick={() => onAddToCart(plan)}
+                    disabled={isAddingToCart}
+                    size="sm"
+                  >
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    {isAddingToCart ? "추가 중..." : "장바구니 담기"}
+                  </Button>
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

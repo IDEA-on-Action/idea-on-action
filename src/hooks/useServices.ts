@@ -83,7 +83,7 @@ export function useServices(filters?: ServiceFilters) {
 }
 
 /**
- * 단일 서비스 상세 조회 훅
+ * 단일 서비스 상세 조회 훅 (ID로 조회)
  */
 export function useServiceDetail(serviceId: string) {
   return useSupabaseQuery<ServiceWithCategory>({
@@ -112,6 +112,37 @@ export function useServiceDetail(serviceId: string) {
     operation: '서비스 상세 조회',
     fallbackValue: null,
     enabled: !!serviceId, // serviceId가 있을 때만 쿼리 실행
+    staleTime: 1000 * 60 * 10, // 10분간 캐시 유지
+  })
+}
+
+/**
+ * 단일 서비스 상세 조회 훅 (slug로 조회)
+ */
+export function useServiceBySlug(slug: string) {
+  return useSupabaseQuery<Service>({
+    queryKey: ['service', 'slug', slug],
+    queryFn: async () => {
+      return await supabaseQuery(
+        async () => {
+          const result = await supabase
+            .from('services')
+            .select('*')
+            .eq('slug', slug)
+            .single()
+          return { data: result.data, error: result.error }
+        },
+        {
+          table: 'services',
+          operation: `서비스 조회 (slug: ${slug})`,
+          fallbackValue: null,
+        }
+      )
+    },
+    table: 'services',
+    operation: `서비스 조회 (slug: ${slug})`,
+    fallbackValue: null,
+    enabled: !!slug, // slug가 있을 때만 쿼리 실행
     staleTime: 1000 * 60 * 10, // 10분간 캐시 유지
   })
 }

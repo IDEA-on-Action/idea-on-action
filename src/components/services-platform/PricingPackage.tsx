@@ -8,18 +8,22 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { Check, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Package } from "@/types/services";
 
 interface PricingPackageProps {
   package: Package;
   className?: string;
+  onAddToCart?: (pkg: Package) => void;
+  isAddingToCart?: boolean;
 }
 
 export default function PricingPackage({
   package: pkg,
   className,
+  onAddToCart,
+  isAddingToCart,
 }: PricingPackageProps) {
   const formattedPrice = new Intl.NumberFormat("ko-KR", {
     style: "currency",
@@ -55,8 +59,18 @@ export default function PricingPackage({
           </div>
         )}
       </CardContent>
-      <CardFooter>
-        <Button asChild className="w-full">
+      <CardFooter className="flex-col gap-2">
+        {onAddToCart && (
+          <Button
+            className="w-full"
+            onClick={() => onAddToCart(pkg)}
+            disabled={isAddingToCart}
+          >
+            <ShoppingCart className="mr-2 h-5 w-5" />
+            {isAddingToCart ? "추가 중..." : "장바구니 담기"}
+          </Button>
+        )}
+        <Button asChild variant="outline" className="w-full">
           <Link to="/work-with-us">상담 신청하기</Link>
         </Button>
       </CardFooter>

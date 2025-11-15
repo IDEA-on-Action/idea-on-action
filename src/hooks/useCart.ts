@@ -68,6 +68,7 @@ interface AddToCartParams {
   serviceId: string
   quantity?: number
   price: number
+  packageName?: string
 }
 
 export function useAddToCart() {
@@ -75,7 +76,7 @@ export function useAddToCart() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ serviceId, quantity = 1, price }: AddToCartParams) => {
+    mutationFn: async ({ serviceId, quantity = 1, price, packageName }: AddToCartParams) => {
       if (!user) throw new Error('로그인이 필요합니다')
 
       // 1. 장바구니가 없으면 생성
@@ -125,6 +126,7 @@ export function useAddToCart() {
           service_id: serviceId,
           quantity,
           price,
+          package_name: packageName || null,
         }
 
         const { error: insertError } = await supabase.from('cart_items').insert(newItem)
@@ -135,7 +137,7 @@ export function useAddToCart() {
       return { success: true }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cartQueryKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
       toast.success('장바구니에 추가되었습니다')
     },
     onError: (error: Error) => {
@@ -179,7 +181,7 @@ export function useUpdateCartItem() {
       return { success: true }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cartQueryKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
     },
     onError: (error: Error) => {
       devError(error, { operation: '수량 변경' })
