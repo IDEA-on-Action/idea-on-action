@@ -300,13 +300,30 @@ curl https://www.ideaonaction.ai/robots.txt
 - **커밋**: fc8d7e2
 - **빌드**: 24.93s, 150 PWA entries (4.06 MB), index 110.50 kB gzip
 
+**3. 폰트 preload 최적화 (LCP 개선)** (완료: 2025-11-15)
+- **변경 파일** (2개):
+  - index.html: preconnect + <link rel="stylesheet">
+  - src/index.css: @import 제거
+- **개선 사항**:
+  - Google Fonts preconnect 태그 추가
+  - CSS @import → HTML <link> 변환 (병렬 다운로드)
+  - fonts.googleapis.com + fonts.gstatic.com (crossorigin)
+- **폰트**: Inter (본문) + JetBrains Mono (코드), 9개 웨이트
+- **효과**:
+  - 폰트 다운로드 시작 시점이 빨라짐 (CSS 파싱 대기 불필요)
+  - LCP (Largest Contentful Paint) 개선
+  - Lighthouse Performance 향상
+- **예상 효과**: Lighthouse Performance 60% → 65%+
+- **커밋**: 19c26ef
+- **빌드**: 23.45s, 150 PWA entries (4.06 MB)
+
 ### ⏳ 진행 중인 작업
 
-**3. Performance 개선** (진행 중)
+**4. Performance 개선** (진행 중)
 - [ ] LCP (Largest Contentful Paint) 최적화
   - [x] 이미지 lazy loading 추가 (완료)
+  - [x] 폰트 preload 추가 (완료)
   - [ ] Critical CSS 인라인화
-  - [ ] 폰트 preload 추가
 - [ ] TBT (Total Blocking Time) 최적화
   - [ ] JavaScript 번들 크기 최적화
   - [ ] Code splitting 개선
