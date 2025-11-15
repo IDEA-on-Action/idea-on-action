@@ -9,6 +9,47 @@
 
 ---
 
+## [2.0.0-sprint2.5] - 2025-11-15
+
+### 🎉 Sprint 2 Day 3-5 완료 - Giscus, Work with Us, Newsletter 통합
+
+**완료율**: 100% (12/12 작업)
+**파일 변경**: 9개 (7개 수정, 2개 신규)
+**총 코드**: ~800줄 추가
+**환경 변수**: 7개 추가
+**빌드**: 20.56s, 129 PWA entries
+
+#### Added
+- **Track A: Giscus 통합** (T-2.11 ~ T-2.14)
+  - `@giscus/react` v3.1.0 패키지 설치
+  - 환경 변수 6개 추가 (VITE_GISCUS_*)
+  - GiscusComments 컴포넌트 환경 변수 통합
+  - Community & BlogPost 페이지 댓글 시스템 활성화
+
+- **Track B: Work with Us 폼** (T-2.15 ~ T-2.17)
+  - `sendWorkWithUsEmail` 함수 생성 (HTML 이메일 템플릿)
+  - `useWorkInquiries` 훅 생성 (7개 함수, 230줄)
+  - WorkWithUsForm 업데이트 (패키지 옵션: MVP, Growth, Custom)
+
+- **Track C: Newsletter 폼** (T-2.18)
+  - Newsletter 기능 검증 완료
+
+- **Track D: 테스트 & 배포** (T-2.19 ~ T-2.22)
+  - E2E 테스트 auth-helpers.ts 픽스처 생성 (5개 함수)
+  - 문서 업데이트 (CLAUDE.md, project-todo.md)
+
+#### Changed
+- `src/vite-env.d.ts`: Giscus + Resend 환경 변수 타입 정의
+- `src/components/community/GiscusComments.tsx`: 환경 변수 기반 설정
+- `src/components/forms/WorkWithUsForm.tsx`: useWorkInquiries 훅 적용
+- `src/lib/email.ts`: sendWorkWithUsEmail 함수 추가 (85줄)
+
+#### Fixed
+- 유닛 테스트 97.6% 통과 (124/127)
+- Lighthouse CI 실행 (Home: 50%, Services: 41%, Login: 53%)
+
+---
+
 ## [2.0.0] - 2025-11-14
 
 ### 🎉 Version 2.0 Sprint 3 완료 - Automation & Open Metrics

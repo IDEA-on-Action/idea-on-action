@@ -2,14 +2,85 @@
 
 > 프로젝트 작업 목록 및 진행 상황 관리
 
-**마지막 업데이트**: 2025-11-14
-**현재 Phase**: 🚀 Sprint 2 Day 1-2 완료 → Day 3-5 진행 예정
-**프로젝트 버전**: 2.0.0-sprint2.2 (Supabase 연동 & 동적 페이지)
-**다음 작업**: Sprint 2 Day 3-5 (Giscus 댓글, Work with Us 폼, 테스트)
+**마지막 업데이트**: 2025-11-15
+**현재 Phase**: 🎉 Sprint 2 완료 → Sprint 3 시작 예정
+**프로젝트 버전**: 2.0.0-sprint2.5 (Giscus, Work with Us, Newsletter 통합)
+**다음 작업**: Sprint 3 - Automation & Open Metrics
 
 ---
 
 ## ✅ 완료된 작업
+
+### 토스페이먼츠 심사용 서비스 페이지 기획서 추가 📋 (2025-11-15)
+**목표**: 토스페이먼츠 결제 시스템 도입을 위한 서비스 페이지 기획 문서 작성
+**완료일**: 2025-11-15
+**완료율**: 100% (문서 작성 완료)
+
+#### 생성된 문서
+- [x] **spec/services-platform/requirements.md** - 요구사항 명세
+  - 사업자 정보 (회사명, 대표자, 사업자등록번호 등)
+  - 서비스 카테고리 (개발 서비스 4개, COMPASS 플랫폼 4개)
+  - 페이지 구조 요구사항 (11개 페이지)
+  - 사용자 스토리 3개 (MVP, Navigator, 법적 문서)
+  - 비기능 요구사항 (SEO, 접근성, 성능, 반응형)
+
+- [x] **spec/services-platform/acceptance-criteria.md** - 성공 기준
+  - Phase 1 필수 페이지 성공 기준 (7개 페이지)
+  - Phase 2 확장 페이지 성공 기준 (4개 페이지)
+  - Phase 3 최적화 성공 기준 (SEO, 모바일, 접근성, 성능)
+  - 전체 시스템 성공 기준 (토스페이먼츠 심사, UX, 개발 품질)
+
+- [x] **plan/services-platform/architecture.md** - 아키텍처 설계
+  - 페이지 구조 설계 (11개 라우트)
+  - 컴포넌트 아키텍처 (페이지, 섹션, UI 컴포넌트)
+  - 데이터 모델 (Service, Pricing, Package 타입)
+  - SEO & 메타데이터 (Open Graph, JSON-LD)
+  - 레이아웃 & 스타일
+  - Footer 업데이트 (사업자 정보, 법적 문서 링크)
+
+- [x] **plan/services-platform/implementation-strategy.md** - 구현 전략
+  - 구현 우선순위 및 일정 (Phase 1-3, 4-6주)
+  - 기술 스택 (기존 스택 활용, 신규 설치 불필요)
+  - 파일 구조 (pages, components, data, types, lib)
+  - 구현 순서 (Step 1-9)
+  - 테스트 전략 (수동, E2E, Lighthouse)
+  - 배포 체크리스트
+  - 롤백 계획
+
+- [x] **docs/payments/toss-payments-review.md** - 전체 기획서 보관
+  - 원본 기획서 내용 (사업자 정보 수정)
+  - 11개 페이지 상세 내용
+  - 구현 우선순위
+  - 토스페이먼츠 심사 대응 요약
+
+#### 사업자 정보 수정
+- 회사명: 생각과 행동 (영문: IDEA on Action)
+- 대표자: 서민원
+- 사업자등록번호: 537-05-01511
+- 통신판매업신고: 2025-경기시흥-2094
+- 주소: 경기도 시흥시 대은로104번길 11 (은행동, 우남아파트) 103동 601호
+- 이메일: sinclairseo@gmail.com
+- 전화: 010-4904-2671
+
+#### 서비스 카탈로그
+**개발 서비스** (4개):
+- MVP 개발 서비스 (₩5M-12M, 4-10주)
+- 풀스택 개발 서비스 (₩50K-80K/시간, ₩3M-8M/월)
+- UI/UX 디자인 시스템 (₩300K-2M, 2-6주)
+- 시스템 운영 관리 (₩500K-2M/월)
+
+**COMPASS 플랫폼** (4개):
+- COMPASS Navigator (₩29K-299K/월, 현재 이용 가능)
+- COMPASS Cartographer (₩49K~/월, 2026 Q1 출시 예정)
+- COMPASS Captain (₩79K~/월, 2026 Q1 출시 예정)
+- COMPASS Harbor (₩39K~/월, 2026 Q1 출시 예정)
+
+#### 다음 단계
+- [ ] Phase 1 구현 시작 (7개 필수 페이지, 1-2주)
+  - /services, /services/development/mvp, /services/compass/navigator
+  - /pricing, /terms, /privacy, /refund
+
+---
 
 ### Sprint 2 Day 1-2 완료 🎉 (2025-11-14)
 **목표**: Supabase 연동 & 동적 페이지 구현 (10개 Task)
@@ -99,12 +170,68 @@
 - TypeScript 타입 정의 시 DB 스키마와 정확히 일치 필요
 - React Query 캐싱 전략: 정적 데이터 5분, 실시간 데이터 1분
 
-**다음 단계 (Sprint 2 Day 3-5)**:
-- [ ] T-2.11: Giscus 설정 및 연동 (2h)
-- [ ] T-2.12: Community 페이지 통합 (2h)
-- [ ] T-2.13: BlogPost 댓글 통합 (1h)
-- [ ] T-2.14 ~ T-2.17: Work with Us 폼 구현 (8h)
-- [ ] T-2.18 ~ T-2.21: 테스트 및 문서화 (7h)
+### Sprint 2 Day 3-5 완료 🎉 (2025-11-15)
+**목표**: Giscus, Work with Us, Newsletter 통합 (12개 Task)
+**완료일**: 2025-11-15
+**총 소요**: 20시간 (Track A: 4h, Track B: 5.5h, Track C: 2.5h, Track D: 8.5h)
+**완료율**: 100% (12/12 작업)
+
+#### Track A: Giscus 통합 (T-2.11 ~ T-2.14)
+- [x] **T-2.11: @giscus/react 패키지 설치 및 설정** (1h)
+  - @giscus/react v3.1.0 설치
+  - 환경 변수 6개 추가
+  - 파일: package.json, .env.local, src/vite-env.d.ts
+
+- [x] **T-2.12: GiscusComments 컴포넌트 생성** (1h)
+  - 환경 변수 기반 설정
+  - 다크 모드 테마 지원
+  - 파일: src/components/community/GiscusComments.tsx
+
+- [x] **T-2.13: Community 페이지에 Giscus 통합** (1h)
+- [x] **T-2.14: BlogPost 페이지에 Giscus 통합** (1h)
+
+#### Track B: Work with Us 폼 (T-2.15 ~ T-2.17)
+- [x] **T-2.15: resend 패키지 설치 및 이메일 전송 함수 생성** (2h)
+  - sendWorkWithUsEmail 함수 생성 (HTML 템플릿)
+  - 파일: src/lib/email.ts
+
+- [x] **T-2.16: useWorkInquiries 훅 생성** (2h)
+  - 7개 함수: submit, list, get, updateStatus, delete, stats, userInquiries
+  - 파일: src/hooks/useWorkInquiries.ts (230줄)
+
+- [x] **T-2.17: WorkWithUsForm 컴포넌트 업데이트** (1.5h)
+  - useWorkInquiries 훅 적용
+  - 파일: src/components/forms/WorkWithUsForm.tsx
+
+#### Track C: Newsletter 폼 (T-2.18)
+- [x] **T-2.18: NewsletterForm 검증** (2.5h)
+
+#### Track D: 테스트 & 배포 (T-2.19 ~ T-2.22)
+- [x] **T-2.19: E2E 테스트 실행** (3h)
+  - auth-helpers.ts 픽스처 생성
+  - 파일: tests/fixtures/auth-helpers.ts
+
+- [x] **T-2.20: 유닛 테스트 실행** (2h)
+  - 127개 테스트, 124개 통과 (97.6%)
+
+- [x] **T-2.21: Lighthouse CI 실행** (1.5h)
+  - Home: 50%, Services: 41%, Login: 53%
+
+- [x] **T-2.22: 문서 업데이트 및 배포** (2h)
+  - CLAUDE.md, project-todo.md 업데이트
+
+#### 결과 ✅
+- ✅ 파일 변경: 9개 (7개 수정, 2개 신규)
+- ✅ 총 코드: ~800줄 추가
+- ✅ 환경 변수: 7개 추가
+- ✅ 빌드: 20.56초, 129 PWA entries
+- ✅ 커밋: 85dcdac
+
+**교훈**:
+- Giscus는 환경 변수로 관리
+- Work with Us 이메일은 비동기 처리
+- E2E 테스트는 auth-helpers 픽스처 재사용
+- Lighthouse 로컬 점수는 프로덕션 대비 50-60%
 
 ---
 
