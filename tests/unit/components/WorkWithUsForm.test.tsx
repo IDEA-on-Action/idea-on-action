@@ -222,8 +222,8 @@ describe('WorkWithUsForm', () => {
     });
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith('제안서가 성공적으로 전송되었습니다!', {
-        description: '영업일 기준 2-3일 내에 답변드리겠습니다.',
+      expect(toast.success).toHaveBeenCalledWith('문의가 접수되었습니다!', {
+        description: '빠른 시일 내에 연락드리겠습니다. 감사합니다!',
       });
     });
   });
