@@ -1861,6 +1861,30 @@ tests/
 
 ---
 
+## 📋 CMS 관리자 모드 (계획 중)
+
+**목표**: 개발자 개입 없이 콘텐츠 관리 가능한 관리자 대시보드 구축
+
+### 주요 기능
+- 로드맵, 포트폴리오, 실험실, 블로그, 팀원 정보 관리
+- 관리자 인증 및 권한 관리 (Super Admin / Admin / Editor)
+- 파일 업로드 (이미지, 문서)
+- 리치 텍스트 에디터 (Tiptap, Markdown 지원)
+- 미디어 라이브러리
+
+### 구현 우선순위
+- **Phase 1** (2주): 기반 구축 (데이터베이스, 인증, Admin Layout)
+- **Phase 2** (3주): 핵심 기능 (로드맵, 포트폴리오, 블로그 CRUD)
+- **Phase 3** (2주): 고급 기능 (미디어 라이브러리, 팀원 관리)
+- **Phase 4** (1주): 최적화 및 테스트
+
+### 상세 문서
+- **명세**: [spec/cms/requirements.md](spec/cms/requirements.md), [acceptance-criteria.md](spec/cms/acceptance-criteria.md), [constraints.md](spec/cms/constraints.md)
+- **계획**: [plan/cms/architecture.md](plan/cms/architecture.md), [tech-stack.md](plan/cms/tech-stack.md), [implementation-strategy.md](plan/cms/implementation-strategy.md)
+- **작업**: [tasks/cms-backlog.md](tasks/cms-backlog.md)
+
+---
+
 ## 🌱 Version 2.0 상세 사양
 
 ### Data Model (Supabase Schema)

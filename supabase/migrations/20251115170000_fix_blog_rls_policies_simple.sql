@@ -116,3 +116,4 @@ BEGIN
   RAISE NOTICE '이제 로그인하지 않은 사용자(anon)도 published 포스트를 조회할 수 있습니다.';
 END $$;
 
+

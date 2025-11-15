@@ -243,3 +243,4 @@ BEGIN
     RAISE NOTICE '이제 anon 사용자도 카테고리, 태그, published 포스트를 조회할 수 있습니다.';
 END $$;
 
+

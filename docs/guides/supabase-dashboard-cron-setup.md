@@ -244,3 +244,4 @@ DELETE FROM cron.job WHERE jobname = 'weekly-recap-generation';
 **Status**: ✅ Ready to Use
 
 
+

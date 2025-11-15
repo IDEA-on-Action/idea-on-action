@@ -108,10 +108,9 @@ const Header = ({ className = "" }: HeaderProps) => {
       } border-gray-200 dark:border-gray-700 ${className}`}
     >
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          aria-label="홈페이지로 이동"
         >
           <img 
             src={BRAND_INFO.logo} 

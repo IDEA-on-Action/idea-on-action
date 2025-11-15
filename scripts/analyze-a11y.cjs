@@ -1,6 +1,13 @@
 const fs = require('fs');
 
-const data = JSON.parse(fs.readFileSync('.lighthouseci/lhr-1763212538020.json', 'utf8'));
+// Get latest LHR file
+const files = fs.readdirSync('.lighthouseci')
+  .filter(f => f.startsWith('lhr-') && f.endsWith('.json'))
+  .sort().reverse();
+const latestFile = '.lighthouseci/' + files[0];
+console.log('Analyzing:', latestFile, '\n');
+
+const data = JSON.parse(fs.readFileSync(latestFile, 'utf8'));
 
 const issues = [
   'aria-progressbar-name',

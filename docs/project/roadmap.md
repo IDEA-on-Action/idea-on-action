@@ -25,12 +25,19 @@ Version 2.0:
 Sprint 1     ████████████████████ 100% ✅ (완료 - 예정)
 Sprint 2     ████████████████████ 100% ✅ (완료 - 2025-11-09) 🌱
 Sprint 3     ████████████████████ 100% ✅ (완료 - 2025-11-09) 🎨
+
+Phase 15 (CMS):
+Phase 1      ░░░░░░░░░░░░░░░░░░░░   0% 📋 (계획 중 - 기반 구축)
+Phase 2      ░░░░░░░░░░░░░░░░░░░░   0% 📋 (계획 중 - 핵심 기능)
+Phase 3      ░░░░░░░░░░░░░░░░░░░░   0% 📋 (계획 중 - 고급 기능)
+Phase 4      ░░░░░░░░░░░░░░░░░░░░   0% 📋 (계획 중 - 최적화)
 ```
 
-**총 진행률**: Version 2.0 Sprint 3 완료 🎨
+**총 진행률**: Phase 14 완료, Phase 15 (CMS) 계획 중 📋
 **최신 버전**: v2.0.0-sprint3
 **총 테스트**: 292+ 테스트 케이스 (E2E 172, Unit 92, Visual 28)
 **Bundle 크기**: ~2997 KiB (56 entries precached)
+**다음 단계**: CMS 관리자 모드 구현 (8주 예정)
 
 ---
 
@@ -936,6 +943,117 @@ Sprint 3     ████████████████████ 100% �
 
 #### 다음 단계
 - Version 2.0 완료 (Sprint 1-3 모두 완료)
+
+---
+
+### 📋 Phase 15: CMS 관리자 모드 (계획 중 - 2025 Q4-Q1)
+
+**우선순위**: ⭐ 높음
+**예상 기간**: 8주 (Phase 1-4)
+**시작일**: TBD
+**목표**: 개발자 개입 없이 콘텐츠 관리 가능한 관리자 대시보드 구축
+
+#### 작업 개요
+
+**Phase 1: 기반 구축 (2주)**
+- [ ] 데이터베이스 스키마 설계 (8개 테이블: admins, roadmap_items, portfolio_items, lab_items, blog_posts, team_members, categories, tags)
+- [ ] RLS 정책 10+개 설정 (Super Admin/Admin/Editor 권한 구분)
+- [ ] 관리자 인증 시스템 (useAuth 확장, usePermissions 훅)
+- [ ] Admin Layout 구조 (Sidebar, Header, Breadcrumb)
+- [ ] 공통 컴포넌트 6개 (Table, Modal, LoadingState, DatePicker, MultiSelect 등)
+- [ ] useCRUD 훅 (list, get, create, update, delete, Optimistic Update)
+- [ ] 파일 업로드 시스템 (Supabase Storage, ImageUpload 컴포넌트)
+
+**Phase 2: 핵심 기능 (3주)**
+- [ ] **로드맵 관리** (RoadmapList, RoadmapForm)
+  - 목록 페이지 (필터링, 검색, 정렬)
+  - 생성/수정 폼 (React Hook Form + Zod)
+  - 진행률 슬라이더, 태그 입력
+  - E2E 테스트 5개
+- [ ] **포트폴리오 관리** (PortfolioList, PortfolioForm)
+  - 카드 그리드 레이아웃
+  - Slug 자동 생성 로직
+  - 이미지 갤러리 (다중 업로드, 드래그 앤 드롭)
+  - 기술 스택 태그 입력
+  - E2E 테스트 5개
+- [ ] **블로그 관리** (BlogList, BlogForm)
+  - Tiptap 리치 텍스트 에디터
+  - 코드 블록 문법 하이라이팅
+  - 이미지 드래그 앤 드롭 삽입
+  - 초안 저장 기능
+  - 카테고리 관리
+  - E2E 테스트 5개
+- [ ] **실험실 관리** (LabList, LabForm)
+  - 기여자 추가/제거 UI
+  - GitHub URL 입력
+  - E2E 테스트 3개
+
+**Phase 3: 고급 기능 (2주)**
+- [ ] **미디어 라이브러리** (MediaLibrary, MediaGrid, MediaUploader)
+  - 그리드/리스트 뷰 전환
+  - 다중 파일 업로드
+  - 검색 및 필터링 (파일 타입, 날짜)
+  - URL 복사 기능
+  - 일괄 삭제
+  - E2E 테스트 3개
+- [ ] **팀원 관리** (TeamList, TeamForm)
+  - 드래그 앤 드롭 정렬
+  - 아바타 업로드 (원형 크롭)
+  - 스킬셋 태그 입력
+  - 소셜 링크 입력 (URL 검증)
+  - E2E 테스트 3개
+- [ ] **SEO 설정 UI**
+  - 블로그/포트폴리오 폼에 SEO 필드 추가
+  - Open Graph 이미지 업로드
+- [ ] **관리자 설정** (Super Admin만)
+  - 관리자 목록 조회
+  - 관리자 추가/제거
+  - 역할 변경
+  - E2E 테스트 3개
+
+**Phase 4: 최적화 및 테스트 (1주)**
+- [ ] 성능 최적화 (React.lazy, Vite manualChunks, 이미지 Lazy Loading)
+- [ ] Lighthouse CI 실행 (Performance 90+, Accessibility 95+)
+- [ ] E2E 테스트 20+개 작성 및 통과
+- [ ] 유닛 테스트 10+개 작성 (useCRUD, usePermissions, useFileUpload)
+- [ ] 접근성 테스트 (jest-axe)
+- [ ] 문서화 (사용자 가이드, 개발자 가이드)
+- [ ] 배포 및 Smoke 테스트
+
+#### 기술 스택
+
+**프론트엔드**:
+- Tiptap (리치 텍스트 에디터)
+- date-fns (날짜 포맷)
+- DOMPurify (HTML 새니타이징)
+- uuid (고유 파일명 생성)
+
+**백엔드**:
+- Supabase PostgreSQL (데이터베이스)
+- Supabase Auth (인증/인가, RLS)
+- Supabase Storage (파일 스토리지)
+
+**상태 관리**:
+- React Query (서버 상태, 캐싱)
+- Zustand (UI 상태, 사이드바 토글)
+
+#### 완료 기준
+- [ ] 관리자 인증 시스템 동작 (Super Admin/Admin/Editor)
+- [ ] 로드맵, 포트폴리오, 블로그 CRUD 동작
+- [ ] 파일 업로드/삭제 동작 (5MB 제한, MIME 검증)
+- [ ] Lighthouse Performance 90+, Accessibility 95+
+- [ ] E2E 테스트 20+개, 유닛 테스트 10+개 통과
+- [ ] 사용자 가이드 & 개발자 가이드 작성 완료
+
+#### 성공 지표 (Phase 4 이후)
+- [ ] 관리자 사용률 > 80% (주 1회 이상 로그인)
+- [ ] 콘텐츠 업데이트 빈도 > 주 3회
+- [ ] 에러율 < 0.1% (Sentry)
+
+#### 상세 문서
+- **명세**: [spec/cms/requirements.md](../../spec/cms/requirements.md)
+- **계획**: [plan/cms/architecture.md](../../plan/cms/architecture.md), [plan/cms/tech-stack.md](../../plan/cms/tech-stack.md)
+- **작업**: [tasks/cms-backlog.md](../../tasks/cms-backlog.md)
 
 ---
 

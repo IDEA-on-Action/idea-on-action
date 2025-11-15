@@ -122,14 +122,14 @@ export default function Login() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
         <Card className="w-full max-w-md glass-card">
           <CardHeader className="text-center">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex justify-center mb-4 hover:opacity-80 transition-opacity"
               aria-label="홈페이지로 이동"
             >
               <img src={logoSymbol} alt="VIBE WORKING" className="h-16 w-16" />
             </Link>
-            <CardTitle className="text-2xl">VIBE WORKING</CardTitle>
+            <h2 className="text-2xl font-semibold leading-none tracking-tight">VIBE WORKING</h2>
             <CardDescription>로그인하여 서비스를 이용하세요</CardDescription>
           </CardHeader>
 
