@@ -8,17 +8,13 @@ export function initSentry() {
       dsn: import.meta.env.VITE_SENTRY_DSN,
       integrations: [
         Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration({
-          // 세션 리플레이 설정
-          maskAllText: true,
-          blockAllMedia: true,
-        }),
+        // Replay는 동적으로 로드 (번들 크기 최적화)
       ],
 
       // Performance Monitoring
       tracesSampleRate: 1.0, // 100% of transactions (프로덕션에서는 0.1-0.2 권장)
 
-      // Session Replay
+      // Session Replay (동적 로드 후 적용)
       replaysSessionSampleRate: 0.1, // 10% of sessions
       replaysOnErrorSampleRate: 1.0, // 에러 발생 시 100% 기록
 
@@ -58,6 +54,31 @@ export function initSentry() {
         "ResizeObserver loop limit exceeded",
       ],
     });
+
+    // Sentry Replay 동적 로드 (번들 크기 최적화: ~35 kB gzip 절감)
+    // 프로덕션 환경에서만 로드하여 초기 번들 크기 감소
+    loadSentryReplay();
+  }
+}
+
+// Sentry Replay 동적 로드 함수
+async function loadSentryReplay() {
+  try {
+    const { replayIntegration } = await import("@sentry/react");
+    const client = Sentry.getClient();
+
+    if (client) {
+      client.addIntegration(
+        replayIntegration({
+          // 세션 리플레이 설정
+          maskAllText: true,
+          blockAllMedia: true,
+        })
+      );
+      console.log("[Sentry] Replay integration loaded");
+    }
+  } catch (error) {
+    console.error("[Sentry] Failed to load Replay integration:", error);
   }
 }
 

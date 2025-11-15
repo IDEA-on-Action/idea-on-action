@@ -45,10 +45,7 @@ export default defineConfig({
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
-    env: {
-      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL || 'https://zykjdneewbzyazfukzyg.supabase.co',
-      VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5a2pkbmVld2J6eWF6ZnVrenlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0Mjc4MTUsImV4cCI6MjA3MTAwMzgxNX0.Lgnm2-NpoDVMLgb3qUK9xgrE2k1S-_eORbG-5RyGST8',
-    },
+    // Note: Remove env object to inherit .env and .env.local from Vite
   },
 
   /* 브라우저 설정 */

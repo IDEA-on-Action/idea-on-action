@@ -15,11 +15,78 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useSearch } from '@/hooks/useSearch'
 import { supabase } from '@/integrations/supabase/client'
 
+// ========================================
+// Type Definitions
+// ========================================
+
+// Database Entity Types
+interface Service {
+  id: string
+  title: string
+  description: string
+  image_url: string | null
+  created_at: string
+  category: string | null
+}
+
+interface BlogPost {
+  id: string
+  title: string
+  content: string
+  featured_image: string | null
+  created_at: string
+  category: string
+}
+
+interface Notice {
+  id: string
+  title: string
+  content: string
+  priority: string
+  created_at: string
+}
+
+// Search Result Types
+interface ServiceSearchResult extends Service {
+  type: 'service'
+  url: string
+}
+
+interface BlogSearchResult extends BlogPost {
+  type: 'blog'
+  url: string
+}
+
+interface NoticeSearchResult extends Notice {
+  type: 'notice'
+  url: string
+}
+
+type SearchResult = ServiceSearchResult | BlogSearchResult | NoticeSearchResult
+
+// Supabase Query Mock Types
+interface SupabaseQueryResult<T> {
+  data: T[] | null
+  error: { message: string } | null
+}
+
+interface SupabaseQueryBuilder<T> {
+  select: (columns?: string) => SupabaseQueryBuilder<T>
+  eq: (column: string, value: unknown) => SupabaseQueryBuilder<T>
+  or: (query: string) => SupabaseQueryBuilder<T>
+  order: (column: string, options?: { ascending?: boolean }) => SupabaseQueryBuilder<T>
+  limit: (count: number) => Promise<SupabaseQueryResult<T>>
+}
+
+interface SupabaseClient {
+  from: <T = unknown>(table: string) => SupabaseQueryBuilder<T>
+}
+
 // Mock Supabase
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(),
-  },
+  } as SupabaseClient,
 }))
 
 const createWrapper = () => {
@@ -64,7 +131,7 @@ describe('useSearch', () => {
 
   // 2. 검색어가 있을 때 쿼리 실행
   it('should execute query when search term is provided', async () => {
-    const mockServices = [
+    const mockServices: Service[] = [
       {
         id: '1',
         title: 'AI Service',
@@ -76,14 +143,14 @@ describe('useSearch', () => {
     ]
 
     const limitMock = vi.fn().mockResolvedValue({ data: mockServices, error: null })
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<Service>)
 
     const { result } = renderHook(
       () =>
@@ -109,7 +176,7 @@ describe('useSearch', () => {
 
   // 3. 통합 검색 (서비스 + 블로그 + 공지사항)
   it('should search across multiple types', async () => {
-    const mockServiceResults = [
+    const mockServiceResults: ServiceSearchResult[] = [
       {
         id: '1',
         title: 'AI Service',
@@ -122,7 +189,7 @@ describe('useSearch', () => {
       },
     ]
 
-    const mockBlogResults = [
+    const mockBlogResults: BlogSearchResult[] = [
       {
         id: '1',
         title: 'AI Blog',
@@ -135,7 +202,7 @@ describe('useSearch', () => {
       },
     ]
 
-    const mockNoticeResults = [
+    const mockNoticeResults: NoticeSearchResult[] = [
       {
         id: '1',
         title: 'AI Notice',
@@ -148,22 +215,22 @@ describe('useSearch', () => {
     ]
 
     // Create separate mock chains for each table
-    const createMockChain = (data: any) => {
+    const createMockChain = <T,>(data: T[]) => {
       const limitMock = vi.fn().mockResolvedValue({ data, error: null })
-      const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-      const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-      const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-      const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+      const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+      const orMock = vi.fn().mockReturnValue({ order: orderMock })
+      const eqMock = vi.fn().mockReturnValue({ or: orMock })
+      const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
       return { select: selectMock }
     }
 
     let callCount = 0
-    vi.mocked(supabase.from).mockImplementation((table: string) => {
+    vi.mocked(supabase.from).mockImplementation(<T,>(table: string): SupabaseQueryBuilder<T> => {
       callCount++
-      if (table === 'services') return createMockChain(mockServiceResults) as any
-      if (table === 'blog_posts') return createMockChain(mockBlogResults) as any
-      if (table === 'notices') return createMockChain(mockNoticeResults) as any
-      return createMockChain([]) as any
+      if (table === 'services') return createMockChain(mockServiceResults) as SupabaseQueryBuilder<T>
+      if (table === 'blog_posts') return createMockChain(mockBlogResults) as SupabaseQueryBuilder<T>
+      if (table === 'notices') return createMockChain(mockNoticeResults) as SupabaseQueryBuilder<T>
+      return createMockChain([]) as SupabaseQueryBuilder<T>
     })
 
     const { result } = renderHook(
@@ -193,7 +260,7 @@ describe('useSearch', () => {
 
   // 4. 타입별 필터링 (type: 'service' → 서비스만)
   it('should filter by single type', async () => {
-    const mockResults = [
+    const mockResults: ServiceSearchResult[] = [
       {
         id: '1',
         title: 'AI Service',
@@ -207,14 +274,14 @@ describe('useSearch', () => {
     ]
 
     const limitMock = vi.fn().mockResolvedValue({ data: mockResults, error: null })
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<ServiceSearchResult>)
 
     const { result } = renderHook(
       () =>
@@ -243,14 +310,14 @@ describe('useSearch', () => {
   // 5. 빈 결과 처리
   it('should return empty array for no results', async () => {
     const limitMock = vi.fn().mockResolvedValue({ data: [], error: null })
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<Service>)
 
     const { result } = renderHook(
       () =>
@@ -273,7 +340,7 @@ describe('useSearch', () => {
 
   // 6. React Query 캐싱 (staleTime: 5분)
   it('should cache results for 5 minutes', async () => {
-    const mockResults = [
+    const mockResults: ServiceSearchResult[] = [
       {
         id: '1',
         title: 'AI Service',
@@ -287,14 +354,14 @@ describe('useSearch', () => {
     ]
 
     const limitMock = vi.fn().mockResolvedValue({ data: mockResults, error: null })
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<ServiceSearchResult>)
 
     const { result, rerender } = renderHook(
       () =>
@@ -331,18 +398,18 @@ describe('useSearch', () => {
   it('should have loading state during query', async () => {
     const limitMock = vi.fn().mockImplementation(
       () =>
-        new Promise((resolve) => {
+        new Promise<SupabaseQueryResult<Service>>((resolve) => {
           setTimeout(() => resolve({ data: [], error: null }), 100)
         })
     )
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<Service>)
 
     const { result } = renderHook(
       () =>
@@ -369,14 +436,14 @@ describe('useSearch', () => {
     // Hook checks for servicesError and logs it, but doesn't throw
     // So we need to make the query fail
     const limitMock = vi.fn().mockRejectedValue(new Error('Database error'))
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<Service>)
 
     const { result } = renderHook(
       () =>
@@ -399,22 +466,29 @@ describe('useSearch', () => {
 
   // 9. 검색어 변경 시 새로운 쿼리 실행
   it('should execute new query when search term changes', async () => {
-    const limitMock1 = vi.fn().mockResolvedValue({ data: [{ id: '1', title: 'AI', description: '', created_at: '2025-01-01', image_url: null, category: null }], error: null })
-    const limitMock2 = vi.fn().mockResolvedValue({ data: [{ id: '2', title: 'ML', description: '', created_at: '2025-01-02', image_url: null, category: null }], error: null })
-    
+    const mockData1: Service[] = [
+      { id: '1', title: 'AI', description: '', created_at: '2025-01-01', image_url: null, category: null }
+    ]
+    const mockData2: Service[] = [
+      { id: '2', title: 'ML', description: '', created_at: '2025-01-02', image_url: null, category: null }
+    ]
+
+    const limitMock1 = vi.fn().mockResolvedValue({ data: mockData1, error: null })
+    const limitMock2 = vi.fn().mockResolvedValue({ data: mockData2, error: null })
+
     let callCount = 0
-    const createMockChain = (limitMock: any) => {
-      const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-      const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-      const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-      const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const createMockChain = (limitMock: ReturnType<typeof vi.fn>) => {
+      const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+      const orMock = vi.fn().mockReturnValue({ order: orderMock })
+      const eqMock = vi.fn().mockReturnValue({ or: orMock })
+      const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
       return { select: selectMock }
     }
 
-    vi.mocked(supabase.from).mockImplementation(() => {
+    vi.mocked(supabase.from).mockImplementation((): SupabaseQueryBuilder<Service> => {
       callCount++
-      if (callCount <= 1) return createMockChain(limitMock1) as any
-      return createMockChain(limitMock2) as any
+      if (callCount <= 1) return createMockChain(limitMock1) as SupabaseQueryBuilder<Service>
+      return createMockChain(limitMock2) as SupabaseQueryBuilder<Service>
     })
 
     const { result, rerender } = renderHook(
@@ -448,14 +522,14 @@ describe('useSearch', () => {
   // 10. limit 파라미터 적용
   it('should apply limit parameter', async () => {
     const limitMock = vi.fn().mockResolvedValue({ data: [], error: null })
-    const orderMock = vi.fn().mockReturnValue({ limit: limitMock } as any)
-    const orMock = vi.fn().mockReturnValue({ order: orderMock } as any)
-    const eqMock = vi.fn().mockReturnValue({ or: orMock } as any)
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock } as any)
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+    const orMock = vi.fn().mockReturnValue({ order: orderMock })
+    const eqMock = vi.fn().mockReturnValue({ or: orMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
 
     vi.mocked(supabase.from).mockReturnValue({
       select: selectMock
-    } as any)
+    } as SupabaseQueryBuilder<Service>)
 
     renderHook(
       () =>

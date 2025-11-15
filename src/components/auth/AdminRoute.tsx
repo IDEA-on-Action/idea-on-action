@@ -34,8 +34,17 @@ export function AdminRoute({ children }: AdminRouteProps) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  // 관리자가 아닌 경우 403 페이지로 리다이렉트
-  if (!isAdmin) {
+  // isAdmin이 undefined면 아직 조회 중이므로 로딩 표시
+  if (isAdmin === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // 관리자가 아닌 경우 (명시적으로 false) 403 페이지로 리다이렉트
+  if (isAdmin === false) {
     return <Navigate to="/forbidden" replace />
   }
 

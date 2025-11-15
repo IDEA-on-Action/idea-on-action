@@ -26,6 +26,7 @@ import {
   Home,
   Menu,
   X,
+  Map,
 } from 'lucide-react'
 import { useState } from 'react'
 import logoSymbol from '@/assets/logo-symbol.png'
@@ -70,6 +71,11 @@ const navItems = [
     title: '주문 관리',
     href: '/admin/orders',
     icon: ShoppingCart,
+  },
+  {
+    title: '로드맵 관리',
+    href: '/admin/roadmap',
+    icon: Map,
   },
   {
     title: '분석 대시보드',

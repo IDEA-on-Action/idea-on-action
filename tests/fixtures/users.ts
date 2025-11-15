@@ -6,6 +6,12 @@
  */
 
 export const testUsers = {
+  superAdmin: {
+    email: 'superadmin@ideaonaction.local',
+    password: 'SuperAdmin123!',
+    username: 'superadmin',
+    role: 'super_admin'
+  },
   admin: {
     email: 'admin@ideaonaction.local',
     password: 'demian00',
@@ -24,7 +30,7 @@ export const testUsers = {
  * Helper function to get login credentials
  * Supports both email and username login
  */
-export function getLoginCredentials(userType: 'admin' | 'regularUser') {
+export function getLoginCredentials(userType: 'superAdmin' | 'admin' | 'regularUser') {
   const user = testUsers[userType];
   return {
     // Username will be converted to email@ideaonaction.local in the login flow

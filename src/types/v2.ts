@@ -136,3 +136,75 @@ export interface ProposalFormValues {
   preferred_contact?: 'email' | 'phone' | 'calendar';
   phone?: string;
 }
+
+// CMS Phase 1: Roadmap Items
+export interface RoadmapItem {
+  id: string;
+  title: string;
+  description?: string;
+  category: 'service' | 'platform' | 'internal';
+  status: 'planned' | 'in-progress' | 'completed' | 'on-hold';
+  progress: number; // 0-100
+  priority: number;
+  start_date?: string;
+  end_date?: string;
+  tags: string[];
+  published: boolean;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// CMS Phase 1: Portfolio Items
+export interface PortfolioItem {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  description?: string;
+  client_name?: string;
+  client_logo?: string;
+  project_type: 'mvp' | 'fullstack' | 'design' | 'operations';
+  thumbnail?: string;
+  images: string[];
+  tech_stack: string[];
+  project_url?: string;
+  github_url?: string;
+  duration?: string;
+  team_size?: number;
+  start_date?: string;
+  end_date?: string;
+  challenges?: string;
+  solutions?: string;
+  outcomes?: string;
+  testimonial: PortfolioTestimonial;
+  featured: boolean;
+  published: boolean;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortfolioTestimonial {
+  author?: string;
+  role?: string;
+  company?: string;
+  content?: string;
+  avatar?: string;
+}
+
+// CMS Phase 1: Admins
+export type AdminRole = 'super_admin' | 'admin' | 'editor';
+
+export interface Admin {
+  id: string;
+  user_id: string;
+  role: AdminRole;
+  created_at: string;
+  updated_at: string;
+}
+
+// Admin with user email (from auth.users join)
+export interface AdminWithEmail extends Admin {
+  email?: string;
+}

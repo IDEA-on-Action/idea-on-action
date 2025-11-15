@@ -38,7 +38,8 @@ const Portfolio = () => {
   };
 
   // 모든 훅은 early return 전에 호출되어야 합니다
-  const projects = projectsData || [];
+  // useMemo로 감싸서 참조 안정성 보장
+  const projects = useMemo(() => projectsData || [], [projectsData]);
 
   const projectCounts = useMemo(() => {
     if (!projects || projects.length === 0) {

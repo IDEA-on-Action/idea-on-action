@@ -8,9 +8,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AdminRoute } from "./components/auth/AdminRoute";
 import { CartDrawer } from "./components/cart";
-import { ChatWidget } from "./components/chat";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
+
+// Lazy load ChatWidget (contains react-markdown dependency)
+const ChatWidget = lazy(() => import("./components/chat").then(module => ({ default: module.ChatWidget })));
 import { initSentry } from "./lib/sentry";
 import { trackPageView } from "./lib/analytics";
 import * as Sentry from "@sentry/react";
@@ -121,6 +123,13 @@ const EditNotice = lazy(() => import("./pages/admin/EditNotice"));
 const AdminRoles = lazy(() => import("./pages/admin/AdminRoles"));
 const AuditLogs = lazy(() => import("./pages/admin/AuditLogs"));
 const AdminOrders = lazy(() => import("./pages/admin/Orders"));
+const AdminRoadmap = lazy(() => import("./pages/admin/AdminRoadmap"));
+const AdminPortfolio = lazy(() => import("./pages/admin/AdminPortfolio"));
+const AdminLab = lazy(() => import("./pages/admin/AdminLab"));
+const AdminTeam = lazy(() => import("./pages/admin/AdminTeam"));
+const AdminBlogCategories = lazy(() => import("./pages/admin/AdminBlogCategories"));
+const AdminTags = lazy(() => import("./pages/admin/AdminTags"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
 const Revenue = lazy(() => import("./pages/admin/Revenue"));
 const RealtimeDashboard = lazy(() => import("./pages/admin/RealtimeDashboard"));
@@ -148,7 +157,9 @@ const App = () => (
         >
           <AnalyticsTracker />
           <CartDrawer />
-          <ChatWidget />
+          <Suspense fallback={null}>
+            <ChatWidget />
+          </Suspense>
           <PWAInstallPrompt />
           <PWAUpdatePrompt />
           <Suspense fallback={<LoadingFallback />}>
@@ -226,6 +237,13 @@ const App = () => (
                 <Route path="roles" element={<AdminRoles />} />
                 <Route path="audit-logs" element={<AuditLogs />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="roadmap" element={<AdminRoadmap />} />
+                <Route path="portfolio" element={<AdminPortfolio />} />
+                <Route path="lab" element={<AdminLab />} />
+                <Route path="team" element={<AdminTeam />} />
+                <Route path="blog/categories" element={<AdminBlogCategories />} />
+                <Route path="tags" element={<AdminTags />} />
+                <Route path="users" element={<AdminUsers />} />
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="revenue" element={<Revenue />} />
                 <Route path="realtime" element={<RealtimeDashboard />} />

@@ -14,36 +14,42 @@ import { handleSupabaseError } from '@/lib/errors'
 export function useIsAdmin() {
   const { user } = useAuth()
 
+  console.log('[useIsAdmin] Hook called, user:', user?.id, user?.email)
+
   return useQuery({
     queryKey: ['isAdmin', user?.id],
     queryFn: async () => {
-      if (!user?.id) return false
+      console.log('[useIsAdmin] queryFn executing, user.id:', user?.id)
+      if (!user?.id) {
+        console.log('[useIsAdmin] No user ID, returning false')
+        return false
+      }
 
-      // user_roles와 roles 테이블 조인하여 관리자 역할 확인
-      // roles 테이블에 직접 접근할 수 없으므로 조인 사용
+      // admins 테이블에서 관리자 역할 확인 (CMS Phase 3)
+      console.log('[useIsAdmin] Querying admins table for user:', user.id)
       const { data, error } = await supabase
-        .from('user_roles')
-        .select(`
-          user_id,
-          role_id,
-          role:roles!inner(name)
-        `)
+        .from('admins')
+        .select('user_id, role')
         .eq('user_id', user.id)
         .maybeSingle()
 
+      console.log('[useIsAdmin] Query result:', { data, error })
+
       if (error) {
         const result = handleSupabaseError(error, {
-          table: 'user_roles',
+          table: 'admins',
           operation: '관리자 확인',
           fallbackValue: false,
         })
         return result !== null ? result : false
       }
 
-      // role.name이 'admin'인지 확인
-      return data?.role?.name === 'admin'
+      // role이 'admin' 또는 'super_admin'인지 확인
+      return data?.role === 'admin' || data?.role === 'super_admin'
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5분간 캐시
+    staleTime: 0, // 캐시 사용 안 함 - 매번 최신 데이터 조회
+    gcTime: 0, // 즉시 가비지 컬렉션 (캐시 완전 비우기)
+    refetchOnMount: 'always', // 컴포넌트 마운트 시 항상 재조회
   })
 }

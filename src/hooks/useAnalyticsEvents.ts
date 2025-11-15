@@ -42,20 +42,29 @@ const showRPCWarning = (functionName: RPCFunctionName, errorType: '404' | '401' 
   }
 }
 
+// Supabase 에러 타입 (PostgrestError)
+interface SupabaseError {
+  status?: number
+  code?: string
+  message?: string
+}
+
 // 401 또는 404 에러인지 확인하는 헬퍼 함수
-const isRPCError = (error: any): '401' | '404' | 'other' => {
+const isRPCError = (error: unknown): '401' | '404' | 'other' => {
   if (!error) return 'other'
-  
+
+  const err = error as SupabaseError
+
   // 401 Unauthorized 에러 확인
-  if (error.status === 401 || error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+  if (err.status === 401 || err.code === 'PGRST301' || err.message?.includes('401') || err.message?.includes('Unauthorized')) {
     return '401'
   }
-  
+
   // 404 Not Found 에러 확인
-  if (error.code === 'PGRST116' || error.message?.includes('404') || error.message?.includes('does not exist')) {
+  if (err.code === 'PGRST116' || err.message?.includes('404') || err.message?.includes('does not exist')) {
     return '404'
   }
-  
+
   return 'other'
 }
 

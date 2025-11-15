@@ -98,7 +98,15 @@ export default function Checkout() {
   })
 
   // Daum Postcode 완료 핸들러
-  const handlePostcodeComplete = (data: any) => {
+  interface DaumPostcodeData {
+    address: string
+    addressType: string
+    bname: string
+    buildingName: string
+    zonecode: string
+  }
+
+  const handlePostcodeComplete = (data: DaumPostcodeData) => {
     let fullAddress = data.address
     let extraAddress = ''
 

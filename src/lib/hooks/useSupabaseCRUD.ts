@@ -22,6 +22,7 @@ export interface SupabaseListOptions<T> {
   table: string
   queryKey: (string | number | boolean | undefined)[]
   select?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filters?: (query: PostgrestFilterBuilder<any, any, any>) => PostgrestFilterBuilder<any, any, any>
   orderBy?: { column: string; ascending?: boolean }
   limit?: number

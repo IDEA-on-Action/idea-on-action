@@ -9,6 +9,97 @@
 
 ---
 
+## [1.9.1] - 2025-11-15
+
+### Added
+- **E2E Tests (Admin CRUD)**: 154개 Playwright E2E 테스트 추가
+  - AdminPortfolio 테스트 32개 (15개 폼 필드, CRUD, 필터링)
+  - AdminLab 테스트 28개 (카테고리/상태 필터, GitHub/Demo URL)
+  - AdminTeam 테스트 28개 (아바타, 스킬, 소셜 링크)
+  - AdminBlogCategories 테스트 24개 (컬러 피커, 아이콘)
+  - AdminTags 테스트 24개 (kebab-case 검증, usage count)
+  - AdminUsers 테스트 18개 (super_admin 권한 체크)
+- **테스트 픽스처**: setup-test-admins.sql (테스트 사용자 admin 권한 설정 가이드)
+- **문서**: tests/e2e/admin/README.md (Admin E2E 테스트 가이드)
+
+### Fixed
+- **auth.ts 로그인 헬퍼**: Login 페이지 selector 수정 및 로딩 대기 로직 추가
+  - Selector 변경: `input[placeholder*="이메일"]` 사용
+  - 페이지 로딩 대기: `waitForLoadState('networkidle')` + `waitForSelector()`
+  - localStorage/sessionStorage 초기화 추가
+
+### Changed
+- **병렬 개발**: 6개 에이전트 동시 실행으로 작업 효율 6배 향상
+
+### Developer Experience
+- E2E 테스트 실행 가이드 추가 (UI 모드, 단일 테스트, 특정 페이지)
+- 테스트 사용자 설정 자동화 SQL 스크립트 제공
+
+---
+
+## [1.9.0] - 2025-11-15
+
+### Added - CMS Phase 3-2: Admin UI Complete
+
+**Admin Pages (6 new)**:
+- AdminPortfolio - Portfolio management with 15 form fields
+- AdminLab - Lab items management with category/status filters
+- AdminTeam - Team members management with avatar preview
+- AdminBlogCategories - Blog categories with color picker
+- AdminTags - Tags management with usage count tracking
+- AdminUsers - Admin users management (super_admin only)
+
+**Features**:
+- Create/Edit/Delete dialogs for all entities
+- Search and filtering on all pages
+- React Hook Form + Zod validation
+- Toast notifications for all operations
+- Loading/Error/Empty states
+- AdminLayout integration
+
+**Routing**:
+- /admin/portfolio
+- /admin/lab
+- /admin/team
+- /admin/blog/categories
+- /admin/tags
+- /admin/users
+
+### Fixed
+
+**Critical Bug - Infinite Recursion**:
+- Fixed useAuth ↔ useIsAdmin circular reference
+- Changed useIsAdmin to use supabase.auth.getUser() directly
+- Removed useAuth import from useAdmins.ts
+
+### Changed
+
+**Build**:
+- Build time: 17.82s
+- PWA cache: 160 entries (4.0 MB)
+- Main bundle: 112.00 kB gzip
+
+**Code Statistics**:
+- Total Admin pages: 7 (Dashboard + 6 CRUD)
+- Total code: ~4,000 lines (Phase 1-3)
+- TypeScript types: 42
+- React hooks: 7 (56 functions)
+- Database migrations: 9
+
+### Performance
+
+- Lazy loading for all admin pages
+- React Query caching (5-10 min staleTime)
+- Optimized bundle splitting
+
+### Developer Experience
+
+- Parallel agent execution (6 pages in 2 hours)
+- Consistent AdminLayout pattern
+- Reusable form components
+
+---
+
 ## [Unreleased] - 2025-01-XX
 
 ### Improved
