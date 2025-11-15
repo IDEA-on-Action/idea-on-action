@@ -4,11 +4,13 @@
  * 주문 생성 페이지 (장바구니 → 주문 전환)
  */
 
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import DaumPostcode from 'react-daum-postcode'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useCart } from '@/hooks/useCart'
@@ -27,9 +29,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, ArrowLeft, ShoppingBag } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { AlertCircle, ArrowLeft, ShoppingBag, Search, ExternalLink } from 'lucide-react'
 
 // 주문 폼 스키마
 const checkoutSchema = z.object({
@@ -50,6 +54,20 @@ const checkoutSchema = z.object({
     .string()
     .min(10, '올바른 전화번호를 입력해주세요')
     .regex(/^[0-9-]+$/, '숫자와 하이픈만 입력 가능합니다'),
+
+  // 약관 동의 (필수)
+  termsAgreed: z.boolean().refine((val) => val === true, {
+    message: '이용약관에 동의해주세요',
+  }),
+  privacyAgreed: z.boolean().refine((val) => val === true, {
+    message: '개인정보처리방침에 동의해주세요',
+  }),
+  refundAgreed: z.boolean().refine((val) => val === true, {
+    message: '환불정책에 동의해주세요',
+  }),
+  electronicFinanceAgreed: z.boolean().refine((val) => val === true, {
+    message: '전자금융거래약관에 동의해주세요',
+  }),
 })
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>
@@ -59,6 +77,7 @@ export default function Checkout() {
   const { user } = useAuth()
   const { data: cart, isLoading: isCartLoading } = useCart()
   const { mutate: createOrder, isPending: isCreatingOrder } = useCreateOrder()
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false)
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -71,8 +90,53 @@ export default function Checkout() {
       shippingNote: '',
       contactEmail: user?.email || '',
       contactPhone: '',
+      termsAgreed: false,
+      privacyAgreed: false,
+      refundAgreed: false,
+      electronicFinanceAgreed: false,
     },
   })
+
+  // Daum Postcode 완료 핸들러
+  const handlePostcodeComplete = (data: any) => {
+    let fullAddress = data.address
+    let extraAddress = ''
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname
+      }
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName
+      }
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : ''
+    }
+
+    form.setValue('postcode', data.zonecode)
+    form.setValue('address', fullAddress)
+    setIsPostcodeOpen(false)
+
+    // 상세주소 입력 필드에 포커스
+    setTimeout(() => {
+      const addressDetailInput = document.querySelector<HTMLInputElement>('input[name="addressDetail"]')
+      addressDetailInput?.focus()
+    }, 100)
+  }
+
+  // 전체 동의 핸들러
+  const handleAllAgree = (checked: boolean) => {
+    form.setValue('termsAgreed', checked)
+    form.setValue('privacyAgreed', checked)
+    form.setValue('refundAgreed', checked)
+    form.setValue('electronicFinanceAgreed', checked)
+  }
+
+  // 전체 동의 상태 확인
+  const isAllAgreed =
+    form.watch('termsAgreed') &&
+    form.watch('privacyAgreed') &&
+    form.watch('refundAgreed') &&
+    form.watch('electronicFinanceAgreed')
 
   // 장바구니 금액 계산
   const subtotal = cart?.items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0
@@ -211,11 +275,21 @@ export default function Checkout() {
                           control={form.control}
                           name="postcode"
                           render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="sm:col-span-3">
                               <FormLabel>우편번호</FormLabel>
-                              <FormControl>
-                                <Input placeholder="12345" {...field} />
-                              </FormControl>
+                              <div className="flex gap-2">
+                                <FormControl>
+                                  <Input placeholder="12345" {...field} readOnly />
+                                </FormControl>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => setIsPostcodeOpen(true)}
+                                >
+                                  <Search className="mr-2 h-4 w-4" />
+                                  검색
+                                </Button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -229,7 +303,7 @@ export default function Checkout() {
                           <FormItem>
                             <FormLabel>주소</FormLabel>
                             <FormControl>
-                              <Input placeholder="서울시 강남구 테헤란로 123" {...field} />
+                              <Input placeholder="서울시 강남구 테헤란로 123" {...field} readOnly />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -302,6 +376,155 @@ export default function Checkout() {
                           )}
                         />
                       </div>
+
+                      <Separator className="my-6" />
+
+                      {/* 약관 동의 */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">약관 동의</h3>
+
+                        {/* 전체 동의 */}
+                        <div className="flex items-center space-x-2 p-4 bg-muted/50 rounded-lg">
+                          <Checkbox
+                            id="allAgree"
+                            checked={isAllAgreed}
+                            onCheckedChange={handleAllAgree}
+                          />
+                          <label
+                            htmlFor="allAgree"
+                            className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            전체 동의
+                          </label>
+                        </div>
+
+                        {/* 개별 약관 동의 */}
+                        <div className="space-y-3 pl-2">
+                          <FormField
+                            control={form.control}
+                            name="termsAgreed"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="flex-1 space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal cursor-pointer">
+                                    [필수] 이용약관 동의
+                                    <a
+                                      href="/terms"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-primary hover:underline inline-flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      보기
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </FormLabel>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="privacyAgreed"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="flex-1 space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal cursor-pointer">
+                                    [필수] 개인정보처리방침 동의
+                                    <a
+                                      href="/privacy"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-primary hover:underline inline-flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      보기
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </FormLabel>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="refundAgreed"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="flex-1 space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal cursor-pointer">
+                                    [필수] 환불정책 동의
+                                    <a
+                                      href="/refund-policy"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-primary hover:underline inline-flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      보기
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </FormLabel>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="electronicFinanceAgreed"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="flex-1 space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal cursor-pointer">
+                                    [필수] 전자금융거래약관 동의
+                                    <a
+                                      href="/electronic-finance-terms"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-primary hover:underline inline-flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      보기
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </FormLabel>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
                     </form>
                   </Form>
                 </CardContent>
@@ -323,7 +546,11 @@ export default function Checkout() {
                     {cart?.items?.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">
                         <span className="flex-1 truncate">
-                          {item.service?.title} x {item.quantity}
+                          {item.service?.title}
+                          {item.package_name && (
+                            <span className="text-muted-foreground"> - {item.package_name}</span>
+                          )}{' '}
+                          x {item.quantity}
                         </span>
                         <span className="font-medium">
                           ₩{(item.price * item.quantity).toLocaleString()}
@@ -354,10 +581,16 @@ export default function Checkout() {
                     className="w-full"
                     size="lg"
                     onClick={form.handleSubmit(onSubmit)}
-                    disabled={isCreatingOrder}
+                    disabled={isCreatingOrder || !isAllAgreed}
                   >
                     {isCreatingOrder ? '주문 중...' : '주문하기'}
                   </Button>
+
+                  {!isAllAgreed && (
+                    <p className="text-xs text-destructive text-center">
+                      필수 약관에 모두 동의해주세요
+                    </p>
+                  )}
 
                   <p className="text-xs text-muted-foreground text-center">
                     주문 버튼을 클릭하시면 주문이 완료됩니다
@@ -369,6 +602,16 @@ export default function Checkout() {
         </main>
 
         <Footer />
+
+        {/* 우편번호 검색 Dialog */}
+        <Dialog open={isPostcodeOpen} onOpenChange={setIsPostcodeOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>우편번호 검색</DialogTitle>
+            </DialogHeader>
+            <DaumPostcode onComplete={handlePostcodeComplete} />
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   )

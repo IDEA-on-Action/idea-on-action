@@ -201,6 +201,7 @@ export function useCreateOrder() {
         quantity: item.quantity,
         unit_price: item.price,
         subtotal: item.price * item.quantity,
+        package_name: item.package_name || null, // 장바구니에서 패키지 이름 복사
         service_snapshot: item.service ? (item.service as unknown as Record<string, unknown>) : null,
       }))
 
@@ -218,7 +219,7 @@ export function useCreateOrder() {
       return order
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orderQueryKeys.all() })
+      queryClient.invalidateQueries({ queryKey: orderQueryKeys.all })
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       toast.success('주문이 완료되었습니다')
     },
@@ -252,7 +253,7 @@ export function useCancelOrder() {
       return { success: true }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orderQueryKeys.all() })
+      queryClient.invalidateQueries({ queryKey: orderQueryKeys.all })
       toast.success('주문이 취소되었습니다')
     },
     onError: (error: Error) => {
@@ -268,7 +269,7 @@ export function useCancelOrder() {
 
 export function useAdminOrders() {
   return useQuery<OrderWithItems[]>({
-    queryKey: adminOrderQueryKeys.all(),
+    queryKey: adminOrderQueryKeys.all,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('orders')
@@ -334,8 +335,8 @@ export function useUpdateOrderStatus() {
       return { success: true }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orderQueryKeys.all() })
-      queryClient.invalidateQueries({ queryKey: adminOrderQueryKeys.all() })
+      queryClient.invalidateQueries({ queryKey: orderQueryKeys.all })
+      queryClient.invalidateQueries({ queryKey: adminOrderQueryKeys.all })
       toast.success('주문 상태가 변경되었습니다')
     },
     onError: (error: Error) => {

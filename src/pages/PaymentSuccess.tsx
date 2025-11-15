@@ -4,7 +4,7 @@
  * 결제 성공 페이지 (Kakao Pay / Toss Payments 공통)
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import Header from '@/components/Header'
@@ -34,8 +34,14 @@ export default function PaymentSuccess() {
 
   const { approveKakaoPay, confirmTossPay } = usePayment()
 
+  // 중복 실행 방지 (React Strict Mode 대응)
+  const hasProcessed = useRef(false)
+
   // 결제 승인 처리
   useEffect(() => {
+    // 이미 처리했거나 처리 중이면 스킵
+    if (hasProcessed.current) return
+
     if (!orderId) {
       setError('주문 정보가 없습니다.')
       setIsProcessing(false)
@@ -43,6 +49,9 @@ export default function PaymentSuccess() {
     }
 
     const processPayment = async () => {
+      // 처리 시작 마킹 (중복 방지)
+      hasProcessed.current = true
+
       try {
         // 1. 주문 정보 조회
         const { data: order, error: orderError } = await supabase
@@ -81,7 +90,8 @@ export default function PaymentSuccess() {
     }
 
     processPayment()
-  }, [orderId, pgToken, paymentKey, amount, approveKakaoPay, confirmTossPay])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 빈 의존성 배열: 마운트 시 1회만 실행
 
   // 주문 내역 페이지로 이동
   const handleGoToOrders = () => {
@@ -96,7 +106,7 @@ export default function PaymentSuccess() {
           <title>결제 처리 중 - IDEA on Action</title>
         </Helmet>
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-16 flex items-center justify-center">
+        <main className="flex-1 container mx-auto px-4 py-16 pt-24 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="h-16 w-16 animate-spin mx-auto mb-4 text-primary" />
             <p className="text-xl font-semibold mb-2">결제를 처리하고 있습니다</p>
@@ -117,7 +127,7 @@ export default function PaymentSuccess() {
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
 
-        <main className="flex-1">
+        <main className="flex-1 pt-20">
           <PaymentStatus
             status={error ? 'failed' : 'success'}
             orderId={orderId || undefined}

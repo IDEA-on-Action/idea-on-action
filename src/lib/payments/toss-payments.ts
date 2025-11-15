@@ -58,7 +58,8 @@ export async function initializeTossPayments(): Promise<TossPaymentsInstance> {
  * Toss Payments API 요청 헤더 생성
  */
 function getHeaders() {
-  const auth = Buffer.from(`${SECRET_KEY}:`, 'utf-8').toString('base64')
+  // Browser-compatible Base64 encoding (btoa is available in all modern browsers)
+  const auth = btoa(`${SECRET_KEY}:`)
   return {
     Authorization: `Basic ${auth}`,
     'Content-Type': 'application/json',
