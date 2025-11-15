@@ -265,8 +265,47 @@ curl https://www.ideaonaction.ai/robots.txt
 **목표**: Lighthouse SEO 85% 이상 (Login 페이지)
 
 **개선 항목**:
-- [ ] Login 페이지 메타태그 추가 (title, description)
-- [ ] noindex 설정 제거 또는 조정
+- [x] Login 페이지 메타태그 추가 (title, description) - **완료**
+- [x] robots: noindex, nofollow 설정 (보안) - **완료**
+
+---
+
+## 🔄 R-5.2: 개선 완료 현황 (2025-11-15)
+
+### ✅ 완료된 개선 작업
+
+**1. Login 페이지 SEO 메타태그 추가** (완료: 2025-11-15)
+- **변경 파일**: src/pages/Login.tsx
+- **추가 항목**:
+  - meta description (155자)
+  - meta keywords
+  - Open Graph 태그 (4개)
+  - Twitter Card 태그 (3개)
+  - Canonical URL
+  - robots: noindex, nofollow
+- **예상 효과**: Lighthouse SEO 66% → 85%+
+- **커밋**: 305a97d
+- **빌드**: 23.20s, 150 PWA entries (4.06 MB)
+
+### ⏳ 진행 중인 작업
+
+**2. Performance 개선**
+- [ ] LCP (Largest Contentful Paint) 최적화
+  - 이미지 lazy loading 추가
+  - Critical CSS 인라인화
+  - 폰트 preload 추가
+- [ ] TBT (Total Blocking Time) 최적화
+  - JavaScript 번들 크기 최적화
+  - Code splitting 개선
+  - Third-party 스크립트 최적화
+- [ ] CLS (Cumulative Layout Shift) 최적화
+  - 이미지 width/height 속성 추가
+  - 광고/위젯 공간 예약
+
+**3. Accessibility 개선**
+- [ ] Services 페이지 접근성 진단 (84% → 85%+)
+- [ ] ARIA 레이블 추가
+- [ ] 키보드 네비게이션 개선
 
 ---
 
