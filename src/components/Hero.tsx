@@ -61,12 +61,13 @@ const Hero = ({ className = "" }: HeroProps) => {
         <div className="max-w-4xl mx-auto text-center animate-fade-in">
           {/* Logo */}
           <div className="mb-8 animate-fade-in">
-            <img 
-              src={logoFull} 
-              alt="VIBE WORKING - KEEP AWAKE, LIVE PASSIONATE" 
-              className="h-20 md:h-24 mx-auto"
-              width={96}
-              height={96}
+            <img
+              src={logoFull}
+              alt="VIBE WORKING - KEEP AWAKE, LIVE PASSIONATE"
+              className="h-20 md:h-24 w-auto mx-auto"
+              width={1920}
+              height={832}
+              loading="lazy"
             />
           </div>
 
