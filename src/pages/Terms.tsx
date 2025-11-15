@@ -34,7 +34,13 @@ export default function Terms() {
           <h2>제2조 (정의)</h2>
           <ol>
             <li>
-              <strong>"서비스"</strong>란 회사가 제공하는 AI 컨설팅, 웹 개발, 데이터 분석 등의 온라인 서비스를 의미합니다.
+              <strong>"서비스"</strong>란 회사가 제공하는 소프트웨어 개발 서비스 및 COMPASS 플랫폼 서비스를 의미합니다.
+            </li>
+            <li>
+              <strong>"개발 서비스"</strong>란 맞춤형 소프트웨어 개발, 디자인 시스템 구축, 시스템 운영 관리 등의 서비스를 의미합니다.
+            </li>
+            <li>
+              <strong>"플랫폼 서비스"</strong>란 COMPASS Navigator 등 SaaS 형태로 제공되는 서비스를 의미합니다.
             </li>
             <li>
               <strong>"이용자"</strong>란 이 약관에 따라 회사가 제공하는 서비스를 이용하는 자를 의미합니다.
@@ -62,9 +68,24 @@ export default function Terms() {
             <li>
               회사는 다음과 같은 서비스를 제공합니다:
               <ul>
-                <li>AI 컨설팅 서비스</li>
-                <li>웹사이트 및 애플리케이션 개발</li>
-                <li>데이터 분석 및 자동화 솔루션</li>
+                <li>
+                  <strong>개발 서비스</strong>
+                  <ul>
+                    <li>MVP 개발 서비스</li>
+                    <li>풀스택 개발 서비스</li>
+                    <li>디자인 시스템 구축 서비스</li>
+                    <li>시스템 운영 관리 서비스</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>COMPASS 플랫폼</strong>
+                  <ul>
+                    <li>COMPASS Navigator - 프로젝트 수주 기회 탐색</li>
+                    <li>COMPASS Cartographer - 시장 기회 분석 (2026 Q1 출시 예정)</li>
+                    <li>COMPASS Captain - 프로젝트 관리 (2026 Q1 출시 예정)</li>
+                    <li>COMPASS Harbor - 포트폴리오 관리 (2026 Q1 출시 예정)</li>
+                  </ul>
+                </li>
                 <li>기타 회사가 정하는 서비스</li>
               </ul>
             </li>

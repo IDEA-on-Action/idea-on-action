@@ -1,58 +1,26 @@
 import { Helmet } from "react-helmet-async";
-import { Rocket, Code, Palette, Mail, Calendar } from "lucide-react";
+import { Rocket, Code, Palette, Mail, Calendar, Server, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { WorkWithUsForm } from "@/components/forms/WorkWithUsForm";
 import { PageLayout, HeroSection, Section } from "@/components/layouts";
+import { developmentServices } from "@/data/services";
+
+const serviceIcons = {
+  mvp: Rocket,
+  fullstack: Code,
+  design: Palette,
+  operations: Server,
+} as const;
 
 const WorkWithUs = () => {
-  const packages = [
-    {
-      icon: Rocket,
-      name: "MVP 개발",
-      price: "협의",
-      description: "아이디어를 빠르게 검증할 수 있는 MVP를 함께 만듭니다.",
-      features: [
-        "요구사항 분석 및 기획",
-        "UI/UX 디자인",
-        "프론트엔드 & 백엔드 개발",
-        "테스트 & 배포",
-        "2주 무료 유지보수"
-      ],
-      duration: "4-6주",
-      ideal: "스타트업, 초기 프로젝트"
-    },
-    {
-      icon: Code,
-      name: "기술 컨설팅",
-      price: "500,000원~",
-      description: "기술 스택 선정부터 아키텍처 설계까지 전문적인 조언을 제공합니다.",
-      features: [
-        "기술 스택 분석 및 추천",
-        "아키텍처 설계 리뷰",
-        "코드 리뷰 및 개선 제안",
-        "성능 최적화 가이드",
-        "문서화 지원"
-      ],
-      duration: "1-2주",
-      ideal: "팀, 프로젝트 리딩"
-    },
-    {
-      icon: Palette,
-      name: "디자인 시스템",
-      price: "300,000원~",
-      description: "일관된 사용자 경험을 위한 디자인 시스템을 구축합니다.",
-      features: [
-        "브랜드 아이덴티티 설계",
-        "컴포넌트 라이브러리 구축",
-        "스타일 가이드 문서",
-        "다크 모드 지원",
-        "반응형 디자인"
-      ],
-      duration: "2-3주",
-      ideal: "브랜드 구축, UI 통일"
-    }
-  ];
+  // Development Services만 표시 (MVP, Fullstack, Design, Operations)
+  const services = developmentServices.map((service) => ({
+    ...service,
+    icon: serviceIcons[service.slug as keyof typeof serviceIcons] || Rocket,
+  }));
 
   return (
     <>
@@ -74,56 +42,74 @@ const WorkWithUs = () => {
           description="아이디어를 현실로 만드는 여정에 함께하세요"
         />
 
-        {/* Packages */}
+        {/* Services */}
         <Section maxWidth="6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">협업 패키지</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">개발 서비스</h2>
             <p className="text-lg text-muted-foreground">
-              프로젝트 단계와 니즈에 맞는 패키지를 선택하세요
+              프로젝트 단계와 니즈에 맞는 서비스를 선택하세요
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-              {packages.map((pkg, index) => (
-                <Card
-                  key={index}
-                  className="glass-card p-8 space-y-6 hover-lift"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                      <pkg.icon className="w-8 h-8 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                      <div className="text-3xl font-bold text-primary mb-2">{pkg.price}</div>
-                      <p className="text-sm text-foreground/70">{pkg.description}</p>
-                    </div>
-                  </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {services.map((service, index) => {
+                const Icon = service.icon;
+                // 가격 정보 추출
+                let priceDisplay = "협의";
+                if (service.pricing.type === "package" && service.pricing.packages) {
+                  const prices = service.pricing.packages.map(p => p.price);
+                  const minPrice = Math.min(...prices);
+                  const maxPrice = Math.max(...prices);
+                  if (minPrice === maxPrice) {
+                    priceDisplay = `₩${(minPrice / 1000000).toFixed(1)}M`;
+                  } else {
+                    priceDisplay = `₩${(minPrice / 1000000).toFixed(1)}M ~ ₩${(maxPrice / 1000000).toFixed(1)}M`;
+                  }
+                } else if (service.pricing.type === "monthly" && service.pricing.monthly) {
+                  const prices = service.pricing.monthly.map(p => p.price);
+                  const minPrice = Math.min(...prices);
+                  const maxPrice = Math.max(...prices);
+                  priceDisplay = `₩${(minPrice / 1000).toFixed(0)}K ~ ₩${(maxPrice / 1000).toFixed(0)}K/월`;
+                } else if (service.pricing.type === "hourly" && service.pricing.hourly) {
+                  priceDisplay = `₩${(service.pricing.hourly.juniorRate / 1000).toFixed(0)}K ~ ₩${(service.pricing.hourly.seniorRate / 1000).toFixed(0)}K/시간`;
+                }
 
-                  <div className="space-y-3 pt-6 border-t">
-                    {pkg.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-start gap-2">
-                        <span className="text-primary mt-1">✓</span>
-                        <span className="text-sm text-foreground/80">{feature}</span>
+                return (
+                  <Card
+                    key={service.id}
+                    className="glass-card p-6 space-y-4 hover-lift flex flex-col"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className="space-y-3">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-primary" />
                       </div>
-                    ))}
-                  </div>
+                      <div>
+                        <h3 className="text-xl font-bold mb-1">{service.name}</h3>
+                        <div className="text-sm font-semibold text-primary mb-2">{priceDisplay}</div>
+                        <p className="text-xs text-foreground/70 line-clamp-2">{service.description}</p>
+                      </div>
+                    </div>
 
-                  <div className="space-y-2 pt-6 border-t">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">예상 기간</span>
-                      <span className="font-semibold">{pkg.duration}</span>
+                    <div className="space-y-2 pt-4 border-t flex-1">
+                      {service.features.slice(0, 4).map((feature, featureIndex) => (
+                        <div key={featureIndex} className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5 text-xs">✓</span>
+                          <span className="text-xs text-foreground/80 line-clamp-1">{feature}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">추천 대상</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {pkg.ideal}
-                      </Badge>
+
+                    <div className="pt-4 border-t">
+                      <Link to={`/services/development/${service.slug}`}>
+                        <Button variant="outline" className="w-full" size="sm">
+                          자세히 보기
+                        </Button>
+                      </Link>
                     </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
           </div>
         </Section>
 

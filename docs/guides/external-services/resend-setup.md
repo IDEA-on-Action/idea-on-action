@@ -133,18 +133,18 @@ re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # .env.local (기존 파일에 추가)
 
 # Resend
+VITE_RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 VITE_RESEND_FROM_EMAIL="noreply@ideaonaction.ai"
-RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
-**⚠️ 중요**: `RESEND_API_KEY`는 `VITE_` 접두사 없음 (서버 전용)
+**⚠️ 중요**: Vite 환경에서는 `VITE_` 접두사가 필요합니다. 클라이언트 사이드에서 접근 가능하지만, 실제 이메일 전송은 서버 사이드에서만 수행됩니다.
 
 **4.2. GitHub Secrets 추가**
 
 GitHub 리포지토리 → **Settings** → **Secrets and variables** → **Actions**:
 
 ```
-Name: RESEND_API_KEY
+Name: VITE_RESEND_API_KEY
 Value: re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -152,7 +152,7 @@ Value: re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 Vercel 대시보드:
 1. Project → **Settings** → **Environment Variables**
-2. `RESEND_API_KEY` 추가
+2. `VITE_RESEND_API_KEY` 추가
 3. **Production**, **Preview** 체크 (Development는 로컬 .env 사용)
 
 ---
@@ -172,7 +172,15 @@ npm install resend
 ```typescript
 import { Resend } from 'resend';
 
-const resend = new Resend(import.meta.env.RESEND_API_KEY);
+// Resend 클라이언트는 지연 초기화됩니다
+// API 키가 없으면 안전하게 오류를 반환합니다
+const getResend = (): Resend => {
+  const apiKey = import.meta.env.VITE_RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('VITE_RESEND_API_KEY is not configured')
+  }
+  return new Resend(apiKey)
+}
 
 /**
  * Work with Us 문의 이메일 발송

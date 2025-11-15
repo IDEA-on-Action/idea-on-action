@@ -6,6 +6,59 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
 
+// RPC 함수 경고 메시지 표시 여부 추적 (한 번만 표시)
+type RPCFunctionName = 'calculate_funnel' | 'calculate_bounce_rate' | 'get_event_counts'
+
+const rpcWarningShown: Record<RPCFunctionName, boolean> = {
+  calculate_funnel: false,
+  calculate_bounce_rate: false,
+  get_event_counts: false,
+}
+
+// 개발 환경에서만 경고 표시
+const shouldShowWarning = (): boolean => {
+  return import.meta.env.DEV && import.meta.env.MODE !== 'test'
+}
+
+// 경고 메시지 표시 (한 번만, debug 레벨로 조용하게)
+const showRPCWarning = (functionName: RPCFunctionName, errorType: '404' | '401' = '404'): void => {
+  if (!shouldShowWarning()) return
+  if (rpcWarningShown[functionName]) return
+  
+  rpcWarningShown[functionName] = true
+  
+  if (errorType === '401') {
+    console.debug(
+      `[Analytics] ${functionName} RPC 함수 호출 권한이 없습니다. 익명 사용자 권한이 필요합니다.\n` +
+      `마이그레이션 파일: supabase/migrations/20251111000002_analytics_functions.sql\n` +
+      `적용 방법: Supabase Dashboard → SQL Editor → 마이그레이션 파일에서 anon 권한 추가 확인`
+    )
+  } else {
+    console.debug(
+      `[Analytics] ${functionName} RPC 함수가 존재하지 않습니다. 마이그레이션을 적용해주세요.\n` +
+      `마이그레이션 파일: supabase/migrations/20251111000002_analytics_functions.sql\n` +
+      `적용 방법: Supabase Dashboard → SQL Editor → 마이그레이션 파일 실행`
+    )
+  }
+}
+
+// 401 또는 404 에러인지 확인하는 헬퍼 함수
+const isRPCError = (error: any): '401' | '404' | 'other' => {
+  if (!error) return 'other'
+  
+  // 401 Unauthorized 에러 확인
+  if (error.status === 401 || error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+    return '401'
+  }
+  
+  // 404 Not Found 에러 확인
+  if (error.code === 'PGRST116' || error.message?.includes('404') || error.message?.includes('does not exist')) {
+    return '404'
+  }
+  
+  return 'other'
+}
+
 // ============================================
 // 타입 정의
 // ============================================
@@ -124,14 +177,34 @@ export function useFunnelAnalysis(startDate: Date, endDate: Date) {
         end_date: endDate.toISOString(),
       })
 
-      if (error) throw error
+      // RPC 함수 에러 처리 (401 또는 404) 빈 데이터 반환
+      if (error) {
+        const errorType = isRPCError(error)
+        if (errorType === '401' || errorType === '404') {
+          showRPCWarning('calculate_funnel', errorType)
+          return {
+            signup: 0,
+            viewService: 0,
+            addToCart: 0,
+            checkout: 0,
+            purchase: 0,
+            conversionRate: {
+              signupToView: 0,
+              viewToCart: 0,
+              cartToCheckout: 0,
+              checkoutToPurchase: 0,
+            },
+          } as FunnelData
+        }
+        throw error
+      }
 
       // 전환율 계산
-      const signup = data[0]?.signup_count || 0
-      const viewService = data[0]?.view_service_count || 0
-      const addToCart = data[0]?.add_to_cart_count || 0
-      const checkout = data[0]?.checkout_count || 0
-      const purchase = data[0]?.purchase_count || 0
+      const signup = data?.[0]?.signup_count || 0
+      const viewService = data?.[0]?.view_service_count || 0
+      const addToCart = data?.[0]?.add_to_cart_count || 0
+      const checkout = data?.[0]?.checkout_count || 0
+      const purchase = data?.[0]?.purchase_count || 0
 
       return {
         signup,
@@ -148,6 +221,7 @@ export function useFunnelAnalysis(startDate: Date, endDate: Date) {
       } as FunnelData
     },
     staleTime: 10 * 60 * 1000, // 10분 캐싱 (무거운 쿼리)
+    retry: false, // 401/404 에러는 재시도하지 않음
   })
 }
 
@@ -168,10 +242,22 @@ export function useBounceRate(startDate: Date, endDate: Date) {
         end_date: endDate.toISOString(),
       })
 
-      if (error) throw error
+      // RPC 함수 에러 처리 (401 또는 404) 빈 데이터 반환
+      if (error) {
+        const errorType = isRPCError(error)
+        if (errorType === '401' || errorType === '404') {
+          showRPCWarning('calculate_bounce_rate', errorType)
+          return {
+            totalSessions: 0,
+            bouncedSessions: 0,
+            bounceRate: 0,
+          } as BounceRateData
+        }
+        throw error
+      }
 
-      const totalSessions = data[0]?.total_sessions || 0
-      const bouncedSessions = data[0]?.bounced_sessions || 0
+      const totalSessions = data?.[0]?.total_sessions || 0
+      const bouncedSessions = data?.[0]?.bounced_sessions || 0
 
       return {
         totalSessions,
@@ -180,6 +266,7 @@ export function useBounceRate(startDate: Date, endDate: Date) {
       } as BounceRateData
     },
     staleTime: 10 * 60 * 1000, // 10분 캐싱
+    retry: false, // 401/404 에러는 재시도하지 않음
   })
 }
 
@@ -200,12 +287,21 @@ export function useEventCounts(startDate: Date, endDate: Date, topN = 20) {
         end_date: endDate.toISOString(),
       })
 
-      if (error) throw error
+      // RPC 함수 에러 처리 (401 또는 404) 빈 배열 반환
+      if (error) {
+        const errorType = isRPCError(error)
+        if (errorType === '401' || errorType === '404') {
+          showRPCWarning('get_event_counts', errorType)
+          return [] as EventCount[]
+        }
+        throw error
+      }
 
       // 상위 N개만 반환
-      return (data as EventCount[]).slice(0, topN)
+      return (data as EventCount[])?.slice(0, topN) || []
     },
     staleTime: 10 * 60 * 1000, // 10분 캐싱
+    retry: false, // 401/404 에러는 재시도하지 않음
   })
 }
 

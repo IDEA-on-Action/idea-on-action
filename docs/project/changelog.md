@@ -9,6 +9,20 @@
 
 ---
 
+## [Unreleased] - 2025-01-XX
+
+### Changed
+- **블로그 메뉴 임시 숨김 처리**
+  - `src/components/Header.tsx`: NAVIGATION_ITEMS 배열에서 블로그 메뉴 항목 주석 처리
+  - 데스크톱 및 모바일 네비게이션에서 블로그 메뉴 제거
+  - 수정 완료 시 주석 해제하여 다시 활성화 예정
+
+### Documentation
+- `docs/archive/analysis-reports/menu-structure-analysis.md`: 블로그 메뉴 숨김 처리 내용 반영
+- `docs/components/Header.md`: 네비게이션 구조 문서 업데이트
+
+---
+
 ## [2.0.0-sprint2.5] - 2025-11-15
 
 ### 🎉 Sprint 2 Day 3-5 완료 - Giscus, Work with Us, Newsletter 통합

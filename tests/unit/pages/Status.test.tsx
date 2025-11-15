@@ -397,7 +397,7 @@ describe('Status Page', () => {
 
       // Assert
       expect(screen.getByText('데이터 로드 실패')).toBeInTheDocument();
-      expect(screen.getByText('일부 데이터를 불러오지 못했습니다.')).toBeInTheDocument();
+      expect(screen.getByText('프로젝트 데이터 로드 실패')).toBeInTheDocument();
     });
 
     it('바운티 데이터 에러 시 에러 메시지가 표시되어야 함', () => {

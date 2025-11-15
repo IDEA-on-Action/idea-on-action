@@ -103,42 +103,77 @@ export default function RefundPolicy() {
 
           <h2>제4조 (서비스별 환불 규정)</h2>
 
-          <h3>1. AI 컨설팅 서비스</h3>
+          <h3>1. 개발 서비스 (MVP / 풀스택 / 디자인 시스템)</h3>
           <Alert className="my-4">
             <CheckCircle2 className="h-4 w-4" />
             <AlertTitle>환불 가능</AlertTitle>
             <AlertDescription>
-              최초 상담 전: 100% 환불
+              계약 체결 전: 100% 환불
               <br />
-              1차 컨설팅 완료 후: 70% 환불
+              착수 전: 착수금 100% 환불
               <br />
-              2차 이상 컨설팅 진행 시: 환불 불가 (단, 회사 귀책사유 제외)
+              기획 단계 (0-25%): 착수금 제외 금액의 90% 환불
+              <br />
+              개발 단계 (25-75%): 진행률에 따라 차등 환불 (양 당사자 협의)
+              <br />
+              완료 단계 (75-100%): 환불 불가 (단, 계약 내용 미이행 시 제외)
             </AlertDescription>
           </Alert>
 
-          <h3>2. 웹 개발 서비스</h3>
+          <h3>2. 시스템 운영 관리 서비스</h3>
           <Alert className="my-4">
             <CheckCircle2 className="h-4 w-4" />
             <AlertTitle>환불 가능</AlertTitle>
             <AlertDescription>
-              계약 체결 후 작업 시작 전: 100% 환불 (단, 계약금 제외)
+              <strong>월 구독형</strong>
               <br />
-              작업 진행률 30% 미만: 70% 환불
+              서비스 시작 전: 전액 환불
               <br />
-              작업 진행률 30% 이상: 환불 불가 (단, 회사 귀책사유 제외)
+              서비스 시작 후 7일 이내: 전액 환불
+              <br />
+              7일 경과 후: 당월 환불 불가, 익월부터 해지
+              <br />
+              <br />
+              <strong>연간 계약</strong>
+              <br />
+              3개월 이내: 80% 환불 | 6개월 이내: 50% 환불 | 6개월 경과: 환불 불가
+              <br />
+              <br />
+              <strong>SLA 위반 시</strong>: 월 이용료 일부 크레딧 보상
             </AlertDescription>
           </Alert>
 
-          <h3>3. 데이터 분석 서비스</h3>
+          <h3>3. COMPASS Navigator (월 구독)</h3>
           <Alert className="my-4">
             <CheckCircle2 className="h-4 w-4" />
             <AlertTitle>환불 가능</AlertTitle>
             <AlertDescription>
-              데이터 수집 전: 100% 환불
+              무료 체험 기간 중: 과금 없음
               <br />
-              데이터 수집 완료 후 분석 시작 전: 50% 환불
+              결제 후 7일 이내: 100% 환불
               <br />
-              분석 시작 후: 환불 불가 (단, 회사 귀책사유 제외)
+              결제 후 7일 경과: 당월 환불 불가, 익월부터 자동 해지
+            </AlertDescription>
+          </Alert>
+
+          <h3>4. COMPASS 플랫폼 (연간 구독)</h3>
+          <Alert className="my-4">
+            <CheckCircle2 className="h-4 w-4" />
+            <AlertTitle>환불 가능</AlertTitle>
+            <AlertDescription>
+              구독 시작 후 30일 이내: 전액 환불
+              <br />
+              30일 경과 후: 사용하지 않은 개월 수만큼 비례 환불
+              <br />
+              <br />
+              <strong>환불 계산 예시</strong>: 연간 구독료 ₩1,200,000 (월 ₩100,000 × 12개월), 4개월 사용 후 해지 시 환불 금액 = ₩100,000 × 8개월 = ₩800,000
+              <br />
+              <br />
+              <strong>SLA 미달 시 보상</strong>
+              <br />
+              1시간 미만: 보상 없음 | 1-4시간: 당월 이용료 10% 크레딧
+              <br />
+              4-24시간: 25% 크레딧 | 24시간 이상: 50% 크레딧
             </AlertDescription>
           </Alert>
 

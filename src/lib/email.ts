@@ -11,8 +11,32 @@ import { Resend } from 'resend'
 import type { ReactElement } from 'react'
 import { devWarn, devError } from '@/lib/errors'
 
-// Resend 클라이언트 초기화
-export const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY)
+// Resend 클라이언트 초기화 (API 키가 있을 때만)
+const getResendClient = (): Resend | null => {
+  const apiKey = import.meta.env.VITE_RESEND_API_KEY
+  if (!apiKey) {
+    return null
+  }
+  try {
+    return new Resend(apiKey)
+  } catch (error) {
+    devError(error, { service: 'Email', operation: 'Resend 클라이언트 초기화' })
+    return null
+  }
+}
+
+// Resend 클라이언트 (지연 초기화)
+let resendClient: Resend | null = null
+
+const getResend = (): Resend => {
+  if (!resendClient) {
+    resendClient = getResendClient()
+    if (!resendClient) {
+      throw new Error('Resend API key is not configured. Please set VITE_RESEND_API_KEY in your environment variables.')
+    }
+  }
+  return resendClient
+}
 
 // 발신자 이메일
 export const FROM_EMAIL = import.meta.env.VITE_RESEND_FROM_EMAIL || 'noreply@ideaonaction.ai'
@@ -45,6 +69,7 @@ export async function sendEmail(
       }
     }
 
+    const resend = getResend()
     const data = await resend.emails.send({
       from: FROM_EMAIL,
       to: options.to,
@@ -247,14 +272,15 @@ export async function sendWorkWithUsEmail(
 ): Promise<SendEmailResult> {
   try {
     // API 키 체크
-    if (!import.meta.env.VITE_RESEND_API_KEY && !import.meta.env.RESEND_API_KEY) {
-      devWarn('RESEND_API_KEY is not set')
+    if (!import.meta.env.VITE_RESEND_API_KEY) {
+      devWarn('VITE_RESEND_API_KEY is not set')
       return {
         success: false,
         error: 'Email API key is not configured',
       }
     }
 
+    const resend = getResend()
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: ['sinclairseo@gmail.com'],

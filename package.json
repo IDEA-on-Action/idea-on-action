@@ -32,7 +32,8 @@
     "generate:screenshots": "node scripts/capture-payment-screenshots.js",
     "check:rls": "node scripts/check-rls-policies.js",
     "fix:rls": "node scripts/apply-rls-policies.js",
-    "verify:gtm": "node scripts/verify-google-tags.js"
+    "verify:gtm": "node scripts/verify-google-tags.js",
+    "cancel:workflows": "node scripts/cancel-non-deployment-workflows.js"
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",

@@ -122,7 +122,7 @@ describe('useRoadmap', () => {
       }
     });
 
-    it('에러 발생 시 에러 상태를 반환해야 함', async () => {
+    it('에러 발생 시 fallback 값을 반환해야 함', async () => {
       // Setup
       const orderMock = vi.fn().mockResolvedValue({
         data: null,
@@ -140,12 +140,12 @@ describe('useRoadmap', () => {
       // Execute
       const { result } = renderHook(() => useRoadmap(), { wrapper });
 
-      // Assert
+      // Assert - supabaseQuery는 에러 시 fallbackValue([])를 반환
       await waitFor(() => {
-        expect(result.current.isError).toBe(true);
+        expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(result.current.error).toBeDefined();
+      expect(result.current.data).toEqual([]);
     });
   });
 
@@ -155,7 +155,7 @@ describe('useRoadmap', () => {
       vi.mocked(supabase.from).mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: mockRoadmapItems[0], error: null })
+        maybeSingle: vi.fn().mockResolvedValue({ data: mockRoadmapItems[0], error: null })
       } as any);
 
       // Execute

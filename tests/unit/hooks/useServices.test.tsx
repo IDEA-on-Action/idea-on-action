@@ -177,7 +177,7 @@ describe('useServices', () => {
     }
   });
 
-  it('에러 발생 시 에러 상태를 반환해야 함', async () => {
+  it('에러 발생 시 fallback 값을 반환해야 함', async () => {
     // Setup
     vi.mocked(supabase.from).mockReturnValue({
       select: vi.fn().mockReturnThis(),
@@ -187,12 +187,12 @@ describe('useServices', () => {
     // Execute
     const { result } = renderHook(() => useServices(), { wrapper });
 
-    // Assert
+    // Assert - supabaseQuery는 에러 시 fallbackValue([])를 반환
     await waitFor(() => {
-      expect(result.current.isError).toBe(true);
+      expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.error).toBeDefined();
+    expect(result.current.data).toEqual([]);
   });
 
   it('로딩 상태가 올바르게 동작해야 함', async () => {

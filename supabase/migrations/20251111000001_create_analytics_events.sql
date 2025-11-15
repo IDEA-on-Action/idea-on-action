@@ -41,9 +41,10 @@ CREATE POLICY "Admins can view analytics events"
 ON analytics_events FOR SELECT
 USING (
   EXISTS (
-    SELECT 1 FROM profiles
-    WHERE profiles.user_id = auth.uid()
-    AND profiles.role = 'admin'
+    SELECT 1 FROM public.user_roles
+    JOIN public.roles ON user_roles.role_id = roles.id
+    WHERE user_roles.user_id = auth.uid()
+    AND roles.name = 'admin'
   )
 );
 

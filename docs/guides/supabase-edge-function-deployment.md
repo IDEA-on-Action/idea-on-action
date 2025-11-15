@@ -27,7 +27,23 @@ supabase --version
 npm install -g supabase
 ```
 
-### 2단계: Supabase 프로젝트 연결
+### 2단계: Docker Desktop 시작 (로컬 개발 시)
+
+**중요**: `supabase status` 명령어를 사용하려면 Docker Desktop이 실행 중이어야 합니다.
+
+```bash
+# Docker Desktop이 실행 중인지 확인
+docker ps
+
+# 오류가 발생하면:
+# 1. Windows 시작 메뉴에서 "Docker Desktop" 실행
+# 2. 시스템 트레이에서 Docker 아이콘이 초록색이 될 때까지 대기 (1-2분)
+# 3. 다시 docker ps 명령어로 확인
+```
+
+**참고**: 원격 프로젝트에만 연결하는 경우(로컬 개발 없이) Docker Desktop이 필요 없습니다.
+
+### 3단계: Supabase 프로젝트 연결
 
 ```bash
 # Supabase 로그인
@@ -36,7 +52,7 @@ supabase login
 # 프로젝트 연결 (이미 연결되어 있다면 스킵)
 supabase link --project-ref zykjdneewbzyazfukzyg
 
-# 연결 확인
+# 연결 확인 (로컬 개발 시 Docker Desktop 필요)
 supabase status
 ```
 
@@ -47,7 +63,7 @@ API URL: https://zykjdneewbzyazfukzyg.supabase.co
 DB URL: postgresql://...
 ```
 
-### 3단계: Supabase Secret 설정
+### 4단계: Supabase Secret 설정
 
 Edge Function에서 사용할 환경 변수를 Supabase Secret으로 설정합니다.
 
@@ -74,7 +90,7 @@ RESEND_FROM_EMAIL         noreply@ideaonaction.ai
 WORK_INQUIRY_TO_EMAIL     sinclairseo@gmail.com
 ```
 
-### 4단계: Edge Function 배포
+### 5단계: Edge Function 배포
 
 ```bash
 # send-work-inquiry-email Edge Function 배포
@@ -92,25 +108,37 @@ supabase functions list
   Created At: 2025-11-15T10:30:00Z
 ```
 
-### 5단계: 로컬 테스트 (선택)
+### 6단계: 로컬 테스트 (선택)
 
 배포 전에 로컬에서 Edge Function을 테스트할 수 있습니다.
 
 ```bash
 # .env 파일 생성 (로컬 테스트용)
-cat > supabase/.env.local <<EOF
+# Windows PowerShell에서는 다음 명령어 사용:
+@"
 RESEND_API_KEY=re_5hKuP6b8_J9euhEqP7pgQVvkSCPtoXhBB
 RESEND_FROM_EMAIL=noreply@ideaonaction.ai
 WORK_INQUIRY_TO_EMAIL=sinclairseo@gmail.com
-EOF
+"@ | Out-File -FilePath supabase\.env.local -Encoding utf8
 
-# Edge Function 로컬 실행
-supabase functions serve send-work-inquiry-email --env-file supabase/.env.local
+# 또는 수동으로 supabase/.env.local 파일 생성
+
+# Edge Function 로컬 실행 (JWT 검증 비활성화)
+supabase functions serve send-work-inquiry-email --env-file supabase/.env.local --no-verify-jwt
 
 # 다른 터미널에서 테스트 요청
+# Windows PowerShell:
+$body = @{
+  name = '테스트 사용자'
+  email = 'test@example.com'
+  package = 'MVP'
+  brief = '테스트 문의입니다. 최소 50자 이상 입력해야 합니다. 추가 텍스트를 입력합니다.'
+} | ConvertTo-Json
+Invoke-RestMethod -Uri 'http://localhost:54321/functions/v1/send-work-inquiry-email' -Method Post -Body $body -ContentType 'application/json'
+
+# Linux/Mac (bash):
 curl -X POST http://localhost:54321/functions/v1/send-work-inquiry-email \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_ANON_KEY" \
   -d '{
     "name": "테스트 사용자",
     "email": "test@example.com",
@@ -118,6 +146,8 @@ curl -X POST http://localhost:54321/functions/v1/send-work-inquiry-email \
     "brief": "테스트 문의입니다. 최소 50자 이상 입력해야 합니다. 추가 텍스트를 입력합니다."
   }'
 ```
+
+**중요**: `--no-verify-jwt` 플래그를 사용하면 로컬 테스트 시 Authorization 헤더 없이도 요청할 수 있습니다. 프로덕션 배포 후에는 클라이언트에서 Supabase 클라이언트를 통해 호출해야 합니다.
 
 **예상 응답**:
 ```json
@@ -132,7 +162,7 @@ curl -X POST http://localhost:54321/functions/v1/send-work-inquiry-email \
 }
 ```
 
-### 6단계: Vercel 환경 변수 제거
+### 7단계: Vercel 환경 변수 제거
 
 이제 클라이언트에서 Resend API 키가 필요 없으므로 Vercel 환경 변수를 제거합니다.
 
@@ -145,7 +175,7 @@ curl -X POST http://localhost:54321/functions/v1/send-work-inquiry-email \
 
 **참고**: `VITE_RESEND_FROM_EMAIL`은 남겨둬도 되지만, 실제로는 Edge Function에서만 사용됩니다.
 
-### 7단계: 프로덕션 재배포
+### 8단계: 프로덕션 재배포
 
 ```bash
 # main 브랜치에 푸시 (GitHub Actions가 자동 배포)
@@ -154,7 +184,7 @@ git push origin main
 
 Vercel이 자동으로 재배포하면서 클라이언트 번들에서 Resend import가 제거됩니다.
 
-### 8단계: 프로덕션 테스트
+### 9단계: 프로덕션 테스트
 
 1. https://www.ideaonaction.ai/work-with-us 접속
 2. Work with Us 폼 제출
@@ -180,6 +210,16 @@ supabase functions logs send-work-inquiry-email --project-ref zykjdneewbzyazfukz
 
 ### 일반적인 에러
 
+#### 0. "failed to inspect container health" 또는 "The system cannot find the file specified"
+**원인**: Docker Desktop이 실행되지 않음
+**해결**: 
+1. Windows 시작 메뉴에서 "Docker Desktop" 실행
+2. 시스템 트레이에서 Docker 아이콘이 초록색이 될 때까지 대기 (1-2분)
+3. `docker ps` 명령어로 확인
+4. 여전히 오류가 발생하면 Docker Desktop 재시작
+
+**참고**: 원격 프로젝트에만 연결하는 경우 `supabase link`만 사용하고 `supabase status`는 스킵할 수 있습니다.
+
 #### 1. "RESEND_API_KEY is not set"
 **원인**: Supabase Secret이 설정되지 않음
 **해결**: `supabase secrets set RESEND_API_KEY=re_xxx`
@@ -192,7 +232,35 @@ supabase functions logs send-work-inquiry-email --project-ref zykjdneewbzyazfukz
 **원인**: Resend API 키가 잘못됨
 **해결**: .env.local에서 올바른 API 키 확인 후 재설정
 
-#### 4. CORS 에러
+#### 3-1. "Resend API error: 403 - domain is not verified"
+**원인**: Resend에서 발신 도메인(`ideaonaction.ai`)이 검증되지 않음
+**해결**: 
+1. https://resend.com/domains 접속
+2. `ideaonaction.ai` 도메인 추가 및 DNS 레코드 설정
+   - DKIM 레코드: `resend._domainkey` (TXT)
+   - SPF 레코드: `send` (TXT)
+   - DMARC 레코드: `_dmarc` (TXT, 선택사항)
+   - MX 레코드: `send` (이메일 발송용)
+3. 도메인 검증 완료 후 재시도
+**상태**: ✅ `ideaonaction.ai` 도메인 검증 완료 (2025-11-15)
+
+#### 4. "Missing authorization header" (로컬 테스트 시)
+**원인**: 로컬 테스트 시 Supabase Edge Runtime이 JWT 토큰을 요구함
+**해결**: 
+1. `--no-verify-jwt` 플래그 사용:
+   ```bash
+   supabase functions serve send-work-inquiry-email --env-file supabase/.env.local --no-verify-jwt
+   ```
+2. 또는 로컬 Supabase 인스턴스의 anon key 사용:
+   ```bash
+   # supabase status로 anon key 확인 후
+   curl -X POST http://localhost:54321/functions/v1/send-work-inquiry-email \
+     -H "Authorization: Bearer YOUR_LOCAL_ANON_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{...}'
+   ```
+
+#### 5. CORS 에러
 **원인**: Access-Control-Allow-Origin 헤더 누락
 **해결**: Edge Function에서 corsHeaders 확인 (이미 설정됨)
 
@@ -232,9 +300,11 @@ supabase functions logs send-work-inquiry-email --project-ref zykjdneewbzyazfukz
 ## 🎯 다음 단계
 
 1. ✅ Edge Function 배포 완료
-2. ✅ 프로덕션 테스트 완료
-3. ⏳ Analytics 401 에러 수정 (RLS 정책)
-4. ⏳ Unit Tests 개선 (DB mock)
+2. ✅ Resend 도메인 검증 완료 (`ideaonaction.ai`)
+3. ✅ 로컬 테스트 완료 (이메일 발송 성공)
+4. ⏳ 프로덕션 배포 및 테스트
+5. ⏳ Analytics 401 에러 수정 (RLS 정책)
+6. ⏳ Unit Tests 개선 (DB mock)
 
 ---
 

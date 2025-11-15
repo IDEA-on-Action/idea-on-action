@@ -43,7 +43,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: "로드맵", href: "/roadmap" },
   { label: "포트폴리오", href: "/portfolio" },
   { label: "실험실", href: "/lab" },
-  { label: "블로그", href: "/blog" },
+  // { label: "블로그", href: "/blog" }, // 임시 숨김 처리 - 수정 완료 시 주석 해제
   { label: "협업하기", href: "/work-with-us" }
 ];
 

@@ -3,16 +3,19 @@
 ## Step 1: 현재 메뉴 구조 분석
 
 ### Header 네비게이션 항목
-```40:47:src/components/Header.tsx
+```40:48:src/components/Header.tsx
 const NAVIGATION_ITEMS: NavigationItem[] = [
+  { label: "홈", href: "/" },
   { label: "회사소개", href: "/about" },
   { label: "로드맵", href: "/roadmap" },
   { label: "포트폴리오", href: "/portfolio" },
   { label: "실험실", href: "/lab" },
-  { label: "블로그", href: "/blog" },
+  // { label: "블로그", href: "/blog" }, // 임시 숨김 처리 - 수정 완료 시 주석 해제
   { label: "협업하기", href: "/work-with-us" }
 ];
 ```
+
+**참고**: 블로그 메뉴는 2025-01-XX부터 임시로 숨김 처리되었습니다. 수정 완료 시 주석을 해제하여 다시 활성화할 예정입니다.
 
 ### Footer 링크 구조
 ```57:90:src/components/Footer.tsx

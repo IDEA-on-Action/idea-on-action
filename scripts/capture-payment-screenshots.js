@@ -238,42 +238,51 @@ async function capturePaymentScreenshots() {
     // 2. 로그인
     await login(page);
 
-    // 3. 서비스 페이지 (장바구니 버튼 보이는 상태)
-    console.log('1️⃣ 서비스 페이지 캡처 중...');
+    // 3. 서비스 페이지 (목록 페이지)
+    console.log('1️⃣ 서비스 목록 페이지 캡처 중...');
     await page.goto(`${BASE_URL}/services`);
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000); // 애니메이션 대기
     await captureScreenshot(
       page,
       '01-services-page',
-      '서비스 목록 페이지 (장바구니 버튼 포함)'
+      '서비스 목록 페이지'
     );
 
-    // 4. 장바구니에 아이템 추가 (첫 번째 서비스)
-    console.log('2️⃣ 장바구니에 아이템 추가 중...');
-    const firstServiceCard = page.locator('.service-card, [data-testid="service-card"]').first();
-    const addToCartButton = firstServiceCard.locator('button:has-text("장바구니")');
+    // 4. 첫 번째 서비스 카드 클릭하여 상세 페이지로 이동
+    console.log('2️⃣ 서비스 상세 페이지로 이동 중...');
+    // 서비스 카드는 Link로 감싸져 있으므로, 카드 내부의 링크나 카드 자체를 클릭
+    const firstServiceCard = page.locator('a[href*="/services/"]').first();
+    await firstServiceCard.waitFor({ timeout: 10000 });
+    await firstServiceCard.click();
+    
+    // 상세 페이지 로딩 대기
+    await page.waitForURL(/\/services\/[^/]+/, { timeout: 10000 });
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
 
-    if (await addToCartButton.isVisible()) {
-      await addToCartButton.click();
-      await page.waitForTimeout(500); // 토스트 표시 대기
-    } else {
-      console.warn('⚠️ 장바구니 버튼을 찾을 수 없습니다. 서비스 상세 페이지로 이동합니다.');
-      await firstServiceCard.click();
-      await page.waitForTimeout(1000);
-      await page.click('button:has-text("장바구니")');
-    }
+    // 5. 장바구니에 아이템 추가
+    console.log('3️⃣ 장바구니에 아이템 추가 중...');
+    const addToCartButton = page.locator('button:has-text("장바구니 담기"), button:has-text("장바구니")').first();
+    await addToCartButton.waitFor({ timeout: 10000 });
+    await addToCartButton.click();
+    await page.waitForTimeout(1000); // 토스트 표시 대기
 
-    // 5. 장바구니 Drawer 열기
-    console.log('3️⃣ 장바구니 Drawer 캡처 중...');
-    await page.click('button[aria-label="장바구니"], button:has-text("장바구니")');
-    await page.waitForTimeout(1000); // Drawer 애니메이션 대기
+    // 6. 장바구니 Drawer 열기
+    console.log('4️⃣ 장바구니 Drawer 캡처 중...');
+    // 헤더의 장바구니 버튼 클릭 (aria-label="장바구니 열기")
+    const cartButton = page.locator('button[aria-label*="장바구니 열기" i], button[aria-label*="장바구니" i]').first();
+    await cartButton.waitFor({ timeout: 5000 });
+    await cartButton.click();
+    await page.waitForTimeout(1500); // Drawer 애니메이션 대기
     await captureScreenshot(
       page,
       '02-cart-drawer',
       '장바구니 Drawer (슬라이드 패널)'
     );
 
-    // 6. 체크아웃 페이지로 이동
-    console.log('4️⃣ 체크아웃 페이지 캡처 중...');
+    // 7. 체크아웃 페이지로 이동
+    console.log('5️⃣ 체크아웃 페이지 캡처 중...');
     await page.click('button:has-text("주문하기"), a[href*="checkout"]');
     await page.waitForURL(/\/checkout/, { timeout: 10000 });
 
@@ -293,8 +302,8 @@ async function capturePaymentScreenshots() {
       '체크아웃 페이지 (배송 정보 폼 + 주문 요약)'
     );
 
-    // 7. 결제 페이지로 이동 (주문 생성)
-    console.log('5️⃣ 결제 수단 선택 페이지 캡처 중...');
+    // 8. 결제 페이지로 이동 (주문 생성)
+    console.log('6️⃣ 결제 수단 선택 페이지 캡처 중...');
 
     // 주문하기 버튼 클릭
     const submitButton = page.locator('button:has-text("주문하기")');
@@ -308,8 +317,8 @@ async function capturePaymentScreenshots() {
       '결제 수단 선택 페이지 (Kakao Pay / Toss Payments)'
     );
 
-    // 8. 주문 내역 페이지
-    console.log('6️⃣ 주문 내역 페이지 캡처 중...');
+    // 9. 주문 내역 페이지
+    console.log('7️⃣ 주문 내역 페이지 캡처 중...');
     await page.goto(`${BASE_URL}/orders`);
     await captureScreenshot(
       page,
@@ -317,8 +326,8 @@ async function capturePaymentScreenshots() {
       '주문 내역 페이지 (목록 + 필터)'
     );
 
-    // 9. 주문 상세 페이지 (첫 번째 주문)
-    console.log('7️⃣ 주문 상세 페이지 캡처 중...');
+    // 10. 주문 상세 페이지 (첫 번째 주문)
+    console.log('8️⃣ 주문 상세 페이지 캡처 중...');
     const firstOrderRow = page.locator('table tbody tr, [data-testid="order-item"]').first();
     if (await firstOrderRow.isVisible()) {
       await firstOrderRow.click();

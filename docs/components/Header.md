@@ -81,13 +81,18 @@ function App() {
 
 ### 데스크톱 네비게이션
 ```tsx
-const NAVIGATION_ITEMS = [
-  { label: "서비스", href: "/services" },
-  { label: "기술", href: "#features" },
-  { label: "회사소개", href: "#about" },
-  { label: "문의", href: "#contact" }
+const NAVIGATION_ITEMS: NavigationItem[] = [
+  { label: "홈", href: "/" },
+  { label: "회사소개", href: "/about" },
+  { label: "로드맵", href: "/roadmap" },
+  { label: "포트폴리오", href: "/portfolio" },
+  { label: "실험실", href: "/lab" },
+  // { label: "블로그", href: "/blog" }, // 임시 숨김 처리 - 수정 완료 시 주석 해제
+  { label: "협업하기", href: "/work-with-us" }
 ];
 ```
+
+**참고**: 블로그 메뉴는 현재 임시로 숨김 처리되어 있습니다. 수정 완료 시 주석을 해제하여 다시 활성화할 예정입니다.
 
 ### 모바일 네비게이션
 - 햄버거 메뉴 버튼

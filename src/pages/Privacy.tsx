@@ -47,7 +47,8 @@ export default function Privacy() {
             <li>
               <strong>서비스 제공</strong>
               <ul>
-                <li>AI 컨설팅, 웹 개발, 데이터 분석 등의 서비스 제공</li>
+                <li>소프트웨어 개발 서비스 (MVP 개발, 풀스택 개발, 디자인 시스템, 시스템 운영 관리) 제공</li>
+                <li>COMPASS 플랫폼 서비스 (Navigator, Cartographer, Captain, Harbor) 제공</li>
                 <li>맞춤형 서비스 제공, 본인인증</li>
               </ul>
             </li>

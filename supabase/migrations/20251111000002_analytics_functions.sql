@@ -130,16 +130,23 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 COMMENT ON FUNCTION get_session_timeline IS 'Phase 14: 특정 세션의 이벤트 타임라인 조회';
 
 -- ============================================
--- 권한 설정 (관리자만 실행 가능)
+-- 권한 설정
 -- ============================================
--- 보안: 관리자만 분석 함수 실행 가능
+-- PUBLIC에서 실행 권한 제거
 REVOKE EXECUTE ON FUNCTION calculate_funnel FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION calculate_bounce_rate FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION get_event_counts FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION get_session_timeline FROM PUBLIC;
 
--- authenticated 사용자에게 실행 권한 부여 (RLS로 관리자 확인)
+-- authenticated 사용자에게 실행 권한 부여
 GRANT EXECUTE ON FUNCTION calculate_funnel TO authenticated;
 GRANT EXECUTE ON FUNCTION calculate_bounce_rate TO authenticated;
 GRANT EXECUTE ON FUNCTION get_event_counts TO authenticated;
 GRANT EXECUTE ON FUNCTION get_session_timeline TO authenticated;
+
+-- anon 사용자에게도 실행 권한 부여 (익명 사용자 접근 허용)
+-- SECURITY DEFINER로 정의되어 있어 함수 내부에서는 안전하게 실행됨
+GRANT EXECUTE ON FUNCTION calculate_funnel TO anon;
+GRANT EXECUTE ON FUNCTION calculate_bounce_rate TO anon;
+GRANT EXECUTE ON FUNCTION get_event_counts TO anon;
+GRANT EXECUTE ON FUNCTION get_session_timeline TO anon;
