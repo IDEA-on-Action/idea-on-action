@@ -14,6 +14,7 @@ import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
 import { initSentry } from "./lib/sentry";
 import { trackPageView } from "./lib/analytics";
 import * as Sentry from "@sentry/react";
+import { Analytics } from "@vercel/analytics/react";
 
 // Loading component
 const LoadingFallback = () => (
@@ -89,6 +90,15 @@ const Lab = lazy(() => import("./pages/Lab"));
 const Community = lazy(() => import("./pages/Community"));
 const WorkWithUs = lazy(() => import("./pages/WorkWithUs"));
 const Status = lazy(() => import("./pages/Status"));
+
+// Lazy load (Code Split) - Services Platform pages
+const ServicesPage = lazy(() => import("./pages/services-platform/ServicesPage"));
+const MVPServicePage = lazy(() => import("./pages/services-platform/MVPServicePage"));
+const FullstackPage = lazy(() => import("./pages/services-platform/FullstackPage"));
+const DesignPage = lazy(() => import("./pages/services-platform/DesignPage"));
+const OperationsPage = lazy(() => import("./pages/services-platform/OperationsPage"));
+const NavigatorPage = lazy(() => import("./pages/services-platform/NavigatorPage"));
+const PricingPage = lazy(() => import("./pages/services-platform/PricingPage"));
 
 // Lazy load (Code Split) - Legal pages
 const Terms = lazy(() => import("./pages/Terms"));
@@ -179,6 +189,15 @@ const App = () => (
               <Route path="/work-with-us" element={<WorkWithUs />} />
               <Route path="/status" element={<Status />} />
 
+              {/* Services Platform Routes */}
+              <Route path="/services-platform" element={<ServicesPage />} />
+              <Route path="/services/development/mvp" element={<MVPServicePage />} />
+              <Route path="/services/development/fullstack" element={<FullstackPage />} />
+              <Route path="/services/development/design" element={<DesignPage />} />
+              <Route path="/services/development/operations" element={<OperationsPage />} />
+              <Route path="/services/compass/navigator" element={<NavigatorPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+
               {/* Legal Routes */}
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
@@ -219,6 +238,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </HelmetProvider>
+    <Analytics />
   </QueryClientProvider>
   </Sentry.ErrorBoundary>
 );
