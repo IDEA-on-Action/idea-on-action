@@ -10,7 +10,7 @@
 
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { useAdmins, useCreateAdmin, useUpdateAdmin, useDeleteAdmin } from '@/hooks/useAdmins'
+import { useAdmins, useCreateAdmin, useUpdateAdmin, useDeleteAdmin, useCurrentAdminRole } from '@/hooks/useAdmins'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -82,7 +82,8 @@ interface UserSearchResult {
 
 export default function AdminUsers() {
   const { toast } = useToast()
-  const { adminRole } = useAuth()
+  const { user } = useAuth()
+  const { data: adminRole, isLoading: isAdminRoleLoading } = useCurrentAdminRole()
   const { data: admins, isLoading } = useAdmins()
   const createMutation = useCreateAdmin()
   const updateMutation = useUpdateAdmin()
@@ -275,6 +276,21 @@ export default function AdminUsers() {
           </Badge>
         )
     }
+  }
+
+  // adminRole loading check
+  if (isAdminRoleLoading) {
+    return (
+      <>
+        <Helmet>
+          <title>관리자 관리 | IDEA on Action</title>
+        </Helmet>
+
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </>
+    )
   }
 
   // Permission check: only super_admin can access this page

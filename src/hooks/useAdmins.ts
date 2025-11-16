@@ -224,6 +224,50 @@ export function useIsAdmin() {
   })
 }
 
+/**
+ * 현재 사용자의 관리자 역할 조회
+ * @returns AdminRole | null
+ */
+export function useCurrentAdminRole() {
+  return useSupabaseQuery<AdminRole | null>({
+    queryKey: ['currentAdminRole'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user?.id) {
+        return null
+      }
+
+      return await supabaseQuery(
+        async () => {
+          const { data, error } = await supabase
+            .from('admins')
+            .select('role')
+            .eq('user_id', user.id)
+            .maybeSingle()
+
+          if (error) {
+            return { data: null, error }
+          }
+
+          return { data: data?.role || null, error: null }
+        },
+        {
+          table: 'admins',
+          operation: '관리자 역할 조회',
+          fallbackValue: null,
+        }
+      )
+    },
+    table: 'admins',
+    operation: '관리자 역할 조회',
+    fallbackValue: null,
+    enabled: true,
+    staleTime: 1000 * 60 * 5, // 5분
+    gcTime: 1000 * 60 * 10, // 10분
+  })
+}
+
 // ===================================================================
 // Mutation Hooks
 // ===================================================================

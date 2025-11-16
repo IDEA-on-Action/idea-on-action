@@ -177,11 +177,16 @@ cat docs/database/current-schema.json
   - 단계별 실행 방법
   - 문제 해결 가이드
   - 검증 체크리스트
+- **[super-admin-upgrade-guide.md](./super-admin-upgrade-guide.md)** - Super Admin 업그레이드 가이드 ⭐ NEW
+  - admin → super_admin 역할 변경
+  - AdminUsers 페이지 접근 권한 부여
+  - 검증 스크립트 및 테스트 방법
 
 ### SQL 파일
 - [extract-schema.sql](./extract-schema.sql) - 스키마 추출 쿼리
 - [migrations/001-schema-cleanup-and-improvement.sql](./migrations/001-schema-cleanup-and-improvement.sql) - 메인 마이그레이션
 - [migrations/002-insert-sample-services.sql](./migrations/002-insert-sample-services.sql) - 샘플 데이터
+- **[migrations/20251116000001_upgrade_admin_to_super_admin.sql](../../supabase/migrations/20251116000001_upgrade_admin_to_super_admin.sql)** - Super Admin 업그레이드 ⭐ NEW
 
 ---
 
