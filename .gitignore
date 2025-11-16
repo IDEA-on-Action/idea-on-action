@@ -53,6 +53,9 @@ repomix-output.txt
 *.temp
 *-temp.md
 *-draft.md
+*-validation-report.md
+temp-*.sql
+nul
 
 # Backups
 backups/
