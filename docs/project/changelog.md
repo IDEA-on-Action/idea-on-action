@@ -9,6 +9,53 @@
 
 ---
 
+## [1.9.5] - 2025-11-16
+
+### Fixed - 서비스 페이지 Markdown 렌더링
+
+**문제**:
+- ServiceDetail, ServiceCard 컴포넌트에서 description 및 features 필드가 markdown 문법 그대로 표시
+- 예: "**일관된 브랜드 아이덴티티**" 형태로 볼드 마크다운 문법이 평문으로 보임
+- 사용자 피드백: "서비스 자세히 보기에 markdown 형식으로 나오고 있어. 다른 서비스 페이지들도 확인해보고 수정해줘."
+
+**원인**:
+- ServiceDetail.tsx 라인 185: `<p>{description}</p>` 평문 렌더링
+- ServiceDetail.tsx 라인 269: `{feature.description}` 평문 렌더링
+- ServiceCard.tsx 라인 72: `{description}` 평문 렌더링
+
+**해결**:
+- **ServiceDetail.tsx** (3개 수정)
+  - MarkdownRenderer 컴포넌트 import 추가 (from '@/components/blog/MarkdownRenderer')
+  - description 렌더링: `<MarkdownRenderer content={description || ''} />` 적용
+  - feature.description 렌더링: `<MarkdownRenderer content={feature.description || ''} />` 적용
+- **ServiceCard.tsx** (2개 수정)
+  - ReactMarkdown import 추가 (from 'react-markdown')
+  - description 렌더링: `<ReactMarkdown>{description}</ReactMarkdown>` 적용
+  - prose 클래스 추가: `prose prose-sm dark:prose-invert max-w-none`
+
+**결과**:
+- ✅ 모든 서비스 페이지에서 markdown 정상 렌더링
+- ✅ 볼드, 이탤릭, 링크 등 markdown 포맷 적용
+- ✅ 다크 모드 대응 (prose dark:prose-invert)
+- ✅ 기존 MarkdownRenderer 컴포넌트 재사용
+
+**영향 범위**:
+- /services (목록 페이지 카드 미리보기)
+- /services/:id (상세 페이지 description 및 features)
+
+**파일 변경**: 2개
+- src/pages/ServiceDetail.tsx
+- src/components/services/ServiceCard.tsx
+
+**빌드 결과**:
+- ServiceDetail.js: 28.08 kB (10.82 kB gzip)
+- Build time: 19.07s
+- PWA: 27 entries (3614.93 KiB)
+
+**커밋**: 45e40d1
+
+---
+
 ## [1.9.4] - 2025-11-16
 
 ### Added - 환경 변수 관리 시스템 구축
