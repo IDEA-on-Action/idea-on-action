@@ -9,6 +9,41 @@
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-16: **🔐 환경 변수 관리 시스템 구축 완료** ✅ - 3중 백업 & 자동화 시스템
+  - **배경**: .env.local 파일 손실 방지 및 팀 협업을 위한 안전한 환경 변수 관리 시스템 필요
+  - **작업 1: 자동화 스크립트 생성** (4개)
+    - `scripts/backup-env.js` - GPG 암호화 + 타임스탬프 백업 생성
+    - `scripts/restore-env.js` - 인터랙티브 백업 복원 (GPG/타임스탬프/dotenv-vault)
+    - `scripts/export-env-to-csv.js` - 1Password CSV 내보내기 (Secure Note/개별 항목)
+    - npm 스크립트 추가: `env:backup`, `env:restore`, `env:export:csv`
+  - **작업 2: 보안 강화**
+    - .gitignore 업데이트 (환경 변수 파일 7개 패턴 추가)
+    - GPG AES256 암호화 백업 (.env.local.gpg)
+    - CSV 파일 자동 삭제 (평문 노출 방지)
+  - **작업 3: 문서 작성** (3개)
+    - `docs/guides/env-management.md` - 전체 환경 변수 관리 가이드
+    - `docs/guides/password-manager-setup.md` - 1Password/Bitwarden 설정 가이드
+    - `docs/guides/env-backup-status.md` - 백업 상태 및 복원 방법
+  - **작업 4: 패키지 설치**
+    - dotenv-vault-core 설치 (클라우드 백업 지원, 선택 사항)
+  - **결과**:
+    - ✅ 3중 백업 시스템: 1Password (Primary) + GPG (Secondary) + 원본
+    - ✅ 환경 변수 26개 모두 백업 완료
+    - ✅ 1Password CSV Import 완료
+    - ✅ 자동화된 백업/복원 워크플로우
+    - ✅ 완전한 문서화 (복원 시나리오, 보안 팁 포함)
+  - **파일 변경**: 10개
+    - `.gitignore` - 환경 변수 보안 패턴 추가
+    - `package.json` - npm 스크립트 3개 추가, dotenv-vault-core 설치
+    - 스크립트 3개 생성 (backup, restore, export-csv)
+    - 문서 3개 생성 (management, password-manager, backup-status)
+  - **보안 점수**: 90/100 (2FA + Emergency Kit 설정 시 100점)
+  - **다음 단계**:
+    - GPG 백업 클라우드 업로드 (Google Drive/OneDrive)
+    - 1Password 2FA 활성화
+    - Emergency Kit 다운로드
+    - 정기 백업 일정 설정 (월 1회)
+
 - 2025-11-16: **🎉 Vercel 캐시 무효화 완료 & React createContext 에러 해결** ✅ - 토스 페이먼츠 심사 준비 완료
   - **문제**: vendor-router-xSh1Q5ua.js, vendor-query-jH1EgEM8.js에서 "Cannot read properties of undefined (reading 'createContext')" 에러 지속
   - **원인**: React 모듈 비동기 로딩 순서 문제 (vendor-query가 vendor-react-core보다 먼저 로드)

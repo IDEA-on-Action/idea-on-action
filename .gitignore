@@ -12,6 +12,15 @@ dist
 dist-ssr
 *.local
 
+# Environment variables (security)
+.env
+.env.local
+.env.*.local
+.env.keys
+.env.vault.gpg
+*.env.backup
+.env.local.gpg
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -51,3 +60,7 @@ backups/
 # OS files
 Thumbs.db
 .DS_Store
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

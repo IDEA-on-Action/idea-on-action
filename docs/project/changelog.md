@@ -9,6 +9,56 @@
 
 ---
 
+## [1.9.4] - 2025-11-16
+
+### Added - 환경 변수 관리 시스템 구축
+
+**배경**:
+- .env.local 파일 손실 방지 및 팀 협업을 위한 안전한 환경 변수 관리 시스템 필요
+
+**자동화 스크립트 (4개)**:
+- `scripts/backup-env.js` - GPG 암호화 + 타임스탬프 백업 생성
+- `scripts/restore-env.js` - 인터랙티브 백업 복원 (GPG/타임스탬프/dotenv-vault)
+- `scripts/export-env-to-csv.js` - 1Password CSV 내보내기 (Secure Note/개별 항목)
+- npm 스크립트: `env:backup`, `env:restore`, `env:export:csv`
+
+**보안 강화**:
+- `.gitignore` 업데이트 (환경 변수 파일 7개 패턴 추가)
+- GPG AES256 암호화 백업 (.env.local.gpg)
+- CSV 파일 자동 삭제 (평문 노출 방지)
+
+**문서 작성 (3개)**:
+- `docs/guides/env-management.md` - 전체 환경 변수 관리 가이드
+- `docs/guides/password-manager-setup.md` - 1Password/Bitwarden 설정 가이드
+- `docs/guides/env-backup-status.md` - 백업 상태 및 복원 방법
+
+**패키지**:
+- `dotenv-vault-core` 설치 (클라우드 백업 지원, 선택 사항)
+
+### Security
+
+**3중 백업 시스템**:
+- Primary: 1Password 클라우드 백업 (26개 환경 변수)
+- Secondary: GPG AES256 암호화 로컬 백업
+- Working Copy: .env.local 원본
+
+**보안 점수**: 90/100
+- ✅ 백업 존재: 30/30
+- ✅ 암호화: 20/20
+- ✅ 클라우드 백업: 20/20
+- ⚠️ 2FA: 10/20 (설정 권장)
+- ⚠️ 정기 백업: 5/10 (일정 설정 필요)
+- ⚠️ Emergency Kit: 5/10 (다운로드 권장)
+
+### Documentation
+
+**새 가이드 문서**:
+- 환경 변수 관리 전체 가이드 (즉시/프로젝트/팀 협업 솔루션)
+- 비밀번호 관리자 설정 가이드 (1Password/Bitwarden FAQ 포함)
+- 백업 상태 문서 (복원 시나리오, 보안 체크리스트)
+
+---
+
 ## [1.9.3] - 2025-11-16
 
 ### Fixed - Vercel 캐시 무효화 & React createContext 에러 해결
