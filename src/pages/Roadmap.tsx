@@ -1,17 +1,31 @@
 import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Calendar, TrendingUp, Users, AlertCircle } from "lucide-react";
+import { Calendar, TrendingUp, Users, AlertCircle, FlaskConical, Briefcase, CheckCircle2, Target } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useRoadmap } from "@/hooks/useRoadmap";
 import { PageLayout, HeroSection, Section } from "@/components/layouts";
+import { NextStepsCTA } from "@/components/common/NextStepsCTA";
 import { LoadingState, ErrorState, EmptyState } from "@/components/shared";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { analytics } from "@/lib/analytics";
+import {
+  getUserFriendlyTheme,
+  getKPIUserBenefits,
+  getStabilityBadge,
+  getProgressDescription,
+  getRoadmapHighlights,
+} from "@/lib/roadmap-transforms";
 
 const Roadmap = () => {
   const { data: roadmapData, isLoading, error } = useRoadmap();
@@ -161,15 +175,28 @@ const Roadmap = () => {
                 ))}
               </TabsList>
 
-              {roadmapData.map((quarter) => (
+              {roadmapData.map((quarter) => {
+                const userFriendlyTheme = getUserFriendlyTheme(quarter.theme);
+                const userBenefits = getKPIUserBenefits(quarter.kpis || {});
+                const stabilityBadge = getStabilityBadge(quarter.risk_level);
+                const progressDesc = getProgressDescription(quarter.progress);
+                const highlights = getRoadmapHighlights(quarter);
+
+                return (
                 <TabsContent key={quarter.id} value={quarter.quarter} className="mt-8 space-y-8">
                   {/* Quarter Overview */}
                   <Card className="glass-card p-8">
                     <div className="space-y-6">
                       <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center gap-2">
-                            <h2 className="text-3xl font-bold">{quarter.theme}</h2>
+                        <div className="space-y-3 flex-1">
+                          {/* User-friendly theme */}
+                          <div className="space-y-1">
+                            <h2 className="text-3xl font-bold">{userFriendlyTheme}</h2>
+                            {userFriendlyTheme !== quarter.theme && (
+                              <p className="text-sm text-muted-foreground">
+                                {quarter.theme}
+                              </p>
+                            )}
                           </div>
                           <p className="text-muted-foreground">
                             {quarter.start_date && quarter.end_date
@@ -181,12 +208,11 @@ const Roadmap = () => {
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
-                          {quarter.risk_level ? (
-                            <Badge variant={getRiskBadgeVariant(quarter.risk_level)}>
-                              <AlertCircle className="w-3 h-3 mr-1" />
-                              리스크: {getRiskLabel(quarter.risk_level)}
-                            </Badge>
-                          ) : null}
+                          {/* Stability Badge */}
+                          <Badge variant={stabilityBadge.variant} className="whitespace-nowrap">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            {stabilityBadge.label}
+                          </Badge>
                           {quarter.owner ? (
                             <Badge variant="outline">
                               <Users className="w-3 h-3 mr-1" />
@@ -196,37 +222,80 @@ const Roadmap = () => {
                         </div>
                       </div>
 
+                      {/* User Benefits Section */}
+                      {userBenefits.length > 0 && (
+                        <div className="space-y-3 pt-4 border-t">
+                          <h3 className="text-lg font-semibold flex items-center gap-2">
+                            <Target className="w-5 h-5 text-primary" />
+                            사용자 혜택
+                          </h3>
+                          <ul className="grid md:grid-cols-2 gap-2">
+                            {userBenefits.map((benefit, index) => (
+                              <li key={index} className="flex items-start gap-2 text-sm">
+                                <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                <span>{benefit}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Highlights */}
+                      {highlights.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {highlights.map((highlight, index) => (
+                            <Badge key={index} variant="secondary">
+                              {highlight}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Progress */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="font-semibold">전체 진행률</span>
-                          <span className="text-muted-foreground">{quarter.progress}%</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{progressDesc}</span>
+                            <span className="font-bold">{quarter.progress}%</span>
+                          </div>
                         </div>
                         <Progress value={quarter.progress} className="h-2" />
                       </div>
 
-                      {/* KPIs */}
-                      <div className={quarter.kpis && Object.keys(quarter.kpis).length > 0 ? "grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t" : "hidden"}>
-                        {quarter.kpis && Object.entries(quarter.kpis).map(([key, value]) => (
-                          <div key={key} className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase">
-                              {key}
-                            </p>
-                            <div className="flex items-baseline gap-2">
-                              <span className="text-2xl font-bold">
-                                {typeof value === 'object' && value !== null && 'current' in value
-                                  ? (value as { current: number }).current
-                                  : typeof value === 'number' ? value : String(value)}
-                              </span>
-                              {typeof value === 'object' && value !== null && 'target' in value && (
-                                <span className="text-sm text-muted-foreground">
-                                  / {(value as { target: number }).target}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      {/* Collapsible Technical Details */}
+                      {quarter.kpis && Object.keys(quarter.kpis).length > 0 && (
+                        <Accordion type="single" collapsible className="pt-2">
+                          <AccordionItem value="tech-details" className="border-none">
+                            <AccordionTrigger className="text-sm text-muted-foreground hover:text-foreground">
+                              기술 상세 보기 (KPIs)
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+                                {Object.entries(quarter.kpis).map(([key, value]) => (
+                                  <div key={key} className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase">
+                                      {key}
+                                    </p>
+                                    <div className="flex items-baseline gap-2">
+                                      <span className="text-2xl font-bold">
+                                        {typeof value === 'object' && value !== null && 'current' in value
+                                          ? (value as { current: number }).current
+                                          : typeof value === 'number' ? value : String(value)}
+                                      </span>
+                                      {typeof value === 'object' && value !== null && 'target' in value && (
+                                        <span className="text-sm text-muted-foreground">
+                                          / {(value as { target: number }).target}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      )}
                     </div>
                   </Card>
 
@@ -285,27 +354,29 @@ const Roadmap = () => {
                     </div>
                   </div>
                 </TabsContent>
-              ))}
+              );
+            })}
             </Tabs>
         </Section>
 
-        {/* CTA Section */}
-        <Section variant="gradient" maxWidth="4xl">
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold">함께 만들어가고 싶으신가요?</h2>
-            <p className="text-lg text-foreground/80">
-              로드맵의 일부가 되어 함께 성장하세요.
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <Button asChild>
-                <Link to="/lab">바운티 참여하기</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/portfolio">프로젝트 보기</Link>
-              </Button>
-            </div>
-          </div>
-        </Section>
+        <NextStepsCTA
+          title="함께 만들어가고 싶으신가요?"
+          description="로드맵의 일부가 되어 함께 성장하세요"
+          primaryCTA={{
+            label: "바운티 참여하기",
+            href: "/lab",
+            icon: FlaskConical,
+            description: "실제 프로젝트에 기여하고 보상을 받으세요"
+          }}
+          secondaryCTA={{
+            label: "결과물 보기",
+            href: "/portfolio",
+            icon: Briefcase,
+            variant: "outline",
+            description: "완성된 프로젝트와 성과를 확인하세요"
+          }}
+          variant="gradient"
+        />
       </PageLayout>
     </>
   );

@@ -1,52 +1,53 @@
 import { Helmet } from "react-helmet-async";
-import { Target, Eye, Heart, Users } from "lucide-react";
+import { Target, Eye, Heart, Users, Calendar, Briefcase } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PageLayout, HeroSection, Section } from "@/components/layouts";
+import { NextStepsCTA } from "@/components/common/NextStepsCTA";
 import { generatePersonSchema, injectJsonLd } from "@/lib/json-ld";
 
 const About = () => {
   const mission = {
     icon: Target,
     title: "Mission",
-    subtitle: "우리의 사명",
-    content: "생각을 멈추지 않고, 행동으로 옮기는 회사. 아이디어가 현실이 되는 과정을 함께 만들어갑니다."
+    subtitle: "함께하는 사명",
+    content: "우리는 생각을 멈추지 않고, 행동으로 옮기는 회사입니다. 아이디어가 현실이 되는 과정을 여러분과 함께 만들어갑니다."
   };
 
   const vision = {
     icon: Eye,
     title: "Vision",
-    subtitle: "우리의 비전",
-    content: "아이디어 실험실이자 커뮤니티형 프로덕트 스튜디오. 혼자가 아닌 함께 만드는 혁신의 플랫폼이 되겠습니다."
+    subtitle: "함께 그리는 미래",
+    content: "아이디어 실험실이자 커뮤니티형 프로덕트 스튜디오. 혼자가 아닌 함께 만드는 혁신의 플랫폼으로, 모든 참여자가 성장하는 생태계를 만듭니다."
   };
 
   const values = [
     {
       icon: Heart,
       title: "열정 (Passion)",
-      description: "매일 깨어있는 마음으로 새로운 도전을 즐깁니다. KEEP AWAKE, LIVE PASSIONATE."
+      description: "매일 깨어있는 마음으로 새로운 도전을 즐깁니다. KEEP AWAKE, LIVE PASSIONATE. 우리의 열정은 커뮤니티와 함께 더 뜨겁게 타오릅니다."
     },
     {
       icon: Users,
       title: "협업 (Collaboration)",
-      description: "혼자보다 함께가 더 멀리 갑니다. 오픈 소스 정신으로 지식과 경험을 공유합니다."
+      description: "혼자보다 함께가 더 멀리 갑니다. 오픈 소스 정신으로 지식과 경험을 공유하며, 누구나 참여하고 기여할 수 있는 환경을 만듭니다."
     },
     {
       icon: Target,
       title: "실행력 (Execution)",
-      description: "완벽한 계획보다 빠른 실행과 반복적인 개선을 중시합니다. MVP부터 시작합니다."
+      description: "완벽한 계획보다 빠른 실행과 반복적인 개선을 중시합니다. MVP부터 시작하며, 커뮤니티 피드백을 통해 함께 성장합니다."
     },
     {
       icon: Eye,
       title: "투명성 (Transparency)",
-      description: "진행 과정, 실패, 성공을 모두 공개합니다. 오픈 메트릭스로 활동을 공유합니다."
+      description: "진행 과정, 실패, 성공을 모두 공개합니다. 오픈 메트릭스로 활동을 공유하며, 모든 참여자가 함께 배우고 성장할 수 있도록 합니다."
     }
   ];
 
   const team = {
     founder: {
       name: "서민원",
-      role: "Founder & CEO",
-      bio: "생각과 행동 사이의 간극을 줄이는 것이 목표입니다. 스타트업 창업자이자 풀스택 개발자로, 아이디어를 직접 구현하는 것을 즐깁니다.",
+      role: "Founder & Community Lead",
+      bio: "생각과 행동 사이의 간극을 줄이는 것이 목표입니다. 스타트업 창업자이자 풀스택 개발자로, 아이디어를 직접 구현하는 것을 즐기며, 함께 성장하는 커뮤니티를 만들어갑니다.",
       email: "sinclair.seo@ideaonaction.ai",
       github: "https://github.com/IDEA-on-Action"
     }
@@ -58,10 +59,10 @@ const About = () => {
         <title>회사 소개 - IDEA on Action</title>
         <meta
           name="description"
-          content="생각을 멈추지 않고, 행동으로 옮기는 회사. 아이디어 실험실이자 커뮤니티형 프로덕트 스튜디오, IDEA on Action을 소개합니다."
+          content="생각을 멈추지 않고, 행동으로 옮기는 회사. 아이디어가 현실이 되는 과정을 여러분과 함께 만들어가는 커뮤니티형 프로덕트 스튜디오입니다."
         />
         <meta property="og:title" content="회사 소개 - IDEA on Action" />
-        <meta property="og:description" content="아이디어 실험실이자 커뮤니티형 프로덕트 스튜디오" />
+        <meta property="og:description" content="함께 만드는 혁신의 플랫폼, 모든 참여자가 성장하는 커뮤니티" />
         <meta property="og:type" content="website" />
 
         {/* JSON-LD Structured Data - Person */}
@@ -152,8 +153,8 @@ const About = () => {
 
         <Section maxWidth="4xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Team</h2>
-              <p className="text-lg text-muted-foreground">함께 만들어가는 사람들</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Community Leaders</h2>
+              <p className="text-lg text-muted-foreground">커뮤니티를 이끌어가는 사람들</p>
             </div>
 
             <Card className="glass-card p-8 max-w-2xl mx-auto">
@@ -189,28 +190,24 @@ const About = () => {
             </Card>
         </Section>
 
-        <Section variant="gradient" maxWidth="4xl">
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold">함께 만들어갈 준비가 되셨나요?</h2>
-            <p className="text-lg text-foreground/80">
-              아이디어가 있다면, 지금 바로 시작하세요.
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <a
-                href="/work-with-us"
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
-              >
-                협업 제안하기
-              </a>
-              <a
-                href="/lab"
-                className="px-6 py-3 glass-card rounded-md hover:bg-muted/50 transition-colors font-semibold"
-              >
-                바운티 둘러보기
-              </a>
-            </div>
-          </div>
-        </Section>
+        <NextStepsCTA
+          title="다음 단계가 궁금하신가요?"
+          description="우리의 계획과 실제 결과물을 확인하세요"
+          primaryCTA={{
+            label: "로드맵 보기",
+            href: "/roadmap",
+            icon: Calendar,
+            description: "우리의 계획과 진행 상황을 투명하게 공유합니다"
+          }}
+          secondaryCTA={{
+            label: "결과물 보기",
+            href: "/portfolio",
+            icon: Briefcase,
+            variant: "outline",
+            description: "실제로 만든 프로젝트와 성과를 확인하세요"
+          }}
+          variant="muted"
+        />
       </PageLayout>
     </>
   );

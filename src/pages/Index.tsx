@@ -366,6 +366,21 @@ const Index = () => {
         )}
 
         <Services />
+
+        {/* Services CTA */}
+        <section className="pb-8 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center">
+              <Link to="/services">
+                <Button variant="outline" className="gap-2">
+                  모든 서비스 보기
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <Features />
         <About />
         <Contact />

@@ -15,8 +15,19 @@ export interface Project {
   links: ProjectLinks;
   timeline: ProjectTimeline;
   highlights?: string[];
+  // Storytelling fields (optional, DB migration pending)
+  problem?: string;        // "어떤 문제를 해결했나?"
+  solution?: string;       // "어떻게 해결했나?"
+  impact?: ProjectImpact;  // 비즈니스 임팩트
   created_at: string;
   updated_at: string;
+}
+
+export interface ProjectImpact {
+  users?: string;        // "5,000명 사용 중"
+  timeSaved?: string;    // "월 100시간 절감"
+  satisfaction?: string; // "4.8/5.0"
+  revenue?: string;      // "월 500만원 매출" (선택)
 }
 
 export interface ProjectMetrics {
@@ -59,6 +70,9 @@ export interface Roadmap {
   kpis: Record<string, KPI>;
   start_date?: string;
   end_date?: string;
+  // User-facing value fields (DB migration 20251116120000)
+  user_benefits?: string[];     // ["버그 없는 서비스", "빠른 로딩"]
+  stability_score?: number;     // 0-100, default 99 (99% uptime)
   created_at: string;
   updated_at: string;
 }

@@ -40,6 +40,7 @@ const BRAND_INFO = {
 const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: "홈", href: "/" },
   { label: "회사소개", href: "/about" },
+  { label: "서비스", href: "/services" },
   { label: "로드맵", href: "/roadmap" },
   { label: "포트폴리오", href: "/portfolio" },
   { label: "실험실", href: "/lab" },
