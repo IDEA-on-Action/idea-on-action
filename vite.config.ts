@@ -253,9 +253,10 @@ export default defineConfig(({ mode }) => ({
           // 2. React Router (depends on React core)
           // Client-side routing library
           // Target: ~30 kB gzip
-          if (id.includes('node_modules/react-router')) {
-            return 'vendor-router';
-          }
+          // TEMPORARILY DISABLED: Force cache invalidation by including in index.js
+          // if (id.includes('node_modules/react-router')) {
+          //   return 'vendor-router';
+          // }
 
           // 3. React Query (depends on React core)
           // Server state management and caching
