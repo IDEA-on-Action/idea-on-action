@@ -69,3 +69,4 @@ Write-Host "  1. dotenv-vault로 암호화: npm run env:vault:new" -ForegroundCo
 Write-Host "  2. 개발 서버 실행: npm run dev" -ForegroundColor Yellow
 Write-Host ""
 
+

@@ -9,7 +9,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin } from '../../fixtures/auth-helpers';
+import { loginAsAdmin } from '../helpers/auth';
 
 test.describe('Admin Tags', () => {
   test.beforeEach(async ({ page }) => {

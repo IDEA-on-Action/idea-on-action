@@ -188,3 +188,4 @@ const compressed = await compressImage(file, {
 - Base64 인코딩은 원본보다 약 33% 큽니다
 - 큰 이미지는 압축하거나 URL로 전달하는 것을 권장합니다
 
+
