@@ -1,7 +1,7 @@
 {
   "name": "vite_react_shadcn_ts",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -35,7 +35,12 @@
     "verify:gtm": "node scripts/verify-google-tags.js",
     "cancel:workflows": "node scripts/cancel-non-deployment-workflows.js",
     "docs:archive": "node scripts/archive-completed-todos.js",
-    "docs:check": "node scripts/check-docs-size.js"
+    "docs:check": "node scripts/check-docs-size.js",
+    "env:backup": "node scripts/backup-env.js",
+    "env:restore": "node scripts/restore-env.js",
+    "env:vault:new": "npx dotenv-vault new",
+    "env:vault:push": "npx dotenv-vault push",
+    "env:vault:pull": "npx dotenv-vault pull"
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",
@@ -114,6 +119,7 @@
     "@vitejs/plugin-react-swc": "^3.11.0",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
+    "dotenv-vault-core": "^0.7.1",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
