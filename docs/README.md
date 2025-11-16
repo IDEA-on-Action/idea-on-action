@@ -73,21 +73,43 @@ docs/
 
 ---
 
+## 🆕 최신 문서 (2025-11-16)
+
+### 📍 전체 문서 인덱스
+전체 문서 목록은 **[INDEX.md](INDEX.md)**를 참고하세요. (41+ 문서, ~400 KB)
+
+### CMS Phase 4 완료
+- ✅ [배포 체크리스트](guides/deployment/cms-phase4-deployment-checklist.md) - 71개 항목
+- ✅ [E2E 테스트 가이드](guides/testing/e2e-test-guide.md) - 215개 테스트
+- ✅ [Admin 가이드](guides/cms/) - 6개 사용자 가이드
+- ✅ [API 문서](api/hooks/) - 55개 훅 문서화
+
+### 주요 업데이트
+- Admin 사용자 가이드 6개 작성 (~56 KB)
+- API 훅 문서 7개 작성 (~98 KB)
+- DB 마이그레이션 가이드 작성
+- 배포 가이드 9개 통합
+
+---
+
 ## 🎯 빠른 탐색
 
 ### 처음 시작하시나요?
 1. **[CLAUDE.md](../CLAUDE.md)** - 프로젝트 전체 개요 (필독!)
-2. **[guides/setup/](guides/setup/)** - 초기 개발 환경 설정
-3. **[guides/deployment/](guides/deployment/)** - 배포 방법
+2. **[INDEX.md](INDEX.md)** - 전체 문서 인덱스 ⭐ 신규
+3. **[guides/setup/](guides/setup/)** - 초기 개발 환경 설정
+4. **[guides/deployment/](guides/deployment/)** - 배포 방법
 
 ### 개발 중이신가요?
 - **[guides/design-system/](guides/design-system/)** - 디자인 시스템 가이드
 - **[guides/components/](guides/components/)** - 컴포넌트 사용 가이드 ⭐ 신규
+- **[api/hooks/](api/hooks/)** - React 훅 API 문서 (55개) ⭐ 신규
 - **[project-todo.md](../project-todo.md)** - 작업 목록
 - **[project/changelog.md](project/changelog.md)** - 변경 로그
 
 ### 운영 관련
 - **[guides/deployment/](guides/deployment/)** - Vercel 배포 (DevOps 통합) ⭐
+- **[guides/cms/](guides/cms/)** - CMS 관리자 가이드 ⭐ 신규
 - **[reports/](reports/)** - 성능/리팩토링 보고서 ⭐ 신규
 - **[archive/deployments/](archive/deployments/)** - 과거 배포 기록
 
