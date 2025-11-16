@@ -1,9 +1,10 @@
 -- Hide non-essential services for Toss Payments review
 -- Keep only 4 main development services visible
+-- Note: status column only allows 'active', 'draft', 'archived'
 
--- Inactive services (not for Toss review)
+-- Archive services (not for Toss review)
 UPDATE services
-SET status = 'inactive', updated_at = NOW()
+SET status = 'archived', updated_at = NOW()
 WHERE id IN (
   '0d19cee7-2c4a-416b-b6eb-21d527adf857', -- 비즈니스 컨설팅 패키지
   '33b02dd7-cc99-451c-aeef-42db34dd3cd7', -- AI 워크플로우 자동화 도구
