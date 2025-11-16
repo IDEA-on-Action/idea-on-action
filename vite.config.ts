@@ -5,6 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
+// Force build cache invalidation - 2025-11-16
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
