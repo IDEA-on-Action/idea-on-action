@@ -161,9 +161,9 @@ const Roadmap = () => {
         <Section>
             <Tabs value={selectedQuarter} onValueChange={setSelectedQuarter}>
               <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 bg-transparent h-auto">
-                {roadmapData.map((item) => (
+                {roadmapData.map((item, index) => (
                   <TabsTrigger
-                    key={item.id}
+                    key={item.id ?? `quarter-tab-${index}`}
                     value={item.quarter}
                     className="glass-card data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                   >
@@ -175,7 +175,7 @@ const Roadmap = () => {
                 ))}
               </TabsList>
 
-              {roadmapData.map((quarter) => {
+              {roadmapData.map((quarter, quarterIndex) => {
                 const userFriendlyTheme = getUserFriendlyTheme(quarter.theme);
                 const userBenefits = getKPIUserBenefits(quarter.kpis || {});
                 const stabilityBadge = getStabilityBadge(quarter.risk_level);
@@ -183,7 +183,7 @@ const Roadmap = () => {
                 const highlights = getRoadmapHighlights(quarter);
 
                 return (
-                <TabsContent key={quarter.id} value={quarter.quarter} className="mt-8 space-y-8">
+                <TabsContent key={quarter.id ?? `quarter-panel-${quarterIndex}`} value={quarter.quarter} className="mt-8 space-y-8">
                   {/* Quarter Overview */}
                   <Card className="glass-card p-8">
                     <div className="space-y-6">
@@ -213,12 +213,12 @@ const Roadmap = () => {
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             {stabilityBadge.label}
                           </Badge>
-                          {quarter.owner ? (
+                          {quarter.owner && (
                             <Badge variant="outline">
                               <Users className="w-3 h-3 mr-1" />
                               {quarter.owner}
                             </Badge>
-                          ) : null}
+                          )}
                         </div>
                       </div>
 
@@ -230,8 +230,8 @@ const Roadmap = () => {
                             사용자 혜택
                           </h3>
                           <ul className="grid md:grid-cols-2 gap-2">
-                            {userBenefits.map((benefit, index) => (
-                              <li key={index} className="flex items-start gap-2 text-sm">
+                          {userBenefits.map((benefit, index) => (
+                              <li key={`${quarter.id ?? `quarter-${quarterIndex}`}-benefit-${index}`} className="flex items-start gap-2 text-sm">
                                 <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                                 <span>{benefit}</span>
                               </li>
@@ -244,7 +244,7 @@ const Roadmap = () => {
                       {highlights.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {highlights.map((highlight, index) => (
-                            <Badge key={index} variant="secondary">
+                            <Badge key={`${quarter.id ?? `quarter-${quarterIndex}`}-highlight-${index}`} variant="secondary">
                               {highlight}
                             </Badge>
                           ))}
@@ -273,7 +273,7 @@ const Roadmap = () => {
                             <AccordionContent>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
                                 {Object.entries(quarter.kpis).map(([key, value]) => (
-                                  <div key={key} className="space-y-1">
+                                  <div key={`${quarter.id ?? `quarter-${quarterIndex}`}-kpi-${key}`} className="space-y-1">
                                     <p className="text-xs text-muted-foreground uppercase">
                                       {key}
                                     </p>
@@ -308,44 +308,46 @@ const Roadmap = () => {
 
                     <div className="grid md:grid-cols-3 gap-6">
                       {quarter.milestones && quarter.milestones.length > 0 ? (
-                        quarter.milestones.map((milestone) => (
-                        <Card
-                          key={milestone.id}
-                          className="glass-card p-6 hover-lift"
-                        >
-                          <div className="space-y-4">
-                            <div className="flex items-start justify-between">
-                              <h4 className="text-lg font-bold">{milestone.title}</h4>
-                              <Badge variant={getStatusBadgeVariant(milestone.status)}>
-                                {getStatusLabel(milestone.status)}
-                              </Badge>
-                            </div>
-                            <div className={milestone.dueDate ? "text-sm text-muted-foreground" : "hidden"}>
-                              {milestone.dueDate && (
-                                <>
-                                  <Calendar className="w-4 h-4 inline mr-1" />
-                                  {new Date(milestone.dueDate).toLocaleDateString('ko-KR', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                  })}
-                                </>
-                              )}
-                            </div>
-                            <ul className={milestone.tasks && milestone.tasks.length > 0 ? "space-y-2" : "hidden"}>
-                              {milestone.tasks && milestone.tasks.map((task, index) => (
-                                <li
-                                  key={`${milestone.id}-task-${index}`}
-                                  className="text-sm text-foreground/70 flex items-start gap-2"
-                                >
-                                  <span className="text-primary mt-1">•</span>
-                                  <span>{task}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </Card>
-                        ))
+                        <>
+                          {quarter.milestones.map((milestone, milestoneIndex) => (
+                            <Card
+                              key={milestone.id ?? `${quarter.id ?? `quarter-${quarterIndex}`}-milestone-${milestoneIndex}`}
+                              className="glass-card p-6 hover-lift"
+                            >
+                              <div className="space-y-4">
+                                <div className="flex items-start justify-between">
+                                  <h4 className="text-lg font-bold">{milestone.title}</h4>
+                                  <Badge variant={getStatusBadgeVariant(milestone.status)}>
+                                    {getStatusLabel(milestone.status)}
+                                  </Badge>
+                                </div>
+                                {milestone.dueDate && (
+                                  <div className="text-sm text-muted-foreground">
+                                    <Calendar className="w-4 h-4 inline mr-1" />
+                                    {new Date(milestone.dueDate).toLocaleDateString('ko-KR', {
+                                      year: 'numeric',
+                                      month: 'long',
+                                      day: 'numeric'
+                                    })}
+                                  </div>
+                                )}
+                                {milestone.tasks && milestone.tasks.length > 0 && (
+                                  <ul className="space-y-2">
+                                    {milestone.tasks.map((task, index) => (
+                                      <li
+                                        key={`${milestone.id ?? `${quarter.id ?? `quarter-${quarterIndex}`}-milestone-${milestoneIndex}`}-task-${index}`}
+                                        className="text-sm text-foreground/70 flex items-start gap-2"
+                                      >
+                                        <span className="text-primary mt-1">•</span>
+                                        <span>{task}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            </Card>
+                          ))}
+                        </>
                       ) : (
                         <div className="col-span-full text-center py-8 text-muted-foreground">
                           등록된 마일스톤이 없습니다.

@@ -155,18 +155,22 @@ export const getRoadmapHighlights = (roadmap: Roadmap): string[] => {
   }
 
   // Add completed milestones count
-  const completedCount = roadmap.milestones.filter(m => m.status === 'completed').length;
-  if (completedCount > 0) {
-    highlights.push(`${completedCount}개 마일스톤 완료`);
+  if (roadmap.milestones && Array.isArray(roadmap.milestones)) {
+    const completedCount = roadmap.milestones.filter(m => m.status === 'completed').length;
+    if (completedCount > 0) {
+      highlights.push(`${completedCount}개 마일스톤 완료`);
+    }
   }
 
   // Add KPI highlights
-  const kpiHighlights = Object.entries(roadmap.kpis)
-    .filter(([_, kpi]) => kpi.current >= kpi.target)
-    .map(([key, _]) => key);
+  if (roadmap.kpis && typeof roadmap.kpis === 'object') {
+    const kpiHighlights = Object.entries(roadmap.kpis)
+      .filter(([_, kpi]) => kpi && typeof kpi === 'object' && 'current' in kpi && 'target' in kpi && kpi.current >= kpi.target)
+      .map(([key, _]) => key);
 
-  if (kpiHighlights.length > 0) {
-    highlights.push(`${kpiHighlights.length}개 목표 달성`);
+    if (kpiHighlights.length > 0) {
+      highlights.push(`${kpiHighlights.length}개 목표 달성`);
+    }
   }
 
   return highlights;
