@@ -53,21 +53,21 @@ async function checkData() {
     }
   }
 
-  // Check specific service IDs needed for URLs
-  console.log('\n=== Checking required service IDs ===');
-  const requiredIds = ['mvp', 'fullstack', 'design', 'operations'];
+  // Check specific service slugs needed for URLs
+  console.log('\n=== Checking required service slugs ===');
+  const requiredSlugs = ['mvp', 'fullstack', 'design', 'operations'];
 
-  for (const id of requiredIds) {
+  for (const slug of requiredSlugs) {
     const { data, error } = await supabase
       .from('services')
-      .select('id, title')
-      .eq('id', id)
+      .select('id, title, slug')
+      .eq('slug', slug)
       .single();
 
     if (error || !data) {
-      console.log(`❌ Missing: ${id}`);
+      console.log(`❌ Missing: ${slug}`);
     } else {
-      console.log(`✅ Found: ${id} - ${data.title}`);
+      console.log(`✅ Found: ${slug} - ${data.title}`);
     }
   }
 }
