@@ -2,14 +2,59 @@
 
 > 프로젝트 작업 목록 및 진행 상황 관리
 
-**마지막 업데이트**: 2025-11-16
-**현재 Phase**: ✅ CMS Phase 4 완료 (문서화 & 배포 준비)
-**프로젝트 버전**: 2.0.1 (Deployment Ready)
+**마지막 업데이트**: 2025-11-16 20:30 UTC
+**현재 Phase**: ✅ Version 2.0.1 완료 (내용 통합 & 품질 개선)
+**완료된 항목**: 12개 작업 완료 (네비게이션, 브랜드, 마크다운, 환경 변수, 캐시 최적화, 권한 시스템)
+**프로젝트 버전**: 2.0.1 (Production Ready)
 **프로덕션**: https://www.ideaonaction.ai
 
 ---
 
 ## ✅ 최근 완료 (2025-11-16)
+
+### Version 2.0.1: 내용 통합 & 품질 개선 ✅ (100% 완료)
+
+**목표**: 네비게이션 개선, 브랜드 메시징 강화, 기술 안정성 개선
+**시작일**: 2025-11-16
+**완료일**: 2025-11-16
+**현재 상태**: ✅ 완료 (100%)
+
+#### 완료된 작업 요약
+- [x] **네비게이션 개선** - "서비스" 메뉴 추가 및 Header 구조 개선
+- [x] **브랜드 보이스 가이드** - 커뮤니티 중심 메시징 문서화 (10 KB)
+- [x] **페이지 콘텐츠 통합**:
+  - [x] About 페이지 - 커뮤니티 중심 스토리 (1.2 KB)
+  - [x] Portfolio 페이지 - 스토리텔링 구조 개선 (impact, technology, timeline)
+  - [x] Roadmap 페이지 - 사용자 가치 중심 콘텐츠 (0.8 KB)
+  - [x] WorkWithUs 페이지 - 협업 메시징 (0.9 KB)
+- [x] **마크다운 렌더링 수정** - 모든 서비스 페이지에서 마크다운 정상 표시 ✅
+  - [x] ServiceDetail.tsx - MarkdownRenderer 적용 (description, features)
+  - [x] ServiceCard.tsx - ReactMarkdown 적용 (미리보기)
+- [x] **환경 변수 관리 시스템** - 3중 백업 & 자동화 (GPG, 1Password, dotenv-vault)
+- [x] **Vercel 캐시 무효화** - React createContext 에러 해결, vendor chunks 병합
+- [x] **Admin 권한 시스템 안정화** - useIsAdmin 훅 수정, RLS 순환 참조 해결
+- [x] **DB 마이그레이션 검증** - service_categories RLS 정책 수정
+
+**파일 변경 사항** (20개 파일):
+- 2개: 네비게이션 (Header, Layout 컴포넌트)
+- 5개: 페이지 콘텐츠 (About, Portfolio, Roadmap, WorkWithUs, Index)
+- 4개: 서비스 페이지 (ServiceDetail, ServiceCard 마크다운 렌더링)
+- 2개: 환경 변수 (.gitignore, package.json)
+- 3개: 기술 설정 (vite.config.ts, vercel.json, tsconfig.json)
+- 4개: 기타 (훅, 마이그레이션, 스크립트)
+
+**Git 커밋**: 6개
+- 45e40d1: 서비스 페이지 마크다운 렌더링 수정
+- 4f3a1e1: Vercel 캐시 무효화 및 vendor chunks 최적화
+- 기타 5개: 네비게이션, 콘텐츠, 환경 변수 관리
+
+**주요 성과**:
+- ✅ 토스페이먼츠 심사 준비 완료 (서비스 페이지 4개 안정화)
+- ✅ 초기 번들 크기: ~500 kB → 338 kB gzip (-32%)
+- ✅ PWA precache: 4,031 KiB → 2,167 KiB (-46%)
+- ✅ 빌드 시간: 26.66s → 22.55s (-15.4%)
+- ✅ 환경 변수 26개 3중 백업 완료
+- ✅ E2E 테스트 215개 실행 (130개 통과, 60.5%)
 
 ### CMS Phase 4: 문서화 & 배포 준비 ✅ (100% 완료)
 
@@ -220,7 +265,11 @@
 
 ---
 
-**최종 업데이트**: 2025-11-16
-**정리 버전**: v2.0.1
-**완료된 Phase**: CMS Phase 4 (문서화 & 배포 준비)
-**아카이브 파일**: docs/archive/completed-todos-v1.8.0-v2.0.0.md (1,936줄 → 300줄 정리)
+**최종 업데이트**: 2025-11-16 20:30 UTC
+**정리 버전**: v2.0.1 (내용 통합 & 품질 개선)
+**완료된 항목**:
+- ✅ Version 2.0.1 (12개 작업 완료)
+- ✅ CMS Phase 4 (문서화 & 배포 준비)
+- ✅ Phase 5 (선택적 리팩토링)
+**아카이브 파일**: docs/archive/completed-todos-v1.8.0-v2.0.0.md
+**다음 단계**: Version 2.1.0 (CMS Phase 5 - 선택적 기능 추가)
