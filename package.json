@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --force",
-    "build:dev": "vite build --mode development --force",
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
@@ -38,6 +38,7 @@
     "docs:check": "node scripts/check-docs-size.js",
     "env:backup": "node scripts/backup-env.js",
     "env:restore": "node scripts/restore-env.js",
+    "env:export:csv": "node scripts/export-env-to-csv.js",
     "env:vault:new": "npx dotenv-vault new",
     "env:vault:push": "npx dotenv-vault push",
     "env:vault:pull": "npx dotenv-vault pull"
