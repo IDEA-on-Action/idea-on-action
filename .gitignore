@@ -59,6 +59,11 @@ nul
 
 # Backups
 backups/
+backup-*.sql
+*-backup-*.sql
+*-migration-*.sql
+production-*.sql
+fix-*-production.sql
 
 # OS files
 Thumbs.db
