@@ -2,13 +2,61 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-11-16
+**마지막 업데이트**: 2025-11-18
 **현재 버전**: 2.0.1 (CMS Phase 4 완료)
-**다음 버전**: 2.1.0 (CMS Phase 5 - 선택적)
-**상태**: ✅ Production Ready | 🎉 CMS Phase 4 완료 (23 파일, 177 테스트, 30분 소요)
+**다음 버전**: 2.2.0 (Toss Payments Sprint 1 진행 중)
+**상태**: ✅ Production Ready | 🚀 토스페이먼츠 심사 준비 (5/40 태스크 완료)
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-18: **🗄️ Services Platform DB 설정 완료** ✅ - 토스페이먼츠 심사용 DB 스키마 & 콘텐츠
+  - **배경**: 토스페이먼츠 가맹점 심사를 위한 서비스 플랫폼 구축 시작
+  - **SDD 프로세스**: Specify → Plan → Tasks → Implement (Day 1 완료)
+  - **완료 태스크**: TASK-001 ~ TASK-005 (5개, ~3시간 소요)
+
+  - **TASK-001**: services 테이블 확장
+    - 4개 JSONB 컬럼 추가: pricing_data, deliverables, process_steps, faq
+    - 기존 4개 서비스 데이터 유지 (NULL 허용)
+    - 마이그레이션: 20251118000000_extend_services_table.sql
+
+  - **TASK-002**: service_packages 테이블 생성
+    - 일회성 프로젝트 패키지 정보 (MVP Standard/Pro/Enterprise 등)
+    - 8개 컬럼, 4개 인덱스, 4개 RLS 정책
+    - 마이그레이션: 20251118000001_create_service_packages_table.sql
+
+  - **TASK-003**: subscription_plans 테이블 생성
+    - 정기 구독 플랜 정보 (월간/분기/연간)
+    - 9개 컬럼, 5개 인덱스, 4개 RLS 정책
+    - 마이그레이션: 20251118000002_create_subscription_plans_table.sql
+
+  - **TASK-004**: RLS 정책 검증
+    - 3개 검증 스크립트 생성 (SQL 2개 + Node.js 1개)
+    - Anonymous 사용자 SELECT 권한 확인, INSERT 차단 확인
+    - scripts/check-services-schema.sql, check-services-rls-policies.sql, check-services-rls.cjs
+
+  - **TASK-005**: 4개 서비스 콘텐츠 데이터 추가
+    - **MVP 개발**: 3개 패키지 (₩8M-18M), 10개 결과물, 5단계, 8개 FAQ
+    - **풀스택 개발**: 3개 플랜 (₩5.5M-60M), 12개 결과물, 6단계, 10개 FAQ
+    - **디자인 시스템**: 2개 패키지 (₩800K-1.5M), 8개 결과물, 5단계, 8개 FAQ
+    - **운영 관리**: 3개 플랜 (₩1M-4M), 5개 결과물, 5단계, 10개 FAQ
+    - 마이그레이션: 20251118000003_add_services_content_data.sql
+
+  - **결과**:
+    - ✅ 3개 테이블 확장/생성 (services, service_packages, subscription_plans)
+    - ✅ 21개 컬럼 추가 (services 4개 + packages 8개 + plans 9개)
+    - ✅ 13개 인덱스 생성
+    - ✅ 14개 RLS 정책 설정
+    - ✅ 4개 서비스 완전한 콘텐츠 (총 11개 패키지/플랜, 35개 결과물, 21단계, 36 FAQ)
+    - ✅ 로컬 DB 테스트 성공
+
+  - **문서**:
+    - [DB Setup Summary](docs/guides/services-platform/db-setup-summary.md) - 종합 요약 (2,000+ 단어)
+    - 4개 검증 스크립트 (schema, RLS policies, content data)
+
+  - **커밋**: 4a6a141 (Day 1 DB setup), 41903e7 (content data)
+  - **다음 단계**: Day 2 - TypeScript 타입, React hooks, UI 컴포넌트 (TASK-006~011)
+
+
 - 2025-11-17: **🔧 코딩 표준 준수** ✅ - EOF newline 추가로 Git 상태 클린업
   - **배경**: CMS Phase 4 작업 후 11개 파일이 미커밋 상태로 남아있음
   - **작업 내용**:

@@ -2,15 +2,90 @@
 
 > 프로젝트 작업 목록 및 진행 상황 관리
 
-**마지막 업데이트**: 2025-11-16 20:30 UTC
-**현재 Phase**: ✅ Version 2.0.1 완료 (내용 통합 & 품질 개선)
-**완료된 항목**: 12개 작업 완료 (네비게이션, 브랜드, 마크다운, 환경 변수, 캐시 최적화, 권한 시스템)
+**마지막 업데이트**: 2025-11-18 15:00 UTC
+**현재 Phase**: 🚀 Version 2.2.0 진행 중 (Toss Payments Sprint 1)
+**완료된 항목**: 5개 태스크 완료 (DB 스키마, RLS, 콘텐츠 데이터)
 **프로젝트 버전**: 2.0.1 (Production Ready)
 **프로덕션**: https://www.ideaonaction.ai
 
 ---
 
-## ✅ 최근 완료 (2025-11-16)
+## ✅ 최근 완료 (2025-11-18)
+
+### Version 2.2.0: Toss Payments Sprint 1 - Day 1 완료 ✅
+
+**목표**: 토스페이먼츠 가맹점 심사 준비 - Services Platform DB 설정
+**시작일**: 2025-11-18
+**완료일**: 2025-11-18 (Day 1)
+**현재 상태**: 🚀 진행 중 (5/40 태스크 완료, 12.5%)
+**SDD 단계**: Specify ✅ → Plan ✅ → Tasks ✅ → **Implement** (진행 중)
+
+#### 완료된 작업 (Day 1)
+
+- [x] **TASK-001**: services 테이블 확장 ✅
+  - 4개 JSONB 컬럼 추가: pricing_data, deliverables, process_steps, faq
+  - 기존 4개 서비스 데이터 유지 (NULL 허용)
+  - 마이그레이션: 20251118000000_extend_services_table.sql
+
+- [x] **TASK-002**: service_packages 테이블 생성 ✅
+  - 일회성 프로젝트 패키지 정보 저장 (MVP Standard/Pro/Enterprise)
+  - 8개 컬럼, 4개 인덱스, 4개 RLS 정책
+  - 마이그레이션: 20251118000001_create_service_packages_table.sql
+
+- [x] **TASK-003**: subscription_plans 테이블 생성 ✅
+  - 정기 구독 플랜 정보 저장 (월간/분기/연간)
+  - 9개 컬럼, 5개 인덱스, 4개 RLS 정책
+  - 마이그레이션: 20251118000002_create_subscription_plans_table.sql
+
+- [x] **TASK-004**: RLS 정책 검증 ✅
+  - 3개 검증 스크립트 생성 (SQL 2개 + Node.js 1개)
+  - Anonymous SELECT 허용, INSERT 차단 확인
+  - scripts/check-services-schema.sql, check-services-rls-policies.sql, check-services-rls.cjs
+
+- [x] **TASK-005**: 4개 서비스 콘텐츠 데이터 추가 ✅
+  - MVP 개발: 3개 패키지 (₩8M-18M), 10개 결과물, 5단계, 8개 FAQ
+  - 풀스택 개발: 3개 플랜 (₩5.5M-60M), 12개 결과물, 6단계, 10개 FAQ
+  - 디자인 시스템: 2개 패키지 (₩800K-1.5M), 8개 결과물, 5단계, 8개 FAQ
+  - 운영 관리: 3개 플랜 (₩1M-4M), 5개 결과물, 5단계, 10개 FAQ
+  - 마이그레이션: 20251118000003_add_services_content_data.sql
+
+#### 📊 Day 1 통계
+
+- **작업 기간**: 2025-11-18 (~3시간)
+- **완료 태스크**: 5개
+- **생성 파일**: 8개
+  - 마이그레이션: 4개 (스키마 3개 + 데이터 1개)
+  - 검증 스크립트: 4개
+  - 문서: 1개 (db-setup-summary.md)
+- **Git 커밋**: 2개
+  - 4a6a141: Day 1 DB setup (7 files)
+  - 41903e7: Content data (1 file)
+
+#### 결과
+
+- ✅ 3개 테이블 확장/생성 (services, service_packages, subscription_plans)
+- ✅ 21개 컬럼 추가
+- ✅ 13개 인덱스 생성
+- ✅ 14개 RLS 정책 설정
+- ✅ 4개 서비스 완전한 콘텐츠
+  - 11개 패키지/플랜
+  - 35개 결과물 카테고리
+  - 21개 프로세스 단계
+  - 36개 FAQ
+- ✅ 로컬 DB 테스트 성공
+
+#### 다음 단계 (Day 2)
+
+- [ ] TASK-006: TypeScript 타입 정의
+- [ ] TASK-007: React hooks 생성 (useServicePackages, useSubscriptionPlans)
+- [ ] TASK-008: 서비스 상세 페이지 업데이트
+- [ ] TASK-009: 패키지 선택 UI 컴포넌트
+- [ ] TASK-010: 장바구니 통합
+- [ ] TASK-011: 프로덕션 배포 및 테스트
+
+---
+
+## ✅ 이전 완료 (2025-11-16)
 
 ### Version 2.0.1: 내용 통합 & 품질 개선 ✅ (100% 완료)
 
