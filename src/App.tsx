@@ -17,7 +17,7 @@ const ChatWidget = lazy(() => import("./components/chat").then(module => ({ defa
 import { initSentry } from "./lib/sentry";
 import { trackPageView } from "./lib/analytics";
 import * as Sentry from "@sentry/react";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
 // Loading component
 const LoadingFallback = () => (
@@ -278,7 +278,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </HelmetProvider>
-    <Analytics />
+    <VercelAnalytics />
   </QueryClientProvider>
   </Sentry.ErrorBoundary>
 );
