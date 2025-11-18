@@ -37,7 +37,7 @@
 - 유선전화번호: `010-4904-2671`
 
 **캡처 URL**:
-- `http://localhost:8080/subscription/payment?service_id={생성된_ID}`
+- `https://www.ideaonaction.ai/subscription/payment?service_id=fed76f94-b3a0-4c88-9540-cf3f98ef354c`
 - 하단 Footer 영역 캡처
 
 ---
@@ -47,7 +47,7 @@
 **캡처 위치**: 환불정책 페이지
 
 **URL**:
-- `/refund-policy` 또는 `/subscription/checkout?service_id={ID}` 페이지의 "환불정책" 링크
+- `/refund-policy` 또는 `/subscription/checkout?service_id=fed76f94-b3a0-4c88-9540-cf3f98ef354c` 페이지의 "환불정책" 링크
 
 **필수 포함 내용** (가이드 Page 8-9 참고):
 - [ ] 환불 및 교환 정책
@@ -92,14 +92,14 @@
 - [ ] "자세히 보기" 버튼
 
 #### 5-2. 상품 상세 페이지
-**URL**: `/services/{생성된_ID}`
+**URL**: `/services/compass-navigator`
 - [ ] 서비스 제목 및 설명
 - [ ] 주요 기능 (Features) 4개
 - [ ] 가격: ₩99,000/월
 - [ ] **"구독 시작" 버튼** (파란색 박스)
 
 #### 5-3. 구독 정보 입력 페이지
-**URL**: `/subscription/checkout?service_id={생성된_ID}`
+**URL**: `/subscription/checkout?service_id=fed76f94-b3a0-4c88-9540-cf3f98ef354c`
 - [ ] 구독자 정보 입력 폼 (이름, 이메일, 전화번호)
 - [ ] 약관 동의 체크박스 5개:
   - 이용약관
@@ -122,7 +122,7 @@
 
 **캡처 위치**: 토스페이먼츠 Payment Widget
 
-**URL**: `/subscription/payment?service_id={생성된_ID}`
+**URL**: `/subscription/payment?service_id=fed76f94-b3a0-4c88-9540-cf3f98ef354c`
 
 **필수 캡처** (가이드 Page 15 참고):
 - [ ] **정기결제용 카드 입력창** (토스페이먼츠 위젯)
@@ -242,19 +242,18 @@ PPT 제작 완료 후 토스페이먼츠 심사 담당자에게 이메일로 전
 - 가이드: `supabase-compass-navigator-guide.md`
 - category_id: `cca66651-9061-477d-9de8-62d4432acd06`
 
-### 2. 로컬 개발 서버 실행
-```bash
-npm run dev
-```
-서버 주소: http://localhost:8080
+### 2. 프로덕션 사이트 접속
+**사이트 주소**: https://www.ideaonaction.ai
 
-### 3. 생성된 서비스 ID 확인
-- Supabase 대시보드 → services 테이블
-- 방금 추가한 COMPASS Navigator의 `id` (UUID) 복사
+**COMPASS Navigator 서비스 ID**: `fed76f94-b3a0-4c88-9540-cf3f98ef354c`
+
+### 3. 테스트 계정으로 로그인
+- **이메일**: toss-review@ideaonaction.ai
+- **비밀번호**: TossReview2025!
 
 ### 4. 캡처 시작
 - 위 가이드 순서대로 각 페이지를 캡처
-- URL에 `{생성된_ID}`를 실제 UUID로 교체
+- 모든 URL은 프로덕션 사이트 기준 (https://www.ideaonaction.ai)
 
 ### 5. PPT 제작
 - PowerPoint 또는 Google Slides 사용
