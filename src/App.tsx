@@ -178,7 +178,7 @@ const App = () => (
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
-              <Route path="/services/:id" element={<ServiceDetail />} />
+              <Route path="/services/:id" element={<ServiceDetail />} /> {/* :id is treated as slug */}
               <Route path="/search" element={<Search />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />

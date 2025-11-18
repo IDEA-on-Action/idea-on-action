@@ -1,52 +1,95 @@
 /**
  * ServiceDetail Page
  *
- * 서비스 상세 페이지
- * - 서비스 정보 표시
- * - 이미지 갤러리
- * - 기능 목록
- * - 메트릭 시각화
- * - CTA 버튼
+ * 서비스 상세 페이지 (Services Platform Integration)
+ * - 서비스 정보 표시 (Hero Section)
+ * - 패키지/플랜 선택 (PackageSelector)
+ * - 프로세스 타임라인 (ProcessTimeline)
+ * - 결과물 그리드 (DeliverablesGrid)
+ * - FAQ 섹션 (FAQSection)
+ *
+ * Updated: 2025-11-19 (Services Platform Day 2)
  */
 
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { toast } from 'sonner'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { useServiceBySlug } from '@/hooks/useServices'
-import { useAddToCart } from '@/hooks/useCart'
-import { useAuth } from '@/hooks/useAuth'
+import { useServiceDetailBySlug } from '@/hooks/useServicesPlatform'
+import { useCartStore } from '@/store/cartStore'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Users,
-  Star,
-  TrendingUp,
-  AlertCircle,
-  Mail,
-  ShoppingCart,
-} from 'lucide-react'
-import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
+import { ArrowLeft, AlertCircle } from 'lucide-react'
+
+// Services Platform Components
+import { ServiceHero } from '@/components/services-platform/ServiceHero'
+import { PackageSelector } from '@/components/services-platform/PackageSelector'
+import { ProcessTimeline } from '@/components/services-platform/ProcessTimeline'
+import { DeliverablesGrid } from '@/components/services-platform/DeliverablesGrid'
+import { FAQSection } from '@/components/services-platform/FAQSection'
+import type { ServicePackage, SubscriptionPlan } from '@/types/services-platform'
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { user } = useAuth()
-  const { data: service, isLoading, isError, error } = useServiceBySlug(id!)
-  const { mutate: addToCart, isPending: isAddingToCart } = useAddToCart()
+  const { data: service, isLoading, isError, error } = useServiceDetailBySlug(id || '')
+  const { addServiceItem, openCart } = useCartStore()
 
+  // Add to cart handlers
+  const handleSelectPackage = (pkg: ServicePackage) => {
+    if (!service) return
+
+    addServiceItem({
+      type: 'package',
+      service_id: service.id,
+      service_title: service.title,
+      item_id: pkg.id,
+      item_name: pkg.name,
+      price: pkg.price,
+      quantity: 1,
+    })
+
+    toast.success(`${pkg.name} 패키지를 장바구니에 추가했습니다`, {
+      description: `${service.title} - ${new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(pkg.price)}`,
+      action: {
+        label: '장바구니 보기',
+        onClick: () => openCart(),
+      },
+    })
+  }
+
+  const handleSelectPlan = (plan: SubscriptionPlan) => {
+    if (!service) return
+
+    addServiceItem({
+      type: 'plan',
+      service_id: service.id,
+      service_title: service.title,
+      item_id: plan.id,
+      item_name: plan.plan_name,
+      price: plan.price,
+      quantity: 1,
+      billing_cycle: plan.billing_cycle,
+    })
+
+    const billingCycleKorean = {
+      monthly: '월간',
+      quarterly: '분기',
+      yearly: '연간',
+    }
+
+    toast.success(`${plan.plan_name}을 장바구니에 추가했습니다`, {
+      description: `${service.title} - ${billingCycleKorean[plan.billing_cycle]} ${new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(plan.price)}`,
+      action: {
+        label: '장바구니 보기',
+        onClick: () => openCart(),
+      },
+    })
+  }
+
+  // Loading State
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
@@ -67,6 +110,7 @@ export default function ServiceDetail() {
     )
   }
 
+  // Error State
   if (isError || !service) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
@@ -92,192 +136,83 @@ export default function ServiceDetail() {
   const {
     title,
     description,
-    price,
     image_url,
-    images,
-    features,
-    metrics,
     category,
+    tags,
+    packages,
+    plans,
+    process_steps,
+    deliverables,
+    faq,
   } = service
-
-  // 가격 포맷팅
-  // 장바구니 담기 핸들러
-  const handleAddToCart = () => {
-    if (!user) {
-      navigate('/login')
-      return
-    }
-
-    addToCart({
-      serviceId: service.id,
-      quantity: 1,
-      price: service.price,
-    })
-  }
-
-  const formattedPrice = new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency: 'KRW',
-  }).format(price)
-
-  // 갤러리 이미지 (메인 이미지 + 추가 이미지)
-  const galleryImages = image_url
-    ? [image_url, ...(images || [])]
-    : images || []
 
   return (
     <>
       <Helmet>
-        <title>{title} | VIBE WORKING</title>
+        <title>{title} | IDEA on Action</title>
         <meta name="description" content={description || ''} />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
 
-        <main className="flex-1 container mx-auto px-4 py-16 space-y-12">
-          {/* 뒤로 가기 */}
-          <Button variant="ghost" onClick={() => navigate('/services')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            서비스 목록으로
-          </Button>
-
-          {/* 메인 섹션 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* 이미지 갤러리 */}
-            <div className="space-y-4">
-              {galleryImages.length > 0 ? (
-                <Carousel className="w-full">
-                  <CarouselContent>
-                    {galleryImages.map((img, index) => (
-                      <CarouselItem key={index}>
-                        <div className="aspect-video rounded-lg overflow-hidden glass-card">
-                          <img
-                            src={img}
-                            alt={`${title} - 이미지 ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  {galleryImages.length > 1 && (
-                    <>
-                      <CarouselPrevious />
-                      <CarouselNext />
-                    </>
-                  )}
-                </Carousel>
-              ) : (
-                <div className="aspect-video rounded-lg overflow-hidden glass-card bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                  <span className="text-6xl font-bold text-muted-foreground opacity-50">
-                    {title.charAt(0)}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* 서비스 정보 */}
-            <div className="space-y-6">
-              {/* 카테고리 & 제목 */}
-              <div className="space-y-3">
-                {category && <Badge variant="secondary">{category.name}</Badge>}
-                <h1 className="text-4xl font-bold">{title}</h1>
-                <div className="text-muted-foreground">
-                  <MarkdownRenderer content={description || ''} />
-                </div>
-              </div>
-
-              {/* 메트릭 */}
-              {metrics && (
-                <div className="grid grid-cols-3 gap-4">
-                  {metrics.users && (
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <Users className="h-5 w-5 text-primary" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{metrics.users.toLocaleString()}</div>
-                        <div className="text-sm text-muted-foreground">사용자</div>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {metrics.satisfaction && (
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <Star className="h-5 w-5 text-yellow-500" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{metrics.satisfaction.toFixed(1)}</div>
-                        <div className="text-sm text-muted-foreground">만족도</div>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {metrics.avg_roi_increase && (
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <TrendingUp className="h-5 w-5 text-green-500" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{metrics.avg_roi_increase}%</div>
-                        <div className="text-sm text-muted-foreground">ROI 증가</div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              )}
-
-              {/* 가격 & CTA */}
-              <Card className="glass-card border-primary/50">
-                <CardContent className="p-6 space-y-4">
-                  <div>
-                    <div className="text-3xl font-bold text-primary">{formattedPrice}</div>
-                    <div className="text-sm text-muted-foreground">부가세 별도</div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
-                      size="lg"
-                      className="flex-1"
-                      onClick={handleAddToCart}
-                      disabled={isAddingToCart}
-                    >
-                      <ShoppingCart className="mr-2 h-5 w-5" />
-                      {isAddingToCart ? '추가 중...' : '장바구니 담기'}
-                    </Button>
-                    <Button size="lg" variant="outline" asChild className="flex-1">
-                      <Link to="/contact">
-                        <Mail className="mr-2 h-5 w-5" />
-                        문의하기
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+        <main className="flex-1">
+          {/* Back Button */}
+          <div className="container mx-auto px-4 pt-8">
+            <Button variant="ghost" onClick={() => navigate('/services')}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              서비스 목록으로
+            </Button>
           </div>
 
-          {/* 기능 섹션 */}
-          {features && features.length > 0 && (
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold">주요 기능</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <Card key={index} className="glass-card">
-                    <CardHeader>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle2 className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-                        <div className="flex-1">
-                          <CardTitle className="text-lg">{feature.title}</CardTitle>
-                          <div className="mt-2 text-sm text-muted-foreground">
-                            <MarkdownRenderer content={feature.description || ''} />
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                  </Card>
-                ))}
+          {/* Hero Section */}
+          <ServiceHero
+            title={title}
+            description={description || ''}
+            image_url={image_url}
+            category={category}
+            tags={tags}
+          />
+
+          {/* Package/Plan Selection */}
+          {(packages.length > 0 || plans.length > 0) && (
+            <section className="bg-muted/30 py-16">
+              <PackageSelector
+                packages={packages}
+                plans={plans}
+                onSelectPackage={handleSelectPackage}
+                onSelectPlan={handleSelectPlan}
+              />
+            </section>
+          )}
+
+          {/* Process Timeline */}
+          {process_steps && process_steps.length > 0 && (
+            <section className="container mx-auto px-4 py-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+                프로세스
+              </h2>
+              <ProcessTimeline steps={process_steps} />
+            </section>
+          )}
+
+          {/* Deliverables Grid */}
+          {deliverables && deliverables.length > 0 && (
+            <section className="bg-muted/30 py-16">
+              <div className="container mx-auto px-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+                  결과물
+                </h2>
+                <DeliverablesGrid deliverables={deliverables} />
               </div>
-            </div>
+            </section>
+          )}
+
+          {/* FAQ Section */}
+          {faq && faq.length > 0 && (
+            <section className="container mx-auto px-4 py-16">
+              <FAQSection faqs={faq} />
+            </section>
           )}
         </main>
 
