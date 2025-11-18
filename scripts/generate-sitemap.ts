@@ -66,7 +66,7 @@ interface Notice {
 }
 
 interface Service {
-  id: string
+  slug: string
   updated_at: string
 }
 
@@ -111,8 +111,8 @@ async function generateSitemap() {
   // Fetch services
   const { data: services } = await supabase
     .from('services')
-    .select('id, updated_at')
-    .eq('is_active', true)
+    .select('slug, updated_at')
+    .eq('status', 'active')
     .order('updated_at', { ascending: false })
 
   // Fetch projects (Portfolio)
@@ -146,16 +146,18 @@ async function generateSitemap() {
     })
   }
 
-  // Services
+  // Services (filter out null slugs)
   if (services) {
-    services.forEach((service: Service) => {
-      xml += '  <url>\n'
-      xml += `    <loc>${SITE_URL}/services/${service.id}</loc>\n`
-      xml += `    <lastmod>${new Date(service.updated_at).toISOString().split('T')[0]}</lastmod>\n`
-      xml += '    <changefreq>weekly</changefreq>\n'
-      xml += '    <priority>0.8</priority>\n'
-      xml += '  </url>\n'
-    })
+    services
+      .filter((service: Service) => service.slug && service.slug !== 'null')
+      .forEach((service: Service) => {
+        xml += '  <url>\n'
+        xml += `    <loc>${SITE_URL}/services/${service.slug}</loc>\n`
+        xml += `    <lastmod>${new Date(service.updated_at).toISOString().split('T')[0]}</lastmod>\n`
+        xml += '    <changefreq>weekly</changefreq>\n'
+        xml += '    <priority>0.8</priority>\n'
+        xml += '  </url>\n'
+      })
   }
 
   // Projects (Portfolio)
