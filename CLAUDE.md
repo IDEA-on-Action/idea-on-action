@@ -2,13 +2,27 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-11-18
+**마지막 업데이트**: 2025-11-19
 **현재 버전**: 2.0.1 (CMS Phase 4 완료)
 **다음 버전**: 2.2.0 (Toss Payments Sprint 1 진행 중)
 **상태**: ✅ Production Ready | 🚀 토스페이먼츠 심사 준비 (5/40 태스크 완료)
 **개발 방법론**: SDD (Spec-Driven Development)
 
 **최신 업데이트**:
+- 2025-11-19: **🐛 Analytics 컴포넌트 이름 충돌 수정** ✅ - 모든 페이지에 관리자 대시보드 표시 문제 해결
+  - **문제**: Vercel Analytics와 Admin Analytics 페이지의 이름 충돌로 모든 공개 페이지에 관리자 대시보드 표시
+  - **원인**: `App.tsx`에서 `const Analytics = lazy(...)` (관리자 페이지)가 `import { Analytics }` (Vercel)를 덮어씀
+  - **해결**:
+    - Vercel Analytics를 `VercelAnalytics`로 리네이밍
+    - Admin Analytics는 `/admin/analytics` 경로에서만 표시되도록 유지
+  - **추가 작업**: Footer LinkedIn 링크 업데이트 (`https://www.linkedin.com/company/ideaonaction`)
+  - **결과**:
+    - ✅ 모든 공개 페이지에서 관리자 대시보드 제거
+    - ✅ Vercel Analytics 정상 작동
+    - ✅ Footer 소셜 링크 업데이트
+  - **파일 변경**: 2개 (App.tsx, Footer.tsx)
+  - **커밋**: 74d11dd (Analytics fix), b3d1906 (LinkedIn link)
+
 - 2025-11-18: **🗄️ Services Platform DB 설정 완료** ✅ - 토스페이먼츠 심사용 DB 스키마 & 콘텐츠
   - **배경**: 토스페이먼츠 가맹점 심사를 위한 서비스 플랫폼 구축 시작
   - **SDD 프로세스**: Specify → Plan → Tasks → Implement (Day 1 완료)
