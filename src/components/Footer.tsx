@@ -43,7 +43,7 @@ const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     icon: Linkedin,
-    href: "https://linkedin.com",
+    href: "https://www.linkedin.com/company/ideaonaction",
     label: "LinkedIn 프로필 방문하기",
     isExternal: true
   },
