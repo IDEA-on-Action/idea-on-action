@@ -73,9 +73,9 @@ export default function SubscriptionCheckout() {
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionSchema),
     defaultValues: {
-      customerName: '',
+      customerName: user?.user_metadata?.full_name || '',
       customerEmail: user?.email || '',
-      customerPhone: '',
+      customerPhone: user?.user_metadata?.phone || '',
       termsAgreed: false,
       privacyAgreed: false,
       refundAgreed: false,
@@ -108,8 +108,17 @@ export default function SubscriptionCheckout() {
     setIsProcessing(true)
 
     try {
+      // 고객 정보를 sessionStorage에 저장 (결제 페이지에서 사용)
+      sessionStorage.setItem(
+        'subscription_customer_info',
+        JSON.stringify({
+          customerName: data.customerName,
+          customerEmail: data.customerEmail,
+          customerPhone: data.customerPhone,
+        })
+      )
+
       // 토스페이먼츠 빌링키 발급 페이지로 이동
-      // 실제 구현 시: Supabase Edge Function으로 빌링키 발급 API 호출
       navigate(`/subscription/payment?service_id=${service.id}`)
     } catch (error) {
       console.error('구독 시작 실패:', error)
@@ -117,25 +126,6 @@ export default function SubscriptionCheckout() {
     } finally {
       setIsProcessing(false)
     }
-  }
-
-  // 로그인 체크
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-16">
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>구독하려면 로그인이 필요합니다.</AlertDescription>
-          </Alert>
-          <Button onClick={() => navigate('/login')} className="mt-4">
-            로그인하기
-          </Button>
-        </main>
-        <Footer />
-      </div>
-    )
   }
 
   // 서비스 없음

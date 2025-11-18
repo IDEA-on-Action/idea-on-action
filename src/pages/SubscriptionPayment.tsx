@@ -35,7 +35,7 @@ export default function SubscriptionPayment() {
 
   // Payment Widget 초기화
   useEffect(() => {
-    if (!user || !service) return
+    if (!service) return
 
     const initializeWidget = async () => {
       try {
@@ -60,13 +60,21 @@ export default function SubscriptionPayment() {
     }
 
     initializeWidget()
-  }, [user, service])
+  }, [service])
 
   // 구독 시작 (빌링키 발급)
   const handleSubscribe = async () => {
     if (!paymentWidgetRef.current || !service) return
 
     try {
+      // sessionStorage에서 고객 정보 가져오기
+      const customerInfoStr = sessionStorage.getItem('subscription_customer_info')
+      const customerInfo = customerInfoStr ? JSON.parse(customerInfoStr) : null
+
+      // 고객 정보 또는 로그인 정보 사용
+      const customerEmail = customerInfo?.customerEmail || user?.email || ''
+      const customerName = customerInfo?.customerName || user?.user_metadata?.full_name || '구독자'
+
       // 토스페이먼츠 빌링키 발급
       // 실제 구현 시: requestBillingAuth() API 사용
       await paymentWidgetRef.current.requestPayment({
@@ -74,8 +82,8 @@ export default function SubscriptionPayment() {
         orderName: service.title,
         successUrl: `${window.location.origin}/subscription/success`,
         failUrl: `${window.location.origin}/subscription/fail`,
-        customerEmail: user?.email,
-        customerName: user?.user_metadata?.full_name || '구독자',
+        customerEmail,
+        customerName,
       })
     } catch (error) {
       console.error('구독 시작 실패:', error)
