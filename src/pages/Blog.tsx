@@ -237,9 +237,10 @@ export default function Blog() {
 
                       {/* Excerpt */}
                       {post.excerpt && (
-                        <CardDescription className="line-clamp-3 mt-2">
-                          <div dangerouslySetInnerHTML={{ __html: post.excerpt }} />
-                        </CardDescription>
+                        <CardDescription
+                          className="line-clamp-3 mt-2"
+                          dangerouslySetInnerHTML={{ __html: post.excerpt }}
+                        />
                       )}
                     </CardHeader>
 
