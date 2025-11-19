@@ -56,7 +56,7 @@ export default function Services() {
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
 
-        <main className="flex-1 container mx-auto px-4 py-16 space-y-12" aria-label="서비스 목록">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-16 space-y-12" aria-label="서비스 목록">
           {/* 헤더 섹션 */}
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-4">

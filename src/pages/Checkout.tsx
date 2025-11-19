@@ -208,7 +208,7 @@ export default function Checkout() {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-16">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>주문하려면 로그인이 필요합니다.</AlertDescription>
@@ -230,7 +230,7 @@ export default function Checkout() {
           <title>주문하기 - IDEA on Action</title>
         </Helmet>
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-16">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>장바구니가 비어있습니다.</AlertDescription>
@@ -254,7 +254,7 @@ export default function Checkout() {
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
 
-        <main className="flex-1 container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-8">
           <div className="mb-8">
             <Button variant="ghost" onClick={() => navigate(-1)}>
               <ArrowLeft className="mr-2 h-4 w-4" />

@@ -103,7 +103,7 @@ export default function ServiceDetail() {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-16">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
           <Skeleton className="h-12 w-32 mb-8" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <Skeleton className="h-96" />
@@ -124,7 +124,7 @@ export default function ServiceDetail() {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-16">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>오류 발생</AlertTitle>
