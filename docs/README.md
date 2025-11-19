@@ -2,7 +2,7 @@
 
 > 프로젝트 문서 전체 인덱스 및 탐색 가이드
 
-**업데이트**: 2025-11-16 (문서 구조 통합 정리)
+**업데이트**: 2025-11-19 (문서 및 SQL 관리 규칙 추가)
 
 ---
 
@@ -11,6 +11,7 @@
 ```
 docs/
 ├── README.md (이 파일)       # 문서 인덱스
+├── DOCUMENT_MANAGEMENT.md    # 문서 및 SQL 관리 규칙 ⭐ 필독!
 ├── guides/                   # 실무 가이드 ⭐ 통합
 │   ├── analytics/            # 분석 도구 (GA4, Sentry)
 │   ├── auth/                 # 인증 시스템 (OAuth, 2FA)
@@ -20,6 +21,7 @@ docs/
 │   ├── deployment/           # 배포 가이드 (DevOps 통합)
 │   ├── design-system/        # 디자인 시스템
 │   ├── external-services/    # 외부 서비스 연동
+│   ├── services-platform/    # 서비스 플랫폼 (토스 페이먼츠)
 │   ├── storage/              # 파일 저장소
 │   ├── testing/              # 테스트 가이드
 │   └── versioning/           # 버전 관리 (신규)
@@ -30,6 +32,7 @@ docs/
 │   ├── daily-summaries/      # 일일 작업 요약
 │   ├── hotfixes/             # 긴급 수정 기록
 │   ├── deployments/          # 배포 기록
+│   ├── database-migrations/  # 과거 DB 마이그레이션 (2020-2024)
 │   ├── blog/                 # 블로그 초안
 │   ├── analysis-reports/     # 과거 분석 보고서
 │   ├── phase-plans/          # Phase 계획 문서
@@ -44,6 +47,23 @@ docs/
 └── payments/                 # 결제 시스템 (유지)
 ```
 
+### 2025-11-19 주요 업데이트
+
+**신규 문서**:
+- **DOCUMENT_MANAGEMENT.md** - 문서 및 SQL 관리 규칙 ⭐ 필독!
+- **archive/database-migrations/** - 과거 DB 마이그레이션 보관 (2020-2024)
+- **guides/services-platform/** - 토스 페이먼츠 서비스 플랫폼 가이드
+
+**scripts 폴더 구조**:
+- **scripts/sql/fixes/** - 30개 DB 수정 스크립트 (RLS, 권한, 컬럼 등)
+- **scripts/validation/** - 7개 검증 스크립트 (DB, RLS, 콘텐츠)
+
+**관리 규칙** (DOCUMENT_MANAGEMENT.md):
+- SQL 파일: supabase/migrations/ (타임스탬프 규칙)
+- 수정 스크립트: scripts/sql/fixes/ (문제 설명 네이밍)
+- 검증 스크립트: scripts/validation/ (체크리스트 포함)
+- 과거 마이그레이션: docs/archive/database-migrations/ (연도별 보관)
+
 ### 2025-11-16 통합 변경 사항
 
 **통합된 폴더** (9개 → 3개):
@@ -57,26 +77,26 @@ docs/
 - \`deployment/\` → \`archive/deployments/\` (4개 파일)
 - \`blog/\` → \`archive/blog/\` (2개 파일)
 
-**새로 생성된 폴더**:
-- \`reports/\` - 성능/리팩토링 보고서
-- \`guides/components/\` - 컴포넌트 사용 가이드
-- \`guides/versioning/\` - 버전 관리 가이드
-- \`archive/daily-summaries/\` - 일일 요약
-- \`archive/hotfixes/\` - 긴급 수정
-- \`archive/deployments/\` - 배포 기록
-- \`archive/blog/\` - 블로그 초안
-
-**통합 목적**:
-- 일관성 있는 문서 구조 (guides, reports, archive)
-- 유사한 문서를 한 곳에 모아 검색성 향상
-- 16개 폴더 → 8개 폴더로 단순화
-
 ---
 
-## 🆕 최신 문서 (2025-11-16)
+## 🆕 최신 문서 (2025-11-19)
+
+### ⭐ 필독 문서
+**[DOCUMENT_MANAGEMENT.md](DOCUMENT_MANAGEMENT.md)** - 문서 및 SQL 관리 규칙
+
+이 문서는 다음을 정의합니다:
+- SQL 파일 배치 규칙 (migrations, fixes, validation)
+- 파일 네이밍 컨벤션 (타임스탬프, 문제 설명)
+- 아카이빙 정책 (과거 마이그레이션 보관)
+- 검증 스크립트 작성 가이드
 
 ### 📍 전체 문서 인덱스
 전체 문서 목록은 **[INDEX.md](INDEX.md)**를 참고하세요. (41+ 문서, ~400 KB)
+
+### 서비스 플랫폼 (토스 페이먼츠 심사)
+- ✅ [DB 셋업 요약](guides/services-platform/db-setup-summary.md) - 3개 테이블, 21개 컬럼
+- ✅ [장바구니 통합](guides/services-platform/cart-integration-summary.md) - 서비스 아이템 관리
+- ✅ [배포 체크리스트](guides/services-platform/production-deployment-checklist.md) - 종합 가이드
 
 ### CMS Phase 4 완료
 - ✅ [배포 체크리스트](guides/deployment/cms-phase4-deployment-checklist.md) - 71개 항목
@@ -84,21 +104,16 @@ docs/
 - ✅ [Admin 가이드](guides/cms/) - 6개 사용자 가이드
 - ✅ [API 문서](api/hooks/) - 55개 훅 문서화
 
-### 주요 업데이트
-- Admin 사용자 가이드 6개 작성 (~56 KB)
-- API 훅 문서 7개 작성 (~98 KB)
-- DB 마이그레이션 가이드 작성
-- 배포 가이드 9개 통합
-
 ---
 
 ## 🎯 빠른 탐색
 
 ### 처음 시작하시나요?
 1. **[CLAUDE.md](../CLAUDE.md)** - 프로젝트 전체 개요 (필독!)
-2. **[INDEX.md](INDEX.md)** - 전체 문서 인덱스 ⭐ 신규
-3. **[guides/setup/](guides/setup/)** - 초기 개발 환경 설정
-4. **[guides/deployment/](guides/deployment/)** - 배포 방법
+2. **[DOCUMENT_MANAGEMENT.md](DOCUMENT_MANAGEMENT.md)** - 문서 및 SQL 관리 규칙 ⭐ 필독!
+3. **[INDEX.md](INDEX.md)** - 전체 문서 인덱스
+4. **[guides/setup/](guides/setup/)** - 초기 개발 환경 설정
+5. **[guides/deployment/](guides/deployment/)** - 배포 방법
 
 ### 개발 중이신가요?
 - **[guides/design-system/](guides/design-system/)** - 디자인 시스템 가이드
@@ -108,10 +123,13 @@ docs/
 - **[project/changelog.md](project/changelog.md)** - 변경 로그
 
 ### 운영 관련
-- **[guides/deployment/](guides/deployment/)** - Vercel 배포 (DevOps 통합) ⭐
-- **[guides/cms/](guides/cms/)** - CMS 관리자 가이드 ⭐ 신규
-- **[reports/](reports/)** - 성능/리팩토링 보고서 ⭐ 신규
+- **[DOCUMENT_MANAGEMENT.md](DOCUMENT_MANAGEMENT.md)** - 문서 및 SQL 관리 규칙 ⭐
+- **[guides/deployment/](guides/deployment/)** - Vercel 배포 (DevOps 통합)
+- **[guides/cms/](guides/cms/)** - CMS 관리자 가이드
+- **[guides/services-platform/](guides/services-platform/)** - 서비스 플랫폼 (토스 페이먼츠) ⭐ 신규
+- **[reports/](reports/)** - 성능/리팩토링 보고서
 - **[archive/deployments/](archive/deployments/)** - 과거 배포 기록
+- **[archive/database-migrations/](archive/database-migrations/)** - 과거 DB 마이그레이션 ⭐ 신규
 
 ---
 
@@ -124,14 +142,15 @@ docs/
 - **analytics/** - GA4, Sentry 설정
 - **auth/** - OAuth, 2FA 설정
 - **cms/** - CMS 관리자 모드 사용법
-- **components/** - Header, Footer, Hero 등 컴포넌트 ⭐ 신규
+- **components/** - Header, Footer, Hero 등 컴포넌트
 - **database/** - Supabase 스키마 및 마이그레이션
-- **deployment/** - Vercel 배포 및 CI/CD ⭐ DevOps 통합
+- **deployment/** - Vercel 배포 및 CI/CD (DevOps 통합)
 - **design-system/** - 디자인 시스템 가이드
 - **external-services/** - 결제, 이메일, 스토리지 연동
+- **services-platform/** - 서비스 플랫폼 (토스 페이먼츠) ⭐ 신규
 - **storage/** - 파일 저장소 관리
 - **testing/** - Playwright, Vitest 테스트
-- **versioning/** - 버전 관리 및 릴리스 ⭐ 신규
+- **versioning/** - 버전 관리 및 릴리스
 
 ---
 
@@ -165,9 +184,15 @@ docs/
 과거 개발 히스토리, 일일 요약, 배포 기록 보관
 
 **최근 아카이브**:
-- \`2025-11-15-work-summary.md\` - 11월 15일 작업 요약
-- \`2025-11-15-order-number-fix.md\` - 주문번호 Race Condition 해결
-- \`2025-11-15-production-deployment.md\` - 프로덕션 배포 기록
+- **database-migrations/** - 과거 DB 마이그레이션 (2020-2024) ⭐ 신규
+  - 78개 마이그레이션 파일, 연도별 분류
+  - 테이블 생성, RLS 정책, 트리거, 뷰 등
+  - README.md에 전체 목록 및 검색 가이드
+- **daily-summaries/** - 일일 작업 요약
+  - \`2025-11-15-work-summary.md\` - 11월 15일 작업 요약
+  - \`2025-11-15-order-number-fix.md\` - 주문번호 Race Condition 해결
+- **deployments/** - 배포 기록
+  - \`2025-11-15-production-deployment.md\` - 프로덕션 배포 기록
 
 ---
 
@@ -203,18 +228,33 @@ docs/
 
 ## 📝 문서 작성 가이드
 
+### 필독 규칙
+**[DOCUMENT_MANAGEMENT.md](DOCUMENT_MANAGEMENT.md)** - 문서 및 SQL 관리 규칙 ⭐
+
+이 문서는 다음을 정의합니다:
+- SQL 파일 배치 및 네이밍 규칙
+- 문서 분류 기준 (guides, reports, archive)
+- 아카이빙 정책 및 검증 스크립트 작성 가이드
+
 ### 문서 추가 시
-1. 적절한 디렉토리 선택 (guides/, reports/, archive/)
-2. Markdown 형식 (.md) 사용
-3. 관련 폴더의 README.md에 링크 추가
+1. **[DOCUMENT_MANAGEMENT.md](DOCUMENT_MANAGEMENT.md)** 읽기
+2. 적절한 디렉토리 선택 (guides/, reports/, archive/)
+3. Markdown 형식 (.md) 사용
+4. 관련 폴더의 README.md에 링크 추가
 
 ### 문서 분류 기준
 - **guides/** - 설정/사용 가이드 (How-to)
 - **reports/** - 분석/보고서 (What happened)
 - **archive/** - 과거 기록 (History)
 
+### SQL 파일 규칙
+- **supabase/migrations/** - 공식 마이그레이션 (타임스탬프 네이밍)
+- **scripts/sql/fixes/** - 수정 스크립트 (문제 설명 네이밍)
+- **scripts/validation/** - 검증 스크립트 (체크리스트 포함)
+- **docs/archive/database-migrations/** - 과거 마이그레이션 보관
+
 ---
 
-**Last Updated**: 2025-11-16  
-**Project Version**: 2.0.0  
-**구조 정리**: 16개 폴더 → 8개 폴더 (통합 완료)
+**Last Updated**: 2025-11-19
+**Project Version**: 2.0.1
+**주요 업데이트**: 문서 및 SQL 관리 규칙 추가, 서비스 플랫폼 가이드 추가

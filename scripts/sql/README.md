@@ -26,10 +26,16 @@ scripts/sql/
 - `insert-service-packages-plans.sql` - 4개 서비스 패키지 및 플랜 추가
 - `delete-old-packages-plans.sql` - 기존 패키지 및 플랜 삭제
 
-### fixes/ - 스키마/권한 수정
+### fixes/ - 스키마/권한 수정 (~30개 파일)
+- `EXECUTE-ALL-FIXES.sql` - 모든 수정 사항 일괄 실행 스크립트
 - `fix-blog-rls-production.sql` - 블로그 RLS 정책 수정
 - `fix-service-tables-permissions.sql` - 서비스 테이블 권한 수정
+- `fix-newsletter-permissions.sql` - 뉴스레터 권한 수정
+- `fix-carts-notifications-rls.sql` - 장바구니/알림 RLS 수정
+- `fix-generate-order-number-v2-advisory-lock.sql` - 주문 번호 생성 함수 수정
 - `update-services-slug.sql` - 서비스 slug 업데이트
+- `rollback-*.sql` - 롤백 스크립트
+- 기타 RLS 정책, 권한, 스키마 수정 스크립트
 
 ## 🚀 사용 방법
 
