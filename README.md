@@ -57,7 +57,7 @@ cp .env.example .env.local
 # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY 설정
 
 # 4. 개발 서버 실행
-npm run dev  # http://localhost:5173
+npm run dev  # http://localhost:8080
 ```
 
 ## 📋 주요 기능 (v2.0.0)

@@ -45,7 +45,7 @@ https://zykjdneewbzyazfukzyg.supabase.co/auth/v1/callback
    - 승인된 자바스크립트 원본:
      ```
      https://www.ideaonaction.ai
-     http://localhost:5173
+     http://localhost:8080
      ```
    - 승인된 리디렉션 URI:
      ```
@@ -356,7 +356,7 @@ WHERE email = 'user@example.com';
 
 ### 2. Redirect URI 제한
 - ✅ Production URL만 허용
-- ✅ 개발용은 `localhost:5173` 별도 등록
+- ✅ 개발용은 `localhost:8080` 별도 등록
 - ❌ Wildcard (`*`) 사용 금지
 
 ### 3. Scope 최소화

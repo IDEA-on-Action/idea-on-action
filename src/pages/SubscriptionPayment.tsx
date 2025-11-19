@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk'
+import { loadTossPayments, type TossPaymentsInstance } from '@tosspayments/payment-sdk'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useAuth } from '@/hooks/useAuth'
@@ -29,44 +29,32 @@ export default function SubscriptionPayment() {
   const { user } = useAuth()
   const { data: service } = useServiceDetail(serviceId!)
 
-  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null)
-  const paymentMethodsWidgetRef = useRef<ReturnType<PaymentWidgetInstance['renderPaymentMethods']> | null>(null)
+  const tossPaymentsRef = useRef<TossPaymentsInstance | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Payment Widget 초기화
+  // Toss Payments SDK 초기화
   useEffect(() => {
-    if (!service) return
-
-    const initializeWidget = async () => {
+    const initializeTossPayments = async () => {
       try {
-        // Payment Widget 로드
-        const paymentWidget = await loadPaymentWidget(TOSS_CLIENT_KEY, TOSS_CUSTOMER_KEY)
-        paymentWidgetRef.current = paymentWidget
-
-        // 결제 방법 UI 렌더링
-        const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
-          '#payment-widget',
-          { value: service.price },
-          { variantKey: 'DEFAULT' }
-        )
-
-        paymentMethodsWidgetRef.current = paymentMethodsWidget
+        // Toss Payments SDK 로드
+        const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY)
+        tossPaymentsRef.current = tossPayments
 
         setIsLoading(false)
       } catch (error) {
-        console.error('Payment Widget 초기화 실패:', error)
-        alert('토스페이먼츠 위젯 로드 실패. 프로덕션 환경에서 다시 시도해주세요.')
+        console.error('Toss Payments SDK 초기화 실패:', error)
+        alert('토스페이먼츠 SDK 로드 실패. 프로덕션 환경에서 다시 시도해주세요.')
         setIsLoading(false)
       }
     }
 
-    initializeWidget()
-  }, [service])
+    initializeTossPayments()
+  }, [])
 
   // 구독 시작 (빌링키 발급)
   const handleSubscribe = async () => {
-    if (!paymentWidgetRef.current || !service || !user) {
-      alert('결제 위젯이 초기화되지 않았습니다. 페이지를 새로고침하거나 프로덕션 환경에서 시도해주세요.')
+    if (!tossPaymentsRef.current || !service || !user) {
+      alert('Toss Payments SDK가 초기화되지 않았습니다. 페이지를 새로고침하거나 프로덕션 환경에서 시도해주세요.')
       return
     }
 
@@ -81,7 +69,7 @@ export default function SubscriptionPayment() {
 
       // 토스페이먼츠 빌링키 발급 (정기결제용)
       // requestBillingAuth(): 카드 정보만 등록하고 빌링키 발급 (첫 결제 X)
-      await paymentWidgetRef.current.requestBillingAuth({
+      await tossPaymentsRef.current.requestBillingAuth('카드', {
         customerKey: user.id, // 사용자 고유 ID (Supabase UID)
         successUrl: `${window.location.origin}/subscription/success?service_id=${service.id}`,
         failUrl: `${window.location.origin}/subscription/fail?service_id=${service.id}`,
@@ -179,20 +167,26 @@ export default function SubscriptionPayment() {
                   </div>
                 ) : (
                   <>
-                    {/* Payment Widget Container */}
-                    <div id="payment-widget" />
+                    {/* 안내 메시지 */}
+                    <div className="mb-6 p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        다음 단계에서 토스페이먼츠 안전한 카드 등록 창이 열립니다.
+                        <br />
+                        카드 정보를 입력하시면 14일 무료 체험이 시작됩니다.
+                      </p>
+                    </div>
 
                     {/* 구독 시작 버튼 */}
                     <Button
-                      className="w-full mt-6"
+                      className="w-full"
                       size="lg"
                       onClick={handleSubscribe}
                     >
-                      14일 무료 체험 시작
+                      카드 등록하고 14일 무료 체험 시작
                     </Button>
 
                     <p className="text-xs text-muted-foreground text-center mt-4">
-                      구독 시작 버튼을 클릭하시면 토스페이먼츠를 통해 카드 정보가 안전하게 등록됩니다
+                      구독 시작 버튼을 클릭하시면 토스페이먼츠 결제창으로 이동하여 카드 정보를 안전하게 등록할 수 있습니다
                     </p>
                   </>
                 )}

@@ -1,5 +1,5 @@
 {
-  "port": 3100,
+  "port": 8080,
   "appPort": 8080,
   "autoPlugins": true,
   "plugins": []

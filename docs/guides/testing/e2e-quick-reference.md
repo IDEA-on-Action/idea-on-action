@@ -46,7 +46,7 @@ supabase status                     # 상태 확인
 
 ### 2. 개발 서버 실행
 ```bash
-npm run dev                         # http://localhost:5173
+npm run dev                         # http://localhost:8080
 ```
 
 ### 3. 테스트 사용자 생성
@@ -64,7 +64,7 @@ ON CONFLICT (email) DO UPDATE SET role = 'super_admin';
 ### "Connection refused"
 ```bash
 npm run dev                         # 개발 서버 재시작
-curl http://localhost:5173          # 확인
+curl http://localhost:8080          # 확인
 ```
 
 ### "Timeout exceeded"

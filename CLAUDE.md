@@ -1227,7 +1227,7 @@ VITE_SUPABASE_URL=https://zykjdneewbzyazfukzyg.supabase.co
 VITE_SUPABASE_ANON_KEY=[YOUR_KEY]
 
 # 4. 개발 서버 실행
-npm run dev  # http://localhost:5173
+npm run dev  # http://localhost:8080
 ```
 
 ### 주요 명령어

@@ -38,7 +38,7 @@ Start the development server before running tests:
 
 ```bash
 npm run dev
-# Server should be accessible at http://localhost:5173
+# Server should be accessible at http://localhost:8080
 ```
 
 ### 2. Test User Setup

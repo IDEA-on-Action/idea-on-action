@@ -69,11 +69,11 @@ Studio URL: http://localhost:54323
 # 새 터미널에서
 npm run dev
 
-# 서버가 http://localhost:5173에서 실행 대기
+# 서버가 http://localhost:8080에서 실행 대기
 ```
 
 **확인**:
-브라우저에서 http://localhost:5173 접속
+브라우저에서 http://localhost:8080 접속
 
 #### 4. 테스트 데이터 준비
 
@@ -246,13 +246,13 @@ npx playwright show-report
 
 ## 🐛 트러블슈팅
 
-### 1. "localhost:5173 refused to connect"
+### 1. "localhost:8080 refused to connect"
 
 **원인**: 개발 서버가 실행되지 않음
 
 **증상**:
 ```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080
 ```
 
 **해결**:
@@ -261,11 +261,11 @@ Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173
 npm run dev
 
 # 2. 서버 실행 확인
-curl http://localhost:5173
+curl http://localhost:8080
 
 # 3. 포트 충돌 확인
-lsof -i :5173  # macOS/Linux
-netstat -ano | findstr :5173  # Windows
+lsof -i :8080  # macOS/Linux
+netstat -ano | findstr :8080  # Windows
 ```
 
 **예방**:
