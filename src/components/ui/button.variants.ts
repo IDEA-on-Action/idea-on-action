@@ -5,11 +5,11 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md",
-        outline: "border-2 border-slate-700 bg-slate-700 text-white hover:bg-slate-800 shadow-md",
-        secondary: "bg-slate-700 text-white hover:bg-slate-800 shadow-md",
-        ghost: "bg-slate-600 text-white hover:bg-slate-700 shadow-sm",
+        default: "!bg-blue-600 !text-white hover:!bg-blue-700 !shadow-md",
+        destructive: "!bg-red-600 !text-white hover:!bg-red-700 !shadow-md",
+        outline: "!border-2 !border-slate-700 !bg-slate-700 !text-white hover:!bg-slate-800 !shadow-md",
+        secondary: "!bg-slate-700 !text-white hover:!bg-slate-800 !shadow-md",
+        ghost: "!bg-slate-600 !text-white hover:!bg-slate-700 !shadow-sm",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
