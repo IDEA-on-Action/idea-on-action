@@ -87,6 +87,7 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentFail = lazy(() => import("./pages/PaymentFail"));
 const SubscriptionCheckout = lazy(() => import("./pages/SubscriptionCheckout"));
 const SubscriptionPayment = lazy(() => import("./pages/SubscriptionPayment"));
+const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
 const Orders = lazy(() => import("./pages/Orders"));
 const OrderDetail = lazy(() => import("./pages/OrderDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -201,7 +202,7 @@ const App = () => (
               <Route path="/checkout/payment/toss/fail" element={<PaymentFail />} />
               <Route path="/subscription/checkout" element={<SubscriptionCheckout />} />
               <Route path="/subscription/payment" element={<SubscriptionPayment />} />
-              <Route path="/subscription/success" element={<PaymentSuccess />} />
+              <Route path="/subscription/success" element={<SubscriptionSuccess />} />
               <Route path="/subscription/fail" element={<PaymentFail />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/orders/:id" element={<OrderDetail />} />
