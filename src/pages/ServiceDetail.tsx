@@ -167,7 +167,7 @@ export default function ServiceDetail() {
 
         <main className="flex-1">
           {/* Back Button */}
-          <div className="container mx-auto px-4 pt-8">
+          <div className="container mx-auto px-4 pt-24">
             <Button variant="ghost" onClick={() => navigate('/services')}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               서비스 목록으로
