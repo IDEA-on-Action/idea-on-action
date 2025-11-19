@@ -77,7 +77,7 @@ export default function Orders() {
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
 
-        <main className="flex-1 container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 pt-24 pb-8">
           {/* 헤더 */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-2">주문 내역</h1>
