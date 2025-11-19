@@ -350,7 +350,7 @@ export function useServiceDetailBySlug(slug: string) {
         .from('services')
         .select('*')
         .eq('slug', slug)
-        .single();
+        .maybeSingle();
 
       if (serviceError) throw serviceError;
       if (!service) return null;

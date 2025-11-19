@@ -29,7 +29,7 @@ END $$;
 CREATE TEMP TABLE service_ids AS
 SELECT id, slug, title
 FROM public.services
-WHERE slug IN ('mvp-development', 'fullstack-development', 'design-system', 'operations-management')
+WHERE slug IN ('mvp', 'fullstack', 'design', 'operations')
   AND status = 'active';
 
 -- ============================================
@@ -51,7 +51,7 @@ SELECT
   false,
   1
 FROM service_ids s
-WHERE s.slug = 'mvp-development';
+WHERE s.slug = 'mvp';
 
 INSERT INTO public.service_packages (service_id, name, price, features, is_popular, display_order)
 SELECT
@@ -70,7 +70,7 @@ SELECT
   true,
   2
 FROM service_ids s
-WHERE s.slug = 'mvp-development';
+WHERE s.slug = 'mvp';
 
 INSERT INTO public.service_packages (service_id, name, price, features, is_popular, display_order)
 SELECT
@@ -90,7 +90,7 @@ SELECT
   false,
   3
 FROM service_ids s
-WHERE s.slug = 'mvp-development';
+WHERE s.slug = 'mvp';
 
 -- ============================================
 -- Step 4: 풀스택 개발 서비스 - 3개 플랜
@@ -111,7 +111,7 @@ SELECT
   false,
   1
 FROM service_ids s
-WHERE s.slug = 'fullstack-development';
+WHERE s.slug = 'fullstack';
 
 INSERT INTO public.subscription_plans (service_id, plan_name, billing_cycle, price, features, is_popular, display_order)
 SELECT
@@ -130,7 +130,7 @@ SELECT
   true,
   2
 FROM service_ids s
-WHERE s.slug = 'fullstack-development';
+WHERE s.slug = 'fullstack';
 
 INSERT INTO public.subscription_plans (service_id, plan_name, billing_cycle, price, features, is_popular, display_order)
 SELECT
@@ -150,7 +150,7 @@ SELECT
   false,
   3
 FROM service_ids s
-WHERE s.slug = 'fullstack-development';
+WHERE s.slug = 'fullstack';
 
 -- ============================================
 -- Step 5: 디자인 시스템 서비스 - 2개 패키지
@@ -171,7 +171,7 @@ SELECT
   false,
   1
 FROM service_ids s
-WHERE s.slug = 'design-system';
+WHERE s.slug = 'design';
 
 INSERT INTO public.service_packages (service_id, name, price, features, is_popular, display_order)
 SELECT
@@ -191,7 +191,7 @@ SELECT
   true,
   2
 FROM service_ids s
-WHERE s.slug = 'design-system';
+WHERE s.slug = 'design';
 
 -- ============================================
 -- Step 6: 운영 관리 서비스 - 3개 플랜
@@ -212,7 +212,7 @@ SELECT
   false,
   1
 FROM service_ids s
-WHERE s.slug = 'operations-management';
+WHERE s.slug = 'operations';
 
 INSERT INTO public.subscription_plans (service_id, plan_name, billing_cycle, price, features, is_popular, display_order)
 SELECT
@@ -231,7 +231,7 @@ SELECT
   true,
   2
 FROM service_ids s
-WHERE s.slug = 'operations-management';
+WHERE s.slug = 'operations';
 
 INSERT INTO public.subscription_plans (service_id, plan_name, billing_cycle, price, features, is_popular, display_order)
 SELECT
@@ -251,7 +251,7 @@ SELECT
   false,
   3
 FROM service_ids s
-WHERE s.slug = 'operations-management';
+WHERE s.slug = 'operations';
 
 -- ============================================
 -- Step 7: 검증
@@ -271,16 +271,16 @@ BEGIN
 
   -- 서비스별 개수
   SELECT COUNT(*) INTO mvp_packages FROM public.service_packages sp
-  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'mvp-development';
+  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'mvp';
 
   SELECT COUNT(*) INTO fullstack_plans FROM public.subscription_plans sp
-  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'fullstack-development';
+  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'fullstack';
 
   SELECT COUNT(*) INTO design_packages FROM public.service_packages sp
-  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'design-system';
+  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'design';
 
   SELECT COUNT(*) INTO operations_plans FROM public.subscription_plans sp
-  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'operations-management';
+  JOIN service_ids s ON sp.service_id = s.id WHERE s.slug = 'operations';
 
   RAISE NOTICE '';
   RAISE NOTICE '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
@@ -299,7 +299,7 @@ BEGIN
   RAISE NOTICE '';
   RAISE NOTICE '📋 다음 단계:';
   RAISE NOTICE '1. 검증: node scripts/check-service-tables.cjs';
-  RAISE NOTICE '2. 브라우저: https://www.ideaonaction.ai/services/mvp-development';
+  RAISE NOTICE '2. 브라우저: https://www.ideaonaction.ai/services/mvp';
   RAISE NOTICE '3. 장바구니 버튼 확인';
 END $$;
 
