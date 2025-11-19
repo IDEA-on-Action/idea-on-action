@@ -68,6 +68,9 @@ const checkoutSchema = z.object({
   electronicFinanceAgreed: z.boolean().refine((val) => val === true, {
     message: '전자금융거래약관에 동의해주세요',
   }),
+  digitalServiceWithdrawalAgreed: z.boolean().refine((val) => val === true, {
+    message: '디지털 서비스 청약철회 제한에 동의해주세요',
+  }),
 })
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>
@@ -94,6 +97,7 @@ export default function Checkout() {
       privacyAgreed: false,
       refundAgreed: false,
       electronicFinanceAgreed: false,
+      digitalServiceWithdrawalAgreed: false,
     },
   })
 
@@ -137,6 +141,7 @@ export default function Checkout() {
     form.setValue('privacyAgreed', checked)
     form.setValue('refundAgreed', checked)
     form.setValue('electronicFinanceAgreed', checked)
+    form.setValue('digitalServiceWithdrawalAgreed', checked)
   }
 
   // 전체 동의 상태 확인
@@ -144,7 +149,8 @@ export default function Checkout() {
     form.watch('termsAgreed') &&
     form.watch('privacyAgreed') &&
     form.watch('refundAgreed') &&
-    form.watch('electronicFinanceAgreed')
+    form.watch('electronicFinanceAgreed') &&
+    form.watch('digitalServiceWithdrawalAgreed')
 
   // 장바구니 금액 계산
   const subtotal = cart?.items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0
@@ -526,6 +532,40 @@ export default function Checkout() {
                                       <ExternalLink className="h-3 w-3" />
                                     </a>
                                   </FormLabel>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="digitalServiceWithdrawalAgreed"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="flex-1 space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal cursor-pointer">
+                                    [필수] 디지털 서비스 청약철회 제한 동의
+                                    <a
+                                      href="/refund-policy#digital-services"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-primary hover:underline inline-flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      보기
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </FormLabel>
+                                  <FormDescription className="text-xs text-muted-foreground">
+                                    디지털 콘텐츠는 다운로드/실행 시점부터 청약철회가 제한됩니다. 무료 체험판을 먼저 이용하시기 바랍니다.
+                                  </FormDescription>
                                   <FormMessage />
                                 </div>
                               </FormItem>

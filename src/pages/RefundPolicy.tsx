@@ -47,6 +47,20 @@ export default function RefundPolicy() {
                 <li>시간이 지나 다시 판매하기 곤란할 정도로 서비스의 가치가 현저히 감소한 경우</li>
               </ul>
             </li>
+            <li>
+              <strong>디지털 콘텐츠 및 무형 서비스</strong>의 경우, 다음 시점부터 청약철회가 제한됩니다:
+              <ul>
+                <li>
+                  <strong>제공 개시 시점</strong>: 프로그램 다운로드, 서비스 실행, API 키 발급, 소스코드 전달 등
+                </li>
+                <li>
+                  <strong>체험판 사용</strong>은 제공 개시로 보지 않으며, 청약철회 권리가 유지됩니다
+                </li>
+                <li>
+                  청약철회 제한은 <strong>결제 전 고객의 명시적 동의</strong>를 받은 경우에만 적용됩니다
+                </li>
+              </ul>
+            </li>
           </ol>
 
           <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제2조 (청약철회 방법)</h2>
@@ -93,6 +107,35 @@ export default function RefundPolicy() {
             </li>
             <li>
               정기결제(구독) 서비스의 경우, 비회원도 회원과 동일한 환불 정책이 적용됩니다.
+            </li>
+          </ol>
+
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제3조의2 (디지털 서비스 청약철회 제한 시 소비자 보호 조치)</h2>
+          <ol>
+            <li>
+              청약철회가 제한되는 디지털 콘텐츠 및 무형 서비스의 경우, 회사는 다음 중 하나 이상의 방법으로 소비자의 권리를 보장합니다:
+              <ul>
+                <li>
+                  <strong>무료 체험판 제공</strong>: COMPASS Navigator 7일 무료 체험, 기타 서비스 데모 버전
+                </li>
+                <li>
+                  <strong>상세 정보 제공</strong>: 서비스 기능 설명, 스크린샷, 시연 영상, 사용 가이드
+                </li>
+                <li>
+                  <strong>무료 상담</strong>: MVP/풀스택 개발 서비스의 경우 사전 상담 및 상세 견적서 제공
+                </li>
+              </ul>
+            </li>
+            <li>
+              디지털 서비스 구매 시, 결제 페이지에서 다음 사항을 고객에게 안내하고 동의를 받습니다:
+              <ul>
+                <li>"본 서비스는 다운로드/실행/소스코드 전달 시점부터 청약철회가 제한됩니다"</li>
+                <li>"무료 체험판 또는 상담을 먼저 이용하신 후 구매하시기 바랍니다"</li>
+                <li>"위 내용을 확인하였으며, 청약철회 제한에 동의합니다" (필수 체크)</li>
+              </ul>
+            </li>
+            <li>
+              회사가 위 조치를 취하지 않은 경우, 고객은 <strong>제공 개시 후에도</strong> 청약철회를 요구할 수 있습니다.
             </li>
           </ol>
 

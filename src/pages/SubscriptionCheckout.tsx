@@ -58,6 +58,9 @@ const subscriptionSchema = z.object({
   recurringPaymentAgreed: z.boolean().refine((val) => val === true, {
     message: '정기결제 이용 약관에 동의해주세요',
   }),
+  digitalServiceWithdrawalAgreed: z.boolean().refine((val) => val === true, {
+    message: '디지털 서비스 청약철회 제한에 동의해주세요',
+  }),
 })
 
 type SubscriptionFormValues = z.infer<typeof subscriptionSchema>
@@ -81,6 +84,7 @@ export default function SubscriptionCheckout() {
       refundAgreed: false,
       electronicFinanceAgreed: false,
       recurringPaymentAgreed: false,
+      digitalServiceWithdrawalAgreed: false,
     },
   })
 
@@ -91,6 +95,7 @@ export default function SubscriptionCheckout() {
     form.setValue('refundAgreed', checked)
     form.setValue('electronicFinanceAgreed', checked)
     form.setValue('recurringPaymentAgreed', checked)
+    form.setValue('digitalServiceWithdrawalAgreed', checked)
   }
 
   // 전체 동의 상태 확인
@@ -99,6 +104,7 @@ export default function SubscriptionCheckout() {
     form.watch('privacyAgreed') &&
     form.watch('refundAgreed') &&
     form.watch('electronicFinanceAgreed') &&
+    form.watch('digitalServiceWithdrawalAgreed') &&
     form.watch('recurringPaymentAgreed')
 
   // 구독 시작 핸들러 (토스페이먼츠 빌링키 발급)
@@ -413,6 +419,40 @@ export default function SubscriptionCheckout() {
                                   </FormLabel>
                                   <p className="text-xs text-muted-foreground mt-1">
                                     매월 동일한 금액이 자동으로 결제되며, 언제든 해지할 수 있습니다.
+                                  </p>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="digitalServiceWithdrawalAgreed"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="flex-1 space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal cursor-pointer">
+                                    [필수] 디지털 서비스 청약철회 제한 동의
+                                    <a
+                                      href="/refund-policy#digital-services"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-primary hover:underline inline-flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      보기
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </FormLabel>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    디지털 콘텐츠는 다운로드/실행 시점부터 청약철회가 제한됩니다. 무료 체험판을 먼저 이용하시기 바랍니다.
                                   </p>
                                   <FormMessage />
                                 </div>
