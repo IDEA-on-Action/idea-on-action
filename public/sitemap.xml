@@ -73,6 +73,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.ideaonaction.ai/services/compass-navigator</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.ideaonaction.ai/services/fullstack</loc>
     <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>

@@ -16,6 +16,7 @@ import Footer from '@/components/Footer'
 import { useCart } from '@/hooks/useCart'
 import { useCreateOrder } from '@/hooks/useOrders'
 import { useAuth } from '@/hooks/useAuth'
+import { useCartStore } from '@/store/cartStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -80,6 +81,7 @@ export default function Checkout() {
   const { user } = useAuth()
   const { data: cart, isLoading: isCartLoading } = useCart()
   const { mutate: createOrder, isPending: isCreatingOrder } = useCreateOrder()
+  const { serviceItems } = useCartStore()
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false)
 
   const form = useForm<CheckoutFormValues>({
@@ -153,11 +155,18 @@ export default function Checkout() {
     form.watch('digitalServiceWithdrawalAgreed')
 
   // 장바구니 금액 계산
-  const subtotal = cart?.items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0
+  // Regular items subtotal
+  const regularSubtotal = cart?.items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0
+
+  // Service items subtotal
+  const serviceSubtotal = serviceItems.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0
+
+  // Total subtotal
+  const subtotal = regularSubtotal + serviceSubtotal
   const tax = subtotal * 0.1
   const total = subtotal + tax
 
-  const isEmpty = !cart?.items || cart.items.length === 0
+  const isEmpty = (!cart?.items || cart.items.length === 0) && serviceItems.length === 0
 
   // 주문 생성 핸들러
   const onSubmit = (data: CheckoutFormValues) => {
