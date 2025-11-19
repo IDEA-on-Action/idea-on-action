@@ -81,7 +81,7 @@ export default function Checkout() {
   const { user } = useAuth()
   const { data: cart, isLoading: isCartLoading } = useCart()
   const { mutate: createOrder, isPending: isCreatingOrder } = useCreateOrder()
-  const { serviceItems } = useCartStore()
+  const { serviceItems, clearServiceItems } = useCartStore()
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false)
 
   const form = useForm<CheckoutFormValues>({
@@ -173,11 +173,12 @@ export default function Checkout() {
 
   // 주문 생성 핸들러
   const onSubmit = (data: CheckoutFormValues) => {
-    if (!cart) return
+    // 일반 cart items가 없어도 serviceItems가 있으면 진행
+    if (!cart && serviceItems.length === 0) return
 
     createOrder(
       {
-        cartId: cart.id,
+        cartId: cart?.id || '', // cart가 없으면 빈 문자열
         shippingAddress: {
           postcode: data.postcode,
           address: data.address,
@@ -188,9 +189,13 @@ export default function Checkout() {
         shippingNote: data.shippingNote,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone,
+        // serviceItems 포함 (서버에서 처리)
+        serviceItems: serviceItems.length > 0 ? serviceItems : undefined,
       },
       {
         onSuccess: (order) => {
+          // 서비스 항목 장바구니 비우기
+          clearServiceItems()
           // 주문 생성 후 결제 페이지로 이동
           navigate(`/checkout/payment?order_id=${order.id}`)
         },
@@ -601,23 +606,54 @@ export default function Checkout() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* 주문 항목 */}
-                  <div className="space-y-2">
-                    {cart?.items?.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span className="flex-1 truncate">
-                          {item.service?.title}
-                          {item.package_name && (
-                            <span className="text-muted-foreground"> - {item.package_name}</span>
-                          )}{' '}
-                          x {item.quantity}
-                        </span>
-                        <span className="font-medium">
-                          ₩{(item.price * item.quantity).toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  {/* 주문 항목 - 일반 서비스 */}
+                  {cart?.items && cart.items.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase">
+                        일반 서비스
+                      </h4>
+                      {cart.items.map((item) => (
+                        <div key={item.id} className="flex justify-between text-sm">
+                          <span className="flex-1 truncate">
+                            {item.service?.title}
+                            {item.package_name && (
+                              <span className="text-muted-foreground"> - {item.package_name}</span>
+                            )}{' '}
+                            x {item.quantity}
+                          </span>
+                          <span className="font-medium">
+                            ₩{(item.price * item.quantity).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 주문 항목 - 서비스 패키지/플랜 */}
+                  {serviceItems.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase">
+                        서비스 패키지/플랜
+                      </h4>
+                      {serviceItems.map((item) => (
+                        <div key={item.item_id} className="flex justify-between text-sm">
+                          <span className="flex-1 truncate">
+                            {item.item_name}
+                            {item.billing_cycle && (
+                              <span className="text-muted-foreground">
+                                {' '}
+                                - {item.billing_cycle === 'monthly' ? '월간' : item.billing_cycle === 'quarterly' ? '분기' : '연간'}
+                              </span>
+                            )}
+                            {item.quantity > 1 && <span> x {item.quantity}</span>}
+                          </span>
+                          <span className="font-medium">
+                            ₩{(item.price * item.quantity).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <Separator />
 

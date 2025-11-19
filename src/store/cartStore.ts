@@ -50,7 +50,12 @@ export const useCartStore = create<CartStore>()(
           const existingIndex = state.serviceItems.findIndex((i) => i.item_id === item.item_id)
 
           if (existingIndex >= 0) {
-            // 이미 있으면 수량 증가
+            // 정기구독 플랜은 중복 추가 무시 (quantity 증가 안 함)
+            if (item.type === 'plan') {
+              return state // 변경 없음
+            }
+
+            // 일반 패키지는 수량 증가
             const updatedItems = [...state.serviceItems]
             updatedItems[existingIndex] = {
               ...updatedItems[existingIndex],

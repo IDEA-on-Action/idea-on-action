@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 import { toast } from 'sonner'
 import type { OrderWithItems, OrderInsert, OrderItemInsert, ShippingAddress } from '@/types/database'
+import type { ServiceCartItem } from '@/types/services-platform'
 import { handleSupabaseError, devError } from '@/lib/errors'
 import { createQueryKeys, commonQueryOptions, createUserQueryKey } from '@/lib/react-query'
 
@@ -126,8 +127,9 @@ interface CreateOrderParams {
   contactEmail: string
   contactPhone: string
 
-  // 주문 항목 (장바구니 기반)
-  cartId: string
+  // 주문 항목
+  cartId: string // 장바구니 ID (기존 cart_items 테이블)
+  serviceItems?: ServiceCartItem[] // 서비스 패키지/플랜 (로컬 상태)
 }
 
 export function useCreateOrder() {
@@ -138,24 +140,41 @@ export function useCreateOrder() {
     mutationFn: async (params: CreateOrderParams) => {
       if (!user) throw new Error('로그인이 필요합니다')
 
-      // 1. 장바구니 항목 조회
-      const { data: cartItems, error: cartError } = await supabase
-        .from('cart_items')
-        .select(
+      // 1. 장바구니 항목 조회 (일반 cart_items)
+      let cartItems: unknown[] = []
+      if (params.cartId) {
+        const { data, error: cartError } = await supabase
+          .from('cart_items')
+          .select(
+            `
+            *,
+            service:services(*)
           `
-          *,
-          service:services(*)
-        `
-        )
-        .eq('cart_id', params.cartId)
+          )
+          .eq('cart_id', params.cartId)
 
-      if (cartError) throw cartError
-      if (!cartItems || cartItems.length === 0) {
+        if (cartError) throw cartError
+        cartItems = data || []
+      }
+
+      // 2. 서비스 항목 (service_items)
+      const serviceItems = params.serviceItems || []
+
+      // 3. 최소 1개 항목 필요
+      if (cartItems.length === 0 && serviceItems.length === 0) {
         throw new Error('장바구니가 비어있습니다')
       }
 
-      // 2. 주문 금액 계산
-      const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      // 4. 주문 금액 계산 (cart items + service items)
+      const cartSubtotal = cartItems.reduce(
+        (sum, item: any) => sum + item.price * item.quantity,
+        0
+      )
+      const serviceSubtotal = serviceItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      )
+      const subtotal = cartSubtotal + serviceSubtotal
       const taxAmount = subtotal * 0.1 // 부가세 10%
       const totalAmount = subtotal + taxAmount
 
@@ -192,18 +211,38 @@ export function useCreateOrder() {
 
       if (orderError) throw orderError
 
-      // 5. 주문 항목 생성
-      const orderItems: OrderItemInsert[] = cartItems.map((item) => ({
-        order_id: order.id,
-        service_id: item.service_id,
-        service_title: item.service?.title || '',
-        service_description: item.service?.description || null,
-        quantity: item.quantity,
-        unit_price: item.price,
-        subtotal: item.price * item.quantity,
-        package_name: item.package_name || null, // 장바구니에서 패키지 이름 복사
-        service_snapshot: item.service ? (item.service as unknown as Record<string, unknown>) : null,
-      }))
+      // 5. 주문 항목 생성 (cart items + service items)
+      const orderItems: OrderItemInsert[] = []
+
+      // 5a. cart items 변환
+      cartItems.forEach((item: any) => {
+        orderItems.push({
+          order_id: order.id,
+          service_id: item.service_id,
+          service_title: item.service?.title || '',
+          service_description: item.service?.description || null,
+          quantity: item.quantity,
+          unit_price: item.price,
+          subtotal: item.price * item.quantity,
+          package_name: item.package_name || null,
+          service_snapshot: item.service ? (item.service as unknown as Record<string, unknown>) : null,
+        })
+      })
+
+      // 5b. service items 변환
+      serviceItems.forEach((item) => {
+        orderItems.push({
+          order_id: order.id,
+          service_id: item.service_id,
+          service_title: item.service_title,
+          service_description: null,
+          quantity: item.quantity,
+          unit_price: item.price,
+          subtotal: item.price * item.quantity,
+          package_name: `${item.item_name}${item.billing_cycle ? ` (${item.billing_cycle})` : ''}`,
+          service_snapshot: null,
+        })
+      })
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
 
@@ -213,8 +252,10 @@ export function useCreateOrder() {
         throw itemsError
       }
 
-      // 6. 장바구니 비우기
-      await supabase.from('cart_items').delete().eq('cart_id', params.cartId)
+      // 6. 장바구니 비우기 (cart items)
+      if (params.cartId) {
+        await supabase.from('cart_items').delete().eq('cart_id', params.cartId)
+      }
 
       return order
     },
