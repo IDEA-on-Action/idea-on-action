@@ -16,7 +16,7 @@ import { Helmet } from 'react-helmet-async'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { useServiceDetailBySlug } from '@/hooks/useServicesPlatform'
+import { useServiceDetail, useServiceDetailBySlug } from '@/hooks/useServicesPlatform'
 import { useCartStore } from '@/store/cartStore'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -31,10 +31,25 @@ import { DeliverablesGrid } from '@/components/services-platform/DeliverablesGri
 import { FAQSection } from '@/components/services-platform/FAQSection'
 import type { ServicePackage, SubscriptionPlan } from '@/types/services-platform'
 
+// Helper: Check if string is UUID format
+const isUUID = (str: string): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  return uuidRegex.test(str)
+}
+
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { data: service, isLoading, isError, error } = useServiceDetailBySlug(id || '')
+
+  // Use appropriate hook based on parameter format
+  const identifier = id || ''
+  const isUuidFormat = isUUID(identifier)
+
+  // Fetch service using UUID or slug
+  const { data: service, isLoading, isError, error } = isUuidFormat
+    ? useServiceDetail(identifier)
+    : useServiceDetailBySlug(identifier)
+
   const { addServiceItem, openCart } = useCartStore()
 
   // Add to cart handlers
