@@ -35,6 +35,56 @@ export const servicesKeys = {
 };
 
 // ============================================================================
+// Basic Service Hooks
+// ============================================================================
+
+/**
+ * Fetch all active services
+ * @returns React Query result with services array
+ */
+export function useServices() {
+  return useQuery({
+    queryKey: servicesKeys.all,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return (data as ServiceWithContent[]) || [];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+  });
+}
+
+/**
+ * Fetch a single service by slug (basic info only)
+ * @param slug - Service slug
+ * @returns React Query result with service
+ */
+export function useServiceBySlug(slug: string) {
+  return useQuery({
+    queryKey: ['services-platform', 'service-slug', slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as ServiceWithContent | null;
+    },
+    enabled: !!slug,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+}
+
+// ============================================================================
 // Service Packages Hooks
 // ============================================================================
 
@@ -207,6 +257,25 @@ export function useSubscriptionPlan(planId: string) {
     enabled: !!planId,
   });
 }
+
+// ============================================================================
+// Aliases for Convenience
+// ============================================================================
+
+/**
+ * Alias for useServicePackage (for consistency with requirements)
+ */
+export const usePackageById = useServicePackage;
+
+/**
+ * Alias for useSubscriptionPlan (for consistency with requirements)
+ */
+export const usePlanById = useSubscriptionPlan;
+
+/**
+ * Alias for useSubscriptionPlans (for consistency with requirements)
+ */
+export const useServicePlans = useSubscriptionPlans;
 
 /**
  * Create a new subscription plan
@@ -384,49 +453,71 @@ export function useServiceDetailBySlug(slug: string) {
 }
 
 /**
- * Fetch popular packages across all services
+ * Fetch popular packages for a specific service or all services
+ * @param serviceId - Optional service UUID to filter by
  * @returns Array of popular service packages
  */
-export function usePopularPackages() {
+export function usePopularPackages(serviceId?: string) {
   return useQuery({
-    queryKey: ['services-platform', 'popular-packages'],
+    queryKey: serviceId
+      ? ['services-platform', 'popular-packages', serviceId]
+      : ['services-platform', 'popular-packages'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('service_packages')
         .select(`
           *,
           service:services(id, title, slug)
         `)
         .eq('is_popular', true)
-        .order('display_order', { ascending: true })
-        .limit(6);
+        .order('display_order', { ascending: true });
 
+      if (serviceId) {
+        query = query.eq('service_id', serviceId);
+      } else {
+        query = query.limit(6);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
   });
 }
 
 /**
- * Fetch popular subscription plans across all services
+ * Fetch popular subscription plans for a specific service or all services
+ * @param serviceId - Optional service UUID to filter by
  * @returns Array of popular subscription plans
  */
-export function usePopularPlans() {
+export function usePopularPlans(serviceId?: string) {
   return useQuery({
-    queryKey: ['services-platform', 'popular-plans'],
+    queryKey: serviceId
+      ? ['services-platform', 'popular-plans', serviceId]
+      : ['services-platform', 'popular-plans'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('subscription_plans')
         .select(`
           *,
           service:services(id, title, slug)
         `)
         .eq('is_popular', true)
-        .order('display_order', { ascending: true})
-        .limit(6);
+        .order('display_order', { ascending: true });
 
+      if (serviceId) {
+        query = query.eq('service_id', serviceId);
+      } else {
+        query = query.limit(6);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
   });
 }
