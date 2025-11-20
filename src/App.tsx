@@ -91,6 +91,7 @@ const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
 const Orders = lazy(() => import("./pages/Orders"));
 const OrderDetail = lazy(() => import("./pages/OrderDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Subscriptions = lazy(() => import("./pages/Subscriptions"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const TwoFactorSetup = lazy(() => import("./pages/TwoFactorSetup"));
 const TwoFactorVerify = lazy(() => import("./pages/TwoFactorVerify"));
@@ -159,137 +160,138 @@ const queryClient = new QueryClient();
 const App = () => (
   <Sentry.ErrorBoundary fallback={<ErrorFallback />} showDialog>
     <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true,
-          }}
-        >
-          {/* Accessibility: Skip to main content link (WCAG 2.1 - Bypass Blocks) */}
-          <SkipToContent targetId="main-content" />
+      <HelmetProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
+            {/* Accessibility: Skip to main content link (WCAG 2.1 - Bypass Blocks) */}
+            <SkipToContent targetId="main-content" />
 
-          {/* Accessibility: Keyboard shortcuts help (WCAG 2.1 - Keyboard Accessible) */}
-          <KeyboardShortcuts />
+            {/* Accessibility: Keyboard shortcuts help (WCAG 2.1 - Keyboard Accessible) */}
+            <KeyboardShortcuts />
 
-          <AnalyticsTracker />
-          <CartDrawer />
-          <CommandPalette />
-          <Suspense fallback={null}>
-            <ChatWidget />
-          </Suspense>
-          <PWAInstallPrompt />
-          <PWAUpdatePrompt />
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/services/:id" element={<ServiceDetail />} /> {/* :id is treated as slug */}
-              <Route path="/search" element={<Search />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/notices" element={<Notices />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/checkout/payment" element={<Payment />} />
-              <Route path="/checkout/payment/kakao/success" element={<PaymentSuccess />} />
-              <Route path="/checkout/payment/toss/success" element={<PaymentSuccess />} />
-              <Route path="/checkout/payment/kakao/fail" element={<PaymentFail />} />
-              <Route path="/checkout/payment/kakao/cancel" element={<PaymentFail />} />
-              <Route path="/checkout/payment/toss/fail" element={<PaymentFail />} />
-              <Route path="/subscription/checkout" element={<SubscriptionCheckout />} />
-              <Route path="/subscription/payment" element={<SubscriptionPayment />} />
-              <Route path="/subscription/success" element={<SubscriptionSuccess />} />
-              <Route path="/subscription/fail" element={<PaymentFail />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/orders/:id" element={<OrderDetail />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/2fa/setup" element={<TwoFactorSetup />} />
-              <Route path="/2fa/verify" element={<TwoFactorVerify />} />
-              <Route path="/forbidden" element={<Forbidden />} />
+            <AnalyticsTracker />
+            <CartDrawer />
+            <CommandPalette />
+            <Suspense fallback={null}>
+              <ChatWidget />
+            </Suspense>
+            <PWAInstallPrompt />
+            <PWAUpdatePrompt />
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/services/:id" element={<ServiceDetail />} /> {/* :id is treated as slug */}
+                <Route path="/search" element={<Search />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/notices" element={<Notices />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/checkout/payment" element={<Payment />} />
+                <Route path="/checkout/payment/kakao/success" element={<PaymentSuccess />} />
+                <Route path="/checkout/payment/toss/success" element={<PaymentSuccess />} />
+                <Route path="/checkout/payment/kakao/fail" element={<PaymentFail />} />
+                <Route path="/checkout/payment/kakao/cancel" element={<PaymentFail />} />
+                <Route path="/checkout/payment/toss/fail" element={<PaymentFail />} />
+                <Route path="/subscription/checkout" element={<SubscriptionCheckout />} />
+                <Route path="/subscription/payment" element={<SubscriptionPayment />} />
+                <Route path="/subscription/success" element={<SubscriptionSuccess />} />
+                <Route path="/subscription/fail" element={<PaymentFail />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/orders/:id" element={<OrderDetail />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/subscriptions" element={<Subscriptions />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/2fa/setup" element={<TwoFactorSetup />} />
+                <Route path="/2fa/verify" element={<TwoFactorVerify />} />
+                <Route path="/forbidden" element={<Forbidden />} />
 
-              {/* Version 2.0 Routes */}
-              <Route path="/about" element={<About />} />
-              <Route path="/roadmap" element={<Roadmap />} />
-              <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
-              <Route path="/now" element={<Now />} />
-              <Route path="/lab" element={<Lab />} />
-              <Route path="/community" element={<Community />} />
-              <Route path="/work-with-us" element={<WorkWithUs />} />
-              <Route path="/status" element={<Status />} />
+                {/* Version 2.0 Routes */}
+                <Route path="/about" element={<About />} />
+                <Route path="/roadmap" element={<Roadmap />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
+                <Route path="/now" element={<Now />} />
+                <Route path="/lab" element={<Lab />} />
+                <Route path="/community" element={<Community />} />
+                <Route path="/work-with-us" element={<WorkWithUs />} />
+                <Route path="/status" element={<Status />} />
 
-              {/* Services Platform Routes */}
-              <Route path="/services-platform" element={<ServicesPage />} />
-              <Route path="/services/development/mvp" element={<MVPServicePage />} />
-              <Route path="/services/development/fullstack" element={<FullstackPage />} />
-              <Route path="/services/development/design" element={<DesignPage />} />
-              <Route path="/services/development/operations" element={<OperationsPage />} />
-              <Route path="/services/compass/navigator" element={<NavigatorPage />} />
+                {/* Services Platform Routes */}
+                <Route path="/services-platform" element={<ServicesPage />} />
+                <Route path="/services/development/mvp" element={<MVPServicePage />} />
+                <Route path="/services/development/fullstack" element={<FullstackPage />} />
+                <Route path="/services/development/design" element={<DesignPage />} />
+                <Route path="/services/development/operations" element={<OperationsPage />} />
+                <Route path="/services/compass/navigator" element={<NavigatorPage />} />
 
-              {/* Toss Payments Review URLs - Short aliases */}
-              <Route path="/services/mvp" element={<MVPServicePage />} />
-              <Route path="/services/fullstack" element={<FullstackPage />} />
-              <Route path="/services/design" element={<DesignPage />} />
-              <Route path="/services/operations" element={<OperationsPage />} />
+                {/* Toss Payments Review URLs - Short aliases */}
+                <Route path="/services/mvp" element={<MVPServicePage />} />
+                <Route path="/services/fullstack" element={<FullstackPage />} />
+                <Route path="/services/design" element={<DesignPage />} />
+                <Route path="/services/operations" element={<OperationsPage />} />
 
-              <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
 
-              {/* Legal Routes */}
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/refund-policy" element={<RefundPolicy />} />
-              <Route path="/electronic-finance-terms" element={<ElectronicFinanceTerms />} />
+                {/* Legal Routes */}
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/electronic-finance-terms" element={<ElectronicFinanceTerms />} />
 
-              {/* Admin Routes */}
-              <Route
-                path="/admin"
-                element={
-                  <AdminRoute>
-                    <AdminLayout />
-                  </AdminRoute>
-                }
-              >
-                <Route index element={<Dashboard />} />
-                <Route path="services" element={<AdminServices />} />
-                <Route path="services/new" element={<CreateService />} />
-                <Route path="services/:id/edit" element={<EditService />} />
-                <Route path="blog" element={<AdminBlog />} />
-                <Route path="blog/new" element={<CreateBlogPost />} />
-                <Route path="blog/:id/edit" element={<EditBlogPost />} />
-                <Route path="notices" element={<AdminNotices />} />
-                <Route path="notices/new" element={<CreateNotice />} />
-                <Route path="notices/:id/edit" element={<EditNotice />} />
-                <Route path="roles" element={<AdminRoles />} />
-                <Route path="audit-logs" element={<AuditLogs />} />
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="roadmap" element={<AdminRoadmap />} />
-                <Route path="portfolio" element={<AdminPortfolio />} />
-                <Route path="lab" element={<AdminLab />} />
-                <Route path="team" element={<AdminTeam />} />
-                <Route path="blog/categories" element={<AdminBlogCategories />} />
-                <Route path="tags" element={<AdminTags />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="revenue" element={<Revenue />} />
-                <Route path="realtime" element={<RealtimeDashboard />} />
-              </Route>
+                {/* Admin Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminLayout />
+                    </AdminRoute>
+                  }
+                >
+                  <Route index element={<Dashboard />} />
+                  <Route path="services" element={<AdminServices />} />
+                  <Route path="services/new" element={<CreateService />} />
+                  <Route path="services/:id/edit" element={<EditService />} />
+                  <Route path="blog" element={<AdminBlog />} />
+                  <Route path="blog/new" element={<CreateBlogPost />} />
+                  <Route path="blog/:id/edit" element={<EditBlogPost />} />
+                  <Route path="notices" element={<AdminNotices />} />
+                  <Route path="notices/new" element={<CreateNotice />} />
+                  <Route path="notices/:id/edit" element={<EditNotice />} />
+                  <Route path="roles" element={<AdminRoles />} />
+                  <Route path="audit-logs" element={<AuditLogs />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="roadmap" element={<AdminRoadmap />} />
+                  <Route path="portfolio" element={<AdminPortfolio />} />
+                  <Route path="lab" element={<AdminLab />} />
+                  <Route path="team" element={<AdminTeam />} />
+                  <Route path="blog/categories" element={<AdminBlogCategories />} />
+                  <Route path="tags" element={<AdminTags />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="analytics" element={<Analytics />} />
+                  <Route path="revenue" element={<Revenue />} />
+                  <Route path="realtime" element={<RealtimeDashboard />} />
+                </Route>
 
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
-    </HelmetProvider>
-    <VercelAnalytics />
-  </QueryClientProvider>
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </HelmetProvider>
+      <VercelAnalytics />
+    </QueryClientProvider>
   </Sentry.ErrorBoundary>
 );
 

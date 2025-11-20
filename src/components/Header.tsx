@@ -81,7 +81,7 @@ const Header = ({ className = "" }: HeaderProps) => {
     const isExternal = item.isExternal || (isHomePage && item.href.startsWith('#'));
     const isActive = !isExternal && location.pathname === item.href;
     const Component = isExternal ? 'a' : Link;
-    const props = isExternal 
+    const props = isExternal
       ? { href: item.href }
       : { to: item.href };
 
@@ -89,11 +89,10 @@ const Header = ({ className = "" }: HeaderProps) => {
       <Component
         key={index}
         {...props}
-        className={`transition-colors ${
-          isActive 
-            ? 'text-foreground font-medium border-b-2 border-primary' 
+        className={`transition-colors ${isActive
+            ? 'text-foreground font-medium border-b-2 border-primary'
             : 'text-foreground/80 hover:text-foreground'
-        }`}
+          }`}
         aria-label={`${item.label} 페이지로 이동`}
         aria-current={isActive ? 'page' : undefined}
       >
@@ -103,20 +102,19 @@ const Header = ({ className = "" }: HeaderProps) => {
   };
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 glass-card border-b transition-all duration-300 ${
-        isScrolled ? 'bg-background/95 backdrop-blur-md' : 'bg-background/80'
-      } border-gray-200 dark:border-gray-700 ${className}`}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 glass-card border-b transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-md' : 'bg-background/80'
+        } border-gray-200 dark:border-gray-700 ${className}`}
     >
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link
           to="/"
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
-          <img 
-            src={BRAND_INFO.logo} 
-            alt={BRAND_INFO.logoAlt} 
-            className="h-10 w-10" 
+          <img
+            src={BRAND_INFO.logo}
+            alt={BRAND_INFO.logoAlt}
+            className="h-10 w-10"
             width={40}
             height={40}
           />
@@ -132,7 +130,7 @@ const Header = ({ className = "" }: HeaderProps) => {
             const isExternal = isHomePage && item.href.startsWith('#');
             const isActive = !isExternal && location.pathname === item.href;
             const Component = isExternal ? 'a' : Link;
-            const props = isExternal 
+            const props = isExternal
               ? { href: item.href }
               : { to: item.href };
 
@@ -140,11 +138,10 @@ const Header = ({ className = "" }: HeaderProps) => {
               <Component
                 key={index}
                 {...props}
-                className={`transition-colors ${
-                  isActive 
-                    ? 'text-foreground font-medium border-b-2 border-primary pb-1' 
+                className={`transition-colors ${isActive
+                    ? 'text-foreground font-medium border-b-2 border-primary pb-1'
                     : 'text-foreground/80 hover:text-foreground'
-                }`}
+                  }`}
                 aria-label={`${item.label} 페이지로 이동`}
                 aria-current={isActive ? 'page' : undefined}
               >
@@ -178,8 +175,8 @@ const Header = ({ className = "" }: HeaderProps) => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="relative h-10 w-10 rounded-full"
                   aria-label="사용자 메뉴 열기"
                 >
@@ -202,6 +199,12 @@ const Header = ({ className = "" }: HeaderProps) => {
                   aria-label="내 주문 페이지로 이동"
                 >
                   내 주문
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate('/profile/subscriptions')}
+                  aria-label="구독 관리 페이지로 이동"
+                >
+                  구독 관리
                 </DropdownMenuItem>
                 {isAdmin && (
                   <>
@@ -239,9 +242,9 @@ const Header = ({ className = "" }: HeaderProps) => {
           )}
 
           {/* Mobile Menu Button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="md:hidden"
             onClick={toggleMobileMenu}
             aria-label={isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
@@ -286,11 +289,10 @@ const Header = ({ className = "" }: HeaderProps) => {
                 <Component
                   key={index}
                   {...props}
-                  className={`block transition-colors py-2 ${
-                    isActive 
-                      ? 'text-primary font-medium' 
+                  className={`block transition-colors py-2 ${isActive
+                      ? 'text-primary font-medium'
                       : 'text-foreground/80 hover:text-foreground'
-                  }`}
+                    }`}
                   aria-label={`${item.label} 페이지로 이동`}
                   aria-current={isActive ? 'page' : undefined}
                 >
