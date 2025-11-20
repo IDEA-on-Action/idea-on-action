@@ -45,10 +45,12 @@ export default function ServiceDetail() {
   const identifier = id || ''
   const isUuidFormat = isUUID(identifier)
 
-  // Fetch service using UUID or slug
-  const { data: service, isLoading, isError, error } = isUuidFormat
-    ? useServiceDetail(identifier)
-    : useServiceDetailBySlug(identifier)
+  // Fetch service using UUID or slug (call both hooks, use appropriate data)
+  const uuidQuery = useServiceDetail(isUuidFormat ? identifier : '')
+  const slugQuery = useServiceDetailBySlug(!isUuidFormat ? identifier : '')
+
+  // Select the active query result
+  const { data: service, isLoading, isError, error } = isUuidFormat ? uuidQuery : slugQuery
 
   const { addServiceItem, openCart } = useCartStore()
 

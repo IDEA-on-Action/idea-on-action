@@ -255,7 +255,7 @@ async function handleExpiredSubscriptions(supabase: SupabaseClient, today: strin
 // Utility: Calculate Next Dates
 function calculateNextDates(cycle: string) {
   const now = new Date()
-  let nextDate = new Date(now)
+  const nextDate = new Date(now)
 
   switch (cycle) {
     case 'monthly':
