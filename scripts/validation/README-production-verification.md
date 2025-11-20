@@ -5,15 +5,34 @@ This directory contains SQL scripts for verifying production migrations and data
 ## Available Scripts
 
 ### 1. Quick Production Verification (5 minutes)
+
+#### Option A: psql CLI (권장)
 **File**: `quick-verify-prod.sql`
-**Purpose**: Fast verification of critical migration points
+**Purpose**: Fast verification with colored emoji output
 **Run time**: ~30 seconds
 **Checks**: 7 critical items
+**Requirements**: psql command-line tool
 
 ```bash
 # Run quick verification
 psql $DATABASE_URL -f scripts/validation/quick-verify-prod.sql
 ```
+
+#### Option B: Supabase Dashboard (Web)
+**File**: `quick-verify-prod-dashboard.sql`
+**Purpose**: Dashboard-compatible verification
+**Run time**: ~5 seconds
+**Checks**: 7 critical items
+**Requirements**: Supabase Dashboard access
+
+**사용 방법**:
+1. https://supabase.com/dashboard 접속
+2. 프로젝트 선택 → **SQL Editor** 메뉴
+3. `quick-verify-prod-dashboard.sql` 파일 열기
+4. 전체 내용 복사
+5. SQL Editor에 붙여넣기
+6. 우측 하단 **RUN** 버튼 클릭
+7. 결과 테이블 확인 (✅ PASS / ❌ FAIL)
 
 **Output Example**:
 ```
