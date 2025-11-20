@@ -535,6 +535,34 @@ export interface LabApplicant {
 // =====================================================
 
 /**
+ * CMS Portfolio Items (Phase 2)
+ * Table: public.cms_portfolio_items
+ */
+export interface CMSPortfolioItem {
+  id: string; // UUID
+  slug: string; // unique
+  title: string;
+  status: PortfolioStatus;
+  summary: string;
+  description?: string;
+  metrics: PortfolioMetrics;
+  tech_stack: string[];
+  team_members: string[];
+  links: PortfolioLinks;
+  timeline: PortfolioTimeline;
+  tags: string[];
+  thumbnail_url?: string;
+  gallery_urls: string[];
+  is_featured: boolean;
+  display_order: number;
+  is_published: boolean;
+  created_at: string; // ISO 8601
+  updated_at: string; // ISO 8601
+  created_by?: string; // UUID
+  updated_by?: string; // UUID
+}
+
+/**
  * Media library for uploaded files (CMS-009)
  * Table: public.media_library
  */

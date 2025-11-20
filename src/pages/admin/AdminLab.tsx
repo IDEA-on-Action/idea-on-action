@@ -1,760 +1,527 @@
 /**
- * AdminLab Page
+ * AdminLab - Lab/Bounty Management List Page
  *
- * CMS Lab 관리 페이지
- * - Lab 목록 (테이블)
- * - 카테고리/상태 필터링
- * - 생성/수정/삭제 CRUD
- * - 공개/비공개 토글
- * - GitHub/Demo URL 관리
+ * Full-featured CMS lab bounty management interface with:
+ * - DataTable with 8 columns
+ * - Search & advanced filters
+ * - CRUD operations with modals
+ * - Applicants modal with accept/reject actions
+ * - Statistics cards
+ * - Loading/error/empty states
+ * - Responsive design
+ *
+ * CMS Phase 2 - Agent 1
  */
 
-import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
-import {
-  useLabItems,
-  useCreateLabItem,
-  useUpdateLabItem,
-  useDeleteLabItem
-} from '@/hooks/cms/useLabItems'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { useState, useMemo } from 'react';
+import { Plus, RefreshCw, Search, Users } from 'lucide-react';
+import { DataTable } from '@/components/admin/ui/DataTable';
+import { useCRUD } from '@/hooks/useCRUD';
+import type { CMSLabItem, LabStatus, LabDifficulty, LabApplicant } from '@/types/cms-lab.types';
+import { formatRelativeTime } from '@/lib/cms-utils';
+import { ColumnDef } from '@tanstack/react-table';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Loader2, Plus, Pencil, Trash2, Search, ExternalLink, Github } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import type { LabItem, LabCategory, LabStatus } from '@/types/cms.types'
-
-// Zod Schema for Lab Form
-const labSchema = z.object({
-  slug: z.string().min(1, 'Slug를 입력하세요').regex(/^[a-z0-9-]+$/, 'Slug는 소문자, 숫자, 하이픈만 가능합니다'),
-  title: z.string().min(1, '제목을 입력하세요'),
-  subtitle: z.string().optional(),
-  description: z.string().min(1, '설명을 입력하세요'),
-  content: z.string().optional(),
-  category: z.enum(['experiment', 'idea', 'community', 'research']),
-  status: z.enum(['exploring', 'developing', 'testing', 'completed', 'archived']),
-  techStack: z.string().optional(), // JSON string array
-  githubUrl: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
-  demoUrl: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
-  contributors: z.string().optional(), // JSON string array
-  startDate: z.string().optional(),
-  tags: z.string().optional(), // JSON string array
-  published: z.boolean().default(false),
-})
-
-type LabFormData = z.infer<typeof labSchema>
-
-// Extended LabItem type with published flag
-interface LabItemWithPublished extends LabItem {
-  published: boolean
-}
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { LabForm } from '@/components/admin/forms/LabForm';
 
 export default function AdminLab() {
-  const { toast } = useToast()
-  const { data: labItems, isLoading } = useLabItems()
-  const createMutation = useCreateLabItem()
-  const updateMutation = useUpdateLabItem()
-  const deleteMutation = useDeleteLabItem()
+  // =====================================================
+  // STATE
+  // =====================================================
 
-  const [search, setSearch] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<string>('all')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [editItem, setEditItem] = useState<LabItemWithPublished | null>(null)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<{
+    status?: LabStatus;
+    difficulty?: LabDifficulty;
+    published?: boolean;
+    skills?: string[];
+  }>({});
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<CMSLabItem | null>(null);
+  const [viewApplicantsItem, setViewApplicantsItem] = useState<CMSLabItem | null>(null);
 
-  const form = useForm<LabFormData>({
-    resolver: zodResolver(labSchema),
-    defaultValues: {
-      slug: '',
-      title: '',
-      subtitle: '',
-      description: '',
-      content: '',
-      category: 'experiment',
-      status: 'exploring',
-      techStack: '[]',
-      githubUrl: '',
-      demoUrl: '',
-      contributors: '[]',
-      startDate: '',
-      tags: '[]',
-      published: false,
+  // =====================================================
+  // CRUD HOOK
+  // =====================================================
+
+  const labCRUD = useCRUD<CMSLabItem>({
+    table: 'cms_lab_items',
+    queryKey: 'cms-lab',
+    select: '*, created_by:admins!created_by(user_id)',
+    orderBy: { column: 'created_at', ascending: false },
+  });
+
+  const { data: response, isLoading, refetch } = labCRUD.useList({
+    search: searchQuery,
+    searchColumns: ['title', 'description'],
+    filters: {
+      ...(filters.status && { status: filters.status }),
+      ...(filters.difficulty && { difficulty: filters.difficulty }),
+      ...(filters.published !== undefined && { is_published: filters.published }),
     },
-  })
+  });
 
-  // Filter lab items
-  const filteredItems = labItems?.filter((item) => {
-    const matchesSearch =
-      !search ||
-      item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.description.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter
-    const matchesStatus = statusFilter === 'all' || item.status === statusFilter
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  const createMutation = labCRUD.useCreate();
+  const updateMutation = labCRUD.useUpdate();
+  const deleteMutation = labCRUD.useDelete();
 
-  // Open dialog for creating new item
+  const items = response?.data || [];
+
+  // =====================================================
+  // STATISTICS
+  // =====================================================
+
+  const stats = useMemo(() => {
+    return {
+      total: items.length,
+      open: items.filter(i => i.status === 'open').length,
+      in_progress: items.filter(i => i.status === 'in_progress').length,
+      completed: items.filter(i => i.status === 'completed').length,
+    };
+  }, [items]);
+
+  // =====================================================
+  // STATUS & DIFFICULTY BADGE HELPERS
+  // =====================================================
+
+  const getStatusBadge = (status: LabStatus) => {
+    const colors: Record<LabStatus, string> = {
+      open: 'bg-green-500 text-white',
+      in_progress: 'bg-blue-500 text-white',
+      completed: 'bg-gray-500 text-white',
+      closed: 'bg-red-500 text-white',
+    };
+    return <Badge className={colors[status]}>{status.replace('_', ' ')}</Badge>;
+  };
+
+  const getDifficultyBadge = (difficulty: LabDifficulty) => {
+    const colors: Record<LabDifficulty, string> = {
+      beginner: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+      intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+      advanced: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+    };
+    return <Badge className={colors[difficulty]}>{difficulty}</Badge>;
+  };
+
+  // =====================================================
+  // DATATABLE COLUMNS
+  // =====================================================
+
+  const columns: ColumnDef<CMSLabItem>[] = [
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: ({ row }) => (
+        <div className="flex flex-col max-w-md">
+          <button
+            onClick={() => handleEdit(row.original)}
+            className="font-medium text-left hover:underline"
+          >
+            {row.original.title}
+          </button>
+          <span className="text-sm text-muted-foreground truncate">
+            {row.original.description?.substring(0, 100)}...
+          </span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => getStatusBadge(row.original.status),
+    },
+    {
+      accessorKey: 'difficulty',
+      header: 'Difficulty',
+      cell: ({ row }) => getDifficultyBadge(row.original.difficulty),
+    },
+    {
+      accessorKey: 'reward',
+      header: 'Reward',
+      cell: ({ row }) => row.original.reward || '-',
+    },
+    {
+      accessorKey: 'skills_required',
+      header: 'Skills',
+      cell: ({ row }) => {
+        const skills = row.original.skills_required || [];
+        return (
+          <div className="flex gap-1 flex-wrap max-w-xs">
+            {skills.slice(0, 3).map((skill) => (
+              <Badge key={skill} variant="secondary" className="text-xs">
+                {skill}
+              </Badge>
+            ))}
+            {skills.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{skills.length - 3}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'applicants',
+      header: 'Applicants',
+      cell: ({ row }) => {
+        const count = row.original.applicants?.length || 0;
+        return (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setViewApplicantsItem(row.original)}
+          >
+            <Users className="h-4 w-4 mr-1" />
+            {count}
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: 'is_published',
+      header: 'Published',
+      cell: ({ row }) => (
+        <span className="text-center">{row.original.is_published ? '✓' : '✗'}</span>
+      ),
+    },
+    {
+      accessorKey: 'created_at',
+      header: 'Created',
+      cell: ({ row }) => formatRelativeTime(row.original.created_at),
+    },
+  ];
+
+  // =====================================================
+  // CRUD HANDLERS
+  // =====================================================
+
   const handleCreate = () => {
-    setEditItem(null)
-    form.reset({
-      slug: '',
-      title: '',
-      subtitle: '',
-      description: '',
-      content: '',
-      category: 'experiment',
-      status: 'exploring',
-      techStack: '[]',
-      githubUrl: '',
-      demoUrl: '',
-      contributors: '[]',
-      startDate: '',
-      tags: '[]',
-      published: false,
-    })
-    setIsDialogOpen(true)
-  }
+    setEditingItem(null);
+    setIsFormOpen(true);
+  };
 
-  // Open dialog for editing item
-  const handleEdit = (item: LabItemWithPublished) => {
-    setEditItem(item)
-    form.reset({
-      slug: item.slug,
-      title: item.title,
-      subtitle: item.subtitle || '',
-      description: item.description,
-      content: item.content || '',
-      category: item.category,
-      status: item.status,
-      techStack: JSON.stringify(item.techStack || []),
-      githubUrl: item.githubUrl || '',
-      demoUrl: item.demoUrl || '',
-      contributors: JSON.stringify(item.contributors || []),
-      startDate: item.startDate || '',
-      tags: JSON.stringify(item.tags || []),
-      published: item.published,
-    })
-    setIsDialogOpen(true)
-  }
+  const handleEdit = (item: CMSLabItem) => {
+    setEditingItem(item);
+    setIsFormOpen(true);
+  };
 
-  // Submit form (create or update)
-  const handleSubmit = async (data: LabFormData) => {
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this bounty?')) return;
+
     try {
-      const payload = {
-        slug: data.slug,
-        title: data.title,
-        subtitle: data.subtitle || null,
-        description: data.description,
-        content: data.content || null,
-        category: data.category,
-        status: data.status,
-        techStack: data.techStack ? JSON.parse(data.techStack) : [],
-        githubUrl: data.githubUrl || null,
-        demoUrl: data.demoUrl || null,
-        contributors: data.contributors ? JSON.parse(data.contributors) : [],
-        startDate: data.startDate || null,
-        tags: data.tags ? JSON.parse(data.tags) : [],
-        published: data.published,
-        createdBy: null, // Will be set by RLS policy
-      }
+      await deleteMutation.mutateAsync(id);
+      toast.success('Bounty deleted successfully');
+    } catch (error) {
+      console.error('[AdminLab] Delete error:', error);
+    }
+  };
 
-      if (editItem) {
-        await updateMutation.mutateAsync({ id: editItem.id, updates: payload })
-        toast({
-          title: 'Lab 항목 수정 완료',
-          description: 'Lab 항목이 수정되었습니다.',
-        })
+  const handleFormSubmit = async (values: Partial<CMSLabItem>) => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({
+          id: editingItem.id,
+          values,
+        });
       } else {
-        await createMutation.mutateAsync(payload)
-        toast({
-          title: 'Lab 항목 생성 완료',
-          description: '새 Lab 항목이 생성되었습니다.',
-        })
+        await createMutation.mutateAsync(values as any);
       }
 
-      setIsDialogOpen(false)
+      setIsFormOpen(false);
+      setEditingItem(null);
+      refetch();
     } catch (error) {
-      const message = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
-      toast({
-        title: editItem ? 'Lab 항목 수정 실패' : 'Lab 항목 생성 실패',
-        description: message,
-        variant: 'destructive',
-      })
+      console.error('[AdminLab] Form submit error:', error);
+      throw error;
     }
-  }
+  };
 
-  // Delete lab item
-  const handleDelete = async () => {
-    if (!deleteId) return
+  // =====================================================
+  // APPLICANTS MODAL HANDLERS
+  // =====================================================
 
-    try {
-      await deleteMutation.mutateAsync(deleteId)
-      toast({
-        title: 'Lab 항목 삭제 완료',
-        description: 'Lab 항목이 삭제되었습니다.',
-      })
-      setDeleteId(null)
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
-      toast({
-        title: 'Lab 항목 삭제 실패',
-        description: message,
-        variant: 'destructive',
-      })
-    }
-  }
+  const handleAcceptApplicant = async (index: number) => {
+    if (!viewApplicantsItem) return;
 
-  // Toggle published status
-  const handleTogglePublished = async (item: LabItemWithPublished) => {
+    const updatedApplicants = [...viewApplicantsItem.applicants];
+    updatedApplicants[index].status = 'accepted';
+
     try {
       await updateMutation.mutateAsync({
-        id: item.id,
-        updates: { published: !item.published },
-      })
-      toast({
-        title: '공개 상태 변경',
-        description: item.published ? '비공개로 변경되었습니다.' : '공개로 변경되었습니다.',
-      })
+        id: viewApplicantsItem.id,
+        values: { applicants: updatedApplicants } as any,
+      });
+      toast.success('Applicant accepted');
+      refetch();
+      setViewApplicantsItem(null);
     } catch (error) {
-      const message = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
-      toast({
-        title: '상태 변경 실패',
-        description: message,
-        variant: 'destructive',
-      })
+      console.error('[AdminLab] Accept applicant error:', error);
     }
-  }
+  };
 
-  // Get category badge
-  const getCategoryBadge = (category: LabCategory) => {
-    const variants: Record<LabCategory, string> = {
-      experiment: 'bg-purple-500',
-      idea: 'bg-blue-500',
-      community: 'bg-green-500',
-      research: 'bg-orange-500',
-    }
-    const labels: Record<LabCategory, string> = {
-      experiment: '실험',
-      idea: '아이디어',
-      community: '커뮤니티',
-      research: '연구',
-    }
-    return <Badge variant="default" className={variants[category]}>{labels[category]}</Badge>
-  }
+  const handleRejectApplicant = async (index: number) => {
+    if (!viewApplicantsItem) return;
 
-  // Get status badge
-  const getStatusBadge = (status: LabStatus) => {
-    const variants: Record<LabStatus, string> = {
-      exploring: 'bg-gray-500',
-      developing: 'bg-blue-500',
-      testing: 'bg-yellow-500',
-      completed: 'bg-green-500',
-      archived: 'bg-red-500',
+    const updatedApplicants = [...viewApplicantsItem.applicants];
+    updatedApplicants[index].status = 'rejected';
+
+    try {
+      await updateMutation.mutateAsync({
+        id: viewApplicantsItem.id,
+        values: { applicants: updatedApplicants } as any,
+      });
+      toast.success('Applicant rejected');
+      refetch();
+      setViewApplicantsItem(null);
+    } catch (error) {
+      console.error('[AdminLab] Reject applicant error:', error);
     }
-    const labels: Record<LabStatus, string> = {
-      exploring: '탐색 중',
-      developing: '개발 중',
-      testing: '테스트 중',
-      completed: '완료',
-      archived: '보관됨',
-    }
-    return <Badge variant="default" className={variants[status]}>{labels[status]}</Badge>
-  }
+  };
+
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <>
-      <Helmet>
-        <title>Lab 관리 | IDEA on Action</title>
-      </Helmet>
-
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Lab 관리</h1>
-            <p className="text-muted-foreground">실험 및 연구 항목을 관리합니다</p>
+            <h1 className="text-3xl font-bold">Lab Bounties</h1>
+            <p className="text-muted-foreground">Manage community bounties and experiments</p>
           </div>
-          <Button onClick={handleCreate}>
-            <Plus className="mr-2 h-4 w-4" />
-            새 Lab 항목
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={() => refetch()}>
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button onClick={handleCreate}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Bounty
+            </Button>
+          </div>
+        </div>
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Bounties
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.total}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Open
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{stats.open}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                In Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{stats.in_progress}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Completed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-600">{stats.completed}</div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filters & Search */}
-        <div className="flex gap-4">
-          <div className="relative flex-1">
+        <div className="flex gap-4 flex-wrap">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="제목 또는 설명 검색..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search bounties..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <Select
+            value={filters.status || 'all'}
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                status: value === 'all' ? undefined : (value as LabStatus),
+              }))
+            }
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">전체 카테고리</SelectItem>
-              <SelectItem value="experiment">실험</SelectItem>
-              <SelectItem value="idea">아이디어</SelectItem>
-              <SelectItem value="community">커뮤니티</SelectItem>
-              <SelectItem value="research">연구</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="open">Open</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={filters.difficulty || 'all'}
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                difficulty: value === 'all' ? undefined : (value as LabDifficulty),
+              }))
+            }
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">전체 상태</SelectItem>
-              <SelectItem value="exploring">탐색 중</SelectItem>
-              <SelectItem value="developing">개발 중</SelectItem>
-              <SelectItem value="testing">테스트 중</SelectItem>
-              <SelectItem value="completed">완료</SelectItem>
-              <SelectItem value="archived">보관됨</SelectItem>
+              <SelectItem value="all">All Difficulty</SelectItem>
+              <SelectItem value="beginner">Beginner</SelectItem>
+              <SelectItem value="intermediate">Intermediate</SelectItem>
+              <SelectItem value="advanced">Advanced</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={
+              filters.published === undefined ? 'all' : filters.published ? 'published' : 'draft'
+            }
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                published: value === 'all' ? undefined : value === 'published',
+              }))
+            }
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Table */}
-        <div className="rounded-lg border">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : filteredItems && filteredItems.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>제목</TableHead>
-                  <TableHead>카테고리</TableHead>
-                  <TableHead>상태</TableHead>
-                  <TableHead>GitHub</TableHead>
-                  <TableHead>공개</TableHead>
-                  <TableHead className="text-right">작업</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">
-                      <div>
-                        <div>{item.title}</div>
-                        {item.subtitle && (
-                          <div className="text-sm text-muted-foreground">{item.subtitle}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{getCategoryBadge(item.category)}</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                    <TableCell>
-                      {item.githubUrl ? (
-                        <a
-                          href={item.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-primary hover:underline"
-                        >
-                          <Github className="h-4 w-4" />
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        '-'
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={item.published || false}
-                        onCheckedChange={() => handleTogglePublished(item as LabItemWithPublished)}
-                      />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(item as LabItemWithPublished)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteId(item.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <p className="text-muted-foreground">등록된 Lab 항목이 없습니다</p>
-              <Button onClick={handleCreate} className="mt-4">
-                <Plus className="mr-2 h-4 w-4" />
-                첫 Lab 항목 만들기
-              </Button>
-            </div>
-          )}
-        </div>
+        {/* DataTable */}
+        <DataTable
+          columns={columns}
+          data={items}
+          isLoading={isLoading}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          emptyMessage="No bounties found"
+          emptyDescription="Create your first bounty to get started"
+        />
       </div>
 
-      {/* Create/Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      {/* Create/Edit Form Modal */}
+      <LabForm
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingItem(null);
+        }}
+        editingItem={editingItem}
+        onSubmit={handleFormSubmit}
+        isSubmitting={createMutation.isPending || updateMutation.isPending}
+      />
+
+      {/* Applicants Modal */}
+      <Dialog open={!!viewApplicantsItem} onOpenChange={() => setViewApplicantsItem(null)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editItem ? 'Lab 항목 수정' : '새 Lab 항목'}</DialogTitle>
-            <DialogDescription>
-              Lab 정보를 입력하세요. 배열 필드는 유효한 JSON 형식이어야 합니다.
-            </DialogDescription>
+            <DialogTitle>Applicants for {viewApplicantsItem?.title}</DialogTitle>
           </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              {/* Slug */}
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Slug (필수)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="ai-chatbot-experiment" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Title */}
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>제목 (필수)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="AI 챗봇 실험" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Subtitle */}
-              <FormField
-                control={form.control}
-                name="subtitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>부제목</FormLabel>
-                    <FormControl>
-                      <Input placeholder="OpenAI GPT-4를 활용한 대화형 인터페이스" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Description */}
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>설명 (필수)</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Lab 항목 설명" className="min-h-[80px]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Content (Markdown) */}
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>본문 (Markdown)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Markdown 형식으로 작성..."
-                        className="min-h-[120px] font-mono text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Category & Status */}
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>카테고리</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="experiment">실험</SelectItem>
-                          <SelectItem value="idea">아이디어</SelectItem>
-                          <SelectItem value="community">커뮤니티</SelectItem>
-                          <SelectItem value="research">연구</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>상태</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="exploring">탐색 중</SelectItem>
-                          <SelectItem value="developing">개발 중</SelectItem>
-                          <SelectItem value="testing">테스트 중</SelectItem>
-                          <SelectItem value="completed">완료</SelectItem>
-                          <SelectItem value="archived">보관됨</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* GitHub & Demo URLs */}
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="githubUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GitHub URL</FormLabel>
-                      <FormControl>
-                        <Input type="url" placeholder="https://github.com/..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="demoUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Demo URL</FormLabel>
-                      <FormControl>
-                        <Input type="url" placeholder="https://demo.example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Start Date */}
-              <FormField
-                control={form.control}
-                name="startDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>시작일</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Tech Stack (JSON) */}
-              <FormField
-                control={form.control}
-                name="techStack"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>기술 스택 (JSON 배열)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='["React", "TypeScript", "OpenAI"]'
-                        className="min-h-[60px] font-mono text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Contributors (JSON) */}
-              <FormField
-                control={form.control}
-                name="contributors"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>기여자 (JSON 배열)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='["서민원", "홍길동"]'
-                        className="min-h-[60px] font-mono text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Tags (JSON) */}
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>태그 (JSON 배열)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='["AI", "Chatbot", "Experiment"]'
-                        className="min-h-[60px] font-mono text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Published */}
-              <FormField
-                control={form.control}
-                name="published"
-                render={({ field }) => (
-                  <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel>공개 여부</FormLabel>
-                      <div className="text-sm text-muted-foreground">
-                        공개 시 사용자에게 표시됩니다
-                      </div>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  취소
-                </Button>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      저장 중...
-                    </>
-                  ) : (
-                    '저장'
-                  )}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+            {viewApplicantsItem?.applicants && viewApplicantsItem.applicants.length > 0 ? (
+              viewApplicantsItem.applicants.map((applicant, index) => (
+                <div key={index} className="flex items-center justify-between p-4 border rounded">
+                  <div className="flex-1">
+                    <p className="font-medium">{applicant.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      User ID: {applicant.user_id}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Applied: {formatRelativeTime(applicant.applied_at)}
+                    </p>
+                    {applicant.message && (
+                      <p className="text-sm mt-1">{applicant.message}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <Badge
+                      variant={applicant.status === 'accepted' ? 'default' : 'secondary'}
+                      className={
+                        applicant.status === 'accepted'
+                          ? 'bg-green-600'
+                          : applicant.status === 'rejected'
+                            ? 'bg-red-600'
+                            : ''
+                      }
+                    >
+                      {applicant.status}
+                    </Badge>
+                    {applicant.status === 'pending' && (
+                      <>
+                        <Button size="sm" onClick={() => handleAcceptApplicant(index)}>
+                          Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleRejectApplicant(index)}
+                        >
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground py-8">No applicants yet</p>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Lab 항목 삭제</AlertDialogTitle>
-            <AlertDialogDescription>
-              정말로 이 Lab 항목을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              삭제
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
-  )
+  );
 }

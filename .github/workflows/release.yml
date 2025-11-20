@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version-type:
-        description: 'Version Type'
+        description: "Version Type"
         required: true
         type: choice
         options:
@@ -29,7 +29,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Dependencies
         run: npm ci
@@ -44,7 +44,7 @@ jobs:
 
       - name: Push Changes
         run: |
-          git push --follow-tags origin staging
+          git push --follow-tags origin ${{ github.ref_name }}
 
       - name: Extract Version
         id: version
@@ -60,9 +60,6 @@ jobs:
           body_path: CHANGELOG.md
           draft: false
           prerelease: false
-
-      - name: Build
-        run: npm run build
 
       - name: Comment on Success
         run: |

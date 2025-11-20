@@ -1,34 +1,22 @@
 /**
- * AdminPortfolio - Portfolio Management List Page
+ * AdminPortfolio Page
  *
- * Full-featured CMS portfolio management interface with:
- * - DataTable with all columns
- * - Search & advanced filters
- * - Drag & drop reordering
- * - Bulk actions (publish/unpublish/delete/status change)
- * - CRUD operations with modals
- * - Loading/error/empty states
- * - Responsive design
- *
- * CMS Phase 2 - Agent 1
+ * CMS 포트폴리오 관리 페이지
+ * - 포트폴리오 목록 (테이블)
+ * - 타입/상태/featured 필터링
+ * - 생성/수정/삭제 CRUD
+ * - 공개/비공개 토글
+ * - 썸네일 표시
  */
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import {
-  Plus,
-  RefreshCw,
-  Search,
-  Filter,
-  GripVertical,
-  Star,
-} from 'lucide-react';
-import { DataTable } from '@/components/admin/ui/DataTable';
-import { useCRUD } from '@/hooks/useCRUD';
-import { useDebounce } from '@/hooks/useDebounce';
-import type { CMSPortfolioItem, PortfolioStatus } from '@/types/cms.types';
-import { formatRelativeTime, truncateText } from '@/lib/cms-utils';
-import { ColumnDef } from '@tanstack/react-table';
-import { toast } from 'sonner';
+  usePortfolioItems,
+  useCreatePortfolioItem,
+  useUpdatePortfolioItem,
+  useDeletePortfolioItem,
+} from '@/hooks/usePortfolioItems'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
