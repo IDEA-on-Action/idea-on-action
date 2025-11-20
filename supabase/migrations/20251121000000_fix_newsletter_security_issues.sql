@@ -11,8 +11,11 @@ DROP VIEW IF EXISTS public.newsletter_subscribers;
 -- STEP 2: Create secure view WITHOUT auth.users exposure
 -- ============================================
 -- This view ONLY exposes data from user_profiles table
--- and does NOT use SECURITY DEFINER
-CREATE OR REPLACE VIEW public.newsletter_subscribers AS
+-- and uses SECURITY INVOKER (default for views in PostgreSQL 15+)
+-- Note: We explicitly set security_invoker = true to ensure RLS is enforced
+CREATE OR REPLACE VIEW public.newsletter_subscribers
+WITH (security_invoker = true)
+AS
 SELECT
   id,
   user_id,
