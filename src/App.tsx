@@ -271,12 +271,12 @@ const App = () => (
                   <Route path="roles" element={<AdminRoles />} />
                   <Route path="audit-logs" element={<AuditLogs />} />
                   <Route path="orders" element={<AdminOrders />} />
-                  <Route path="roadmap" element={<AdminRoadmap />} />
-                  <Route path="portfolio" element={<AdminPortfolio />} />
-                  <Route path="lab" element={<AdminLab />} />
-                  <Route path="team" element={<AdminTeam />} />
                   <Route path="blog/categories" element={<AdminBlogCategories />} />
+                  <Route path="lab" element={<AdminLab />} />
+                  <Route path="portfolio" element={<AdminPortfolio />} />
+                  <Route path="roadmap" element={<AdminRoadmap />} />
                   <Route path="tags" element={<AdminTags />} />
+                  <Route path="team" element={<AdminTeam />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="analytics" element={<Analytics />} />
                   <Route path="revenue" element={<Revenue />} />

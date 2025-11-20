@@ -245,6 +245,24 @@ export interface Tag {
   createdAt: string; // ISO 8601
 }
 
+/**
+ * CMS Tags - Enhanced tag system with categorization and usage tracking
+ * Table: public.cms_tags
+ */
+export interface CMSTag {
+  id: string; // UUID
+  slug: string; // unique, kebab-case
+  name: string; // display name
+  description?: string; // optional description
+  usage_count: number; // cached count (default 0)
+  category: TagCategory; // general | technical | business
+  is_active: boolean; // show/hide tag
+  created_at: string; // ISO 8601
+  updated_at: string; // ISO 8601
+  created_by?: string; // UUID (auth.users)
+  updated_by?: string; // UUID (auth.users)
+}
+
 // =====================================================
 // INSERT & UPDATE TYPES
 // =====================================================
@@ -318,6 +336,16 @@ export type TagInsert = Omit<Tag, 'id' | 'createdAt'>;
  * Tag update type
  */
 export type TagUpdate = Partial<Omit<Tag, 'id' | 'createdAt'>>;
+
+/**
+ * CMS Tag insert type
+ */
+export type CMSTagInsert = Omit<CMSTag, 'id' | 'created_at' | 'updated_at' | 'created_by' | 'updated_by'>;
+
+/**
+ * CMS Tag update type
+ */
+export type CMSTagUpdate = Partial<Omit<CMSTag, 'id' | 'created_at' | 'updated_at' | 'created_by' | 'updated_by'>>;
 
 // =====================================================
 // HELPER TYPES
@@ -555,6 +583,29 @@ export interface CMSPortfolioItem {
   gallery_urls: string[];
   is_featured: boolean;
   display_order: number;
+  is_published: boolean;
+  created_at: string; // ISO 8601
+  updated_at: string; // ISO 8601
+  created_by?: string; // UUID
+  updated_by?: string; // UUID
+}
+
+/**
+ * CMS Roadmap Items (Phase 2)
+ * Table: public.cms_roadmap_items
+ */
+export interface CMSRoadmapItem {
+  id: string; // UUID
+  quarter: string; // e.g., "Q1 2025", "Q2 2025"
+  theme: string;
+  goal: string;
+  progress: number; // 0-100
+  milestones: RoadmapMilestone[];
+  kpis: RoadmapKPI[];
+  risk_level: RoadmapRiskLevel;
+  owner?: string;
+  start_date: string; // YYYY-MM-DD
+  end_date: string; // YYYY-MM-DD
   is_published: boolean;
   created_at: string; // ISO 8601
   updated_at: string; // ISO 8601
