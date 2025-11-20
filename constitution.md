@@ -186,19 +186,14 @@ import './styles.css'
 
 ## 📝 문서화 원칙 (Documentation Principles)
 
-### 1. 명세 우선
-- **원칙**: 구현 전 명세 작성
-- **프로세스**: Specify → Plan → Tasks → Implement
-- **예외**: 긴급 버그 수정 시 사후 명세 작성 허용 (24시간 내)
-
-### 2. 변경 시 명세 먼저
-- **원칙**: 코드 변경 전 명세 업데이트
-- **실천**:
-  - spec/ 파일 먼저 수정
-  - plan/ 파일 업데이트
-  - 코드 구현
-  - tasks/ 파일 체크
-- **예외**: 없음
+### 1. Tiered SDD (차등화된 명세 주도 개발)
+- **원칙**: 변경의 규모와 리스크에 따라 문서화 수준을 차등 적용
+- **참조**: [Tiered SDD 가이드](docs/guides/tiered-sdd.md)
+- **Tier 구분**:
+  - **Tier 1 (Critical)**: Spec → Plan → Tasks → Implement (DB 변경, 핵심 로직)
+  - **Tier 2 (Standard)**: Plan/Tasks → Implement (기능 개선, UI 변경)
+  - **Tier 3 (Trivial)**: Implement (Code-First) (버그 수정, 단순 변경)
+- **예외**: 긴급한 프로덕션 장애 대응 (Tier 3로 처리 후 사후 문서화)
 
 ### 3. 커밋 메시지
 - **원칙**: Conventional Commits 준수

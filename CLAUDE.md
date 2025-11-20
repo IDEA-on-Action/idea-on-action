@@ -6,7 +6,7 @@
 **현재 버전**: 2.0.1 (CMS Phase 4 완료)
 **다음 버전**: 2.2.0 (Toss Payments Sprint 1 진행 중)
 **상태**: ✅ Production Ready | 🚀 토스페이먼츠 심사 준비 (19/40 태스크 완료)
-**개발 방법론**: SDD (Spec-Driven Development)
+**개발 방법론**: Tiered SDD (Spec-Driven Development with Flexibility)
 
 **최신 업데이트**:
 - 2025-11-20: **💳 구독 관리 시스템 구축 (Part 2/2)** ✅ - React Query 훅, UI, 자동 결제
