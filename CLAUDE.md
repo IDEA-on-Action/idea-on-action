@@ -43,7 +43,7 @@
     - RoadmapForm (5개 Accordion 섹션, 17개 필드)
     - 진행률 슬라이더 (0-100%), 동적 Milestones/KPIs (useFieldArray)
     - 분기별 필터 (Q1-Q4), 위험도 레벨, 4개 통계 카드
-    - E2E 테스트: 미작성 (향후 15-20개 권장)
+    - E2E 테스트: ✅ 작성 완료 (admin-roadmap.spec.ts)
 
   - **통합 작업** (3개 에이전트, ~10분)
     - App.tsx 라우트 통합: 6개 라우트 추가 (알파벳순 정렬)
