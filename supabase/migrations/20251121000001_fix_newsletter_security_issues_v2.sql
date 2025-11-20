@@ -1,6 +1,7 @@
 -- Fix Security Issues for newsletter_subscribers view
 -- Issue 1: Exposed Auth Users - Remove auth.users exposure
 -- Issue 2: Security Definer - Remove SECURITY DEFINER and use proper RLS
+-- VERSION 2: Fixed to use roles table join instead of direct role column
 
 -- ============================================
 -- STEP 1: Drop existing view
