@@ -136,8 +136,11 @@ Deno.serve(async (req: Request) => {
   }
 })
 
-// Helper: Process Payment with Toss Payments
-async function processPayment(sub: Subscription, orderId: string) {
+// Helper: Process Payment with Toss Payments (with retry logic)
+async function processPayment(sub: Subscription, orderId: string, retryCount = 0): Promise<any> {
+  const MAX_RETRIES = 3
+  const RETRY_DELAY_MS = 1000 // Initial delay: 1 second
+
   if (!TOSS_PAYMENTS_SECRET_KEY) {
     throw new Error('TOSS_PAYMENTS_SECRET_KEY is not set')
   }
@@ -164,13 +167,31 @@ async function processPayment(sub: Subscription, orderId: string) {
     const data = await response.json()
 
     if (!response.ok) {
+      // Check if error is retryable (network errors, 5xx server errors)
+      const isRetryable = response.status >= 500 || response.status === 429
+
+      if (isRetryable && retryCount < MAX_RETRIES) {
+        const delay = RETRY_DELAY_MS * Math.pow(2, retryCount) // Exponential backoff
+        console.log(`Payment failed (attempt ${retryCount + 1}/${MAX_RETRIES + 1}), retrying in ${delay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+        return processPayment(sub, orderId, retryCount + 1)
+      }
+
       return { success: false, error: data }
     }
 
     return { success: true, data }
 
   } catch (error: any) {
-    return { success: false, error: { message: error.message || 'Unknown error' } }
+    // Network errors - retry
+    if (retryCount < MAX_RETRIES) {
+      const delay = RETRY_DELAY_MS * Math.pow(2, retryCount)
+      console.log(`Network error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}), retrying in ${delay}ms...`)
+      await new Promise(resolve => setTimeout(resolve, delay))
+      return processPayment(sub, orderId, retryCount + 1)
+    }
+
+    return { success: false, error: { message: error.message || 'Unknown error', code: 'NETWORK_ERROR' } }
   }
 }
 
@@ -183,6 +204,7 @@ async function handlePaymentSuccess(supabase: SupabaseClient, sub: Subscription,
     status: 'success',
     payment_key: paymentData.paymentKey,
     order_id: orderId,
+    paid_at: new Date().toISOString(),
     metadata: paymentData
   })
 
@@ -197,6 +219,22 @@ async function handlePaymentSuccess(supabase: SupabaseClient, sub: Subscription,
     next_billing_date: nextDates.next_billing_date,
     updated_at: new Date().toISOString()
   }).eq('id', sub.id)
+
+  // 4. Log activity
+  await supabase.from('activity_logs').insert({
+    user_id: sub.user_id,
+    action: 'subscription_payment_success',
+    entity_type: 'subscription',
+    entity_id: sub.id,
+    metadata: {
+      amount: sub.plan.price,
+      plan_name: sub.plan.plan_name,
+      order_id: orderId,
+      payment_key: paymentData.paymentKey
+    }
+  })
+
+  console.log(`✅ Payment successful for ${sub.id}: ₩${sub.plan.price.toLocaleString()}`)
 }
 
 // Helper: Handle Payment Failure
@@ -212,10 +250,62 @@ async function handlePaymentFailure(supabase: SupabaseClient, sub: Subscription,
     metadata: errorData
   })
 
-  // 2. Update Subscription Status (Suspend or Retry logic could be added here)
-  // For now, we keep it active but maybe add a 'past_due' status in future
-  // Or just log it.
-  console.log(`Payment failed for ${sub.id}: ${errorData.message}`)
+  // 2. Check consecutive failures
+  const { data: recentPayments } = await supabase
+    .from('subscription_payments')
+    .select('status')
+    .eq('subscription_id', sub.id)
+    .order('created_at', { ascending: false })
+    .limit(3)
+
+  const consecutiveFailures = recentPayments?.filter(p => p.status === 'failed').length || 0
+
+  // 3. Suspend subscription after 3 consecutive failures
+  if (consecutiveFailures >= 3) {
+    await supabase
+      .from('subscriptions')
+      .update({
+        status: 'suspended',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', sub.id)
+
+    // Log suspension activity
+    await supabase.from('activity_logs').insert({
+      user_id: sub.user_id,
+      action: 'subscription_suspended',
+      entity_type: 'subscription',
+      entity_id: sub.id,
+      metadata: {
+        reason: 'consecutive_payment_failures',
+        failure_count: consecutiveFailures,
+        last_error: errorData.message
+      }
+    })
+
+    console.log(`⚠️ Subscription ${sub.id} suspended after 3 consecutive payment failures`)
+
+    // TODO: Send email notification to user about suspension
+    // await sendPaymentFailureEmail(sub.user_id, sub)
+  } else {
+    // Log payment failure activity
+    await supabase.from('activity_logs').insert({
+      user_id: sub.user_id,
+      action: 'subscription_payment_failed',
+      entity_type: 'subscription',
+      entity_id: sub.id,
+      metadata: {
+        amount: sub.plan.price,
+        plan_name: sub.plan.plan_name,
+        order_id: orderId,
+        error_code: errorData.code || 'UNKNOWN',
+        error_message: errorData.message,
+        consecutive_failures: consecutiveFailures
+      }
+    })
+
+    console.log(`❌ Payment failed for ${sub.id}: ${errorData.message} (${consecutiveFailures}/3 failures)`)
+  }
 }
 
 // Helper: Extend Free Subscription

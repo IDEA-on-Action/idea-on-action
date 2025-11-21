@@ -309,3 +309,149 @@ export function useBulkDeleteSubscribers() {
     },
   });
 }
+
+
+/**
+ * CSV Export 훅
+ *
+ * 필터가 적용된 구독자 목록을 CSV로 내보내기
+ *
+ * @returns Mutation 객체
+ *
+ * @example
+ * ```tsx
+ * const exportCSV = useExportNewsletterCSV();
+ * await exportCSV.mutateAsync({ status: 'confirmed', search: 'test' });
+ * ```
+ */
+export function useExportNewsletterCSV() {
+  return useMutation({
+    mutationFn: async (filters?: NewsletterFilters) => {
+      // 전체 구독자 조회 (페이지네이션 없이)
+      let query = supabase
+        .from('newsletter_subscriptions')
+        .select('*')
+        .order('subscribed_at', { ascending: false });
+
+      // 필터 적용
+      if (filters?.status && filters.status !== 'all') {
+        query = query.eq('status', filters.status);
+      }
+      if (filters?.search) {
+        query = query.ilike('email', `%${filters.search}%`);
+      }
+      if (filters?.dateFrom) {
+        query = query.gte('subscribed_at', filters.dateFrom);
+      }
+      if (filters?.dateTo) {
+        query = query.lte('subscribed_at', filters.dateTo);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('CSV export query error:', error);
+        throw new Error(`CSV 내보내기 실패: ${error.message}`);
+      }
+
+      // CSV 생성
+      const csv = generateCSV(data as NewsletterSubscriber[]);
+
+      // 파일 다운로드
+      downloadCSV(csv, `newsletter-subscribers-${getDateString()}.csv`);
+
+      return data.length;
+    },
+    onSuccess: (count) => {
+      toast.success(`${count}명의 구독자 데이터를 내보냈습니다.`);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+/**
+ * CSV 생성 헬퍼 함수
+ */
+function generateCSV(subscribers: NewsletterSubscriber[]): string {
+  // CSV 헤더
+  const headers = [
+    'Email',
+    'Status',
+    'Subscribed At',
+    'Confirmed At',
+    'Unsubscribed At',
+    'Source',
+  ];
+
+  // CSV 행
+  const rows = subscribers.map((sub) => [
+    sub.email,
+    sub.status,
+    sub.subscribed_at,
+    sub.confirmed_at || '',
+    sub.unsubscribed_at || '',
+    sub.metadata?.source || '',
+  ]);
+
+  // CSV 문자열 생성
+  const csvContent = [
+    headers.join(','),
+    ...rows.map((row) =>
+      row
+        .map((cell) => {
+          // 특수문자 이스케이프 (쉼표, 따옴표, 줄바꿈)
+          const cellStr = String(cell);
+          if (
+            cellStr.includes(',') ||
+            cellStr.includes('"') ||
+            cellStr.includes('\n')
+          ) {
+            return `"${cellStr.replace(/"/g, '""')}"`;
+          }
+          return cellStr;
+        })
+        .join(','),
+    ),
+  ].join('\n');
+
+  return csvContent;
+}
+
+/**
+ * CSV 파일 다운로드 헬퍼 함수
+ */
+function downloadCSV(csvContent: string, filename: string): void {
+  // BOM 추가 (Excel에서 한글 깨짐 방지)
+  const BOM = '﻿';
+  const blob = new Blob([BOM + csvContent], {
+    type: 'text/csv;charset=utf-8;',
+  });
+
+  // 다운로드 링크 생성
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // 메모리 정리
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * 날짜 문자열 생성 (YYYY-MM-DD)
+ */
+function getDateString(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
