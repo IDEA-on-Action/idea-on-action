@@ -277,10 +277,12 @@ export default defineConfig(({ mode }) => ({
           //   return 'vendor-editor';
           // }
 
-          // 4. Sentry - Error tracking (can load after initial paint)
-          if (id.includes('node_modules/@sentry')) {
-            return 'vendor-sentry';
-          }
+          // 4. Sentry - DISABLED due to React dependency issues
+          // Sentry React SDK uses React.Component internally
+          // which causes "Cannot read properties of undefined" errors
+          // if (id.includes('node_modules/@sentry')) {
+          //   return 'vendor-sentry';
+          // }
 
           // 5. Auth & Security (OTP, QR Code) - Only used in 2FA setup
           if (
@@ -298,10 +300,9 @@ export default defineConfig(({ mode }) => ({
           //
           // Expected Results:
           // - vendor-markdown: ~50 kB gzip (lazy loaded)
-          // - vendor-sentry:   ~30 kB gzip (lazy loaded)
           // - vendor-auth:     ~20 kB gzip (lazy loaded)
           // - pages-admin:     ~800 kB gzip (lazy loaded)
-          // - index.js:        ~500 kB gzip (initial, includes recharts+tiptap)
+          // - index.js:        ~600 kB gzip (initial, includes recharts+tiptap+sentry)
           // ============================================================
 
           // Admin Routes (23 pages + 4 components)
