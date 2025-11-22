@@ -16,6 +16,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import { createServer, setCurrentUser } from './server.js';
 import { verifyToken } from './lib/jwt.js';
 import { validateEnvironment } from './lib/supabase.js';
+import { createWebhookRouter, validateWebhookEnvironment } from './routes/index.js';
 
 /**
  * Configuration from environment
@@ -233,6 +234,10 @@ async function startHttpServer(): Promise<void> {
     }
   });
 
+  // Mount webhook routes
+  const webhookRouter = createWebhookRouter();
+  app.use('/api/webhooks', webhookRouter);
+
   // Start the HTTP server
   app.listen(PORT, HOST, () => {
     console.log(`[MCP Server] HTTP server listening on http://${HOST}:${PORT}`);
@@ -242,6 +247,7 @@ async function startHttpServer(): Promise<void> {
     console.log(`  - POST http://${HOST}:${PORT}/mcp (MCP protocol)`);
     console.log(`  - GET  http://${HOST}:${PORT}/health (Health check)`);
     console.log(`  - GET  http://${HOST}:${PORT}/info (Server info)`);
+    console.log(`  - POST http://${HOST}:${PORT}/api/webhooks/compass (Webhook)`);
   });
 }
 
@@ -263,6 +269,9 @@ async function main(): Promise<void> {
     console.error('  - SUPABASE_JWT_SECRET (for token verification)');
     process.exit(1);
   }
+
+  // Validate webhook environment (non-fatal, just warns)
+  validateWebhookEnvironment();
 
   const { transport } = parseArgs();
 

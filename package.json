@@ -42,7 +42,8 @@
     "env:export:csv": "node scripts/env/export-env-to-csv.js",
     "env:vault:new": "npx dotenv-vault new",
     "env:vault:push": "npx dotenv-vault push",
-    "env:vault:pull": "npx dotenv-vault pull"
+    "env:vault:pull": "npx dotenv-vault pull",
+    "generate:webhook-secret": "node scripts/generate-webhook-secret.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
