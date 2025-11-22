@@ -132,6 +132,9 @@ const PricingPage = lazy(() => import("./pages/services-platform/PricingPage"));
 // Lazy load (Code Split) - Hub pages (신규 IA 구조)
 const ProjectsHub = lazy(() => import("./pages/projects/ProjectsHub"));
 const StoriesHub = lazy(() => import("./pages/stories/StoriesHub"));
+const Changelog = lazy(() => import("./pages/stories/Changelog"));
+const NewsletterArchive = lazy(() => import("./pages/stories/NewsletterArchive"));
+const NewsletterDetail = lazy(() => import("./pages/stories/NewsletterDetail"));
 const ConnectHub = lazy(() => import("./pages/connect/ConnectHub"));
 
 // Lazy load (Code Split) - Legal pages
@@ -257,6 +260,9 @@ const App = () => (
                 <Route path="/stories/blog" element={<Blog />} />
                 <Route path="/stories/blog/:slug" element={<BlogPost />} />
                 <Route path="/stories/notices" element={<Notices />} />
+                <Route path="/stories/changelog" element={<Changelog />} />
+                <Route path="/stories/newsletter" element={<NewsletterArchive />} />
+                <Route path="/stories/newsletter/:id" element={<NewsletterDetail />} />
 
                 {/* Connect Hub - 신규 IA */}
                 <Route path="/connect" element={<ConnectHub />} />

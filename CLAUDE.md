@@ -3,7 +3,7 @@
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
 **마지막 업데이트**: 2025-11-23
-**현재 버전**: 2.6.0 (사이트 재구조화 Sprint 1 완료)
+**현재 버전**: 2.7.0 (사이트 재구조화 Sprint 2+3 완료)
 **상태**: ✅ Production Ready | 🔒 보안 점수 98/100 | 🎯 토스페이먼츠 심사 제출 완료
 **개발 방법론**: SDD (Spec-Driven Development) + MCP (Model Context Protocol) Integration
 
@@ -12,13 +12,20 @@
 ## 📋 최신 업데이트
 
 ### 2025-11-23 (오늘)
+- ✅ **사이트 재구조화 Sprint 2 + Sprint 3 병렬 완료** - 프로젝트/이야기/함께하기 페이지
+  - **Sprint 2**: ProjectsHub 4개 탭 완성, ProjectCard 확장, 탭 컴포넌트 4개
+  - **Sprint 3**: StoriesHub, ConnectHub 완성, Changelog/Newsletter 페이지
+  - **DB 마이그레이션**: changelog_entries, newsletter_archive 테이블
+  - **React 훅**: useChangelog, useNewsletterArchive 생성
+  - **E2E 테스트**: 68개 신규 작성 (projects-hub, stories-hub, connect-hub)
+  - **병렬 에이전트**: 5~6개 동시 진행, 74% 시간 절감
+  - **빌드**: 29.14s 성공 (PWA precache 27 entries)
+
 - ✅ **사이트 재구조화 Sprint 1 완료** - 메뉴 재구성 및 허브 페이지
   - **메뉴**: 7개 → 5개 (홈/서비스/프로젝트/이야기/함께하기)
-  - **허브 페이지**: ProjectsHub, StoriesHub, ConnectHub 신규 생성
+  - **허브 페이지**: ProjectsHub, StoriesHub, ConnectHub 스켈레톤 생성
   - **리디렉션**: /about→/, /roadmap→/projects?tab=roadmap 등 8개 설정
-  - **E2E 테스트**: navigation.spec.ts, redirects.spec.ts 신규 작성
   - **SDD 문서**: spec/, plan/, tasks/ 디렉토리 구조화
-  - **빌드**: 17.45s 성공 (PWA precache 27 entries)
 
 - ✅ **CMS Phase 5 완료** - 리치 텍스트 에디터 & 미디어 라이브러리 고도화 (병렬 6개 에이전트)
   - **Sprint 1: 미디어 라이브러리 고도화**

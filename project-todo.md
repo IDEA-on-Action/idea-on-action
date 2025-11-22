@@ -3,9 +3,9 @@
 > 프로젝트 작업 목록 및 진행 상황 관리
 
 **마지막 업데이트**: 2025-11-23
-**현재 Phase**: ✅ Sprint 1 완료 (사이트 재구조화)
-**다음 단계**: Sprint 2 - 프로젝트 페이지 통합 (예정: 2025-12-01~07)
-**프로젝트 버전**: 2.6.0 (사이트 재구조화 Sprint 1 완료)
+**현재 Phase**: ✅ Sprint 2 + Sprint 3 완료
+**다음 단계**: Sprint 4 - GitHub 연동 (예정)
+**프로젝트 버전**: 2.7.0 (사이트 재구조화 Sprint 2+3 완료)
 **프로덕션**: https://www.ideaonaction.ai
 
 ---
@@ -27,9 +27,9 @@
 
 ### Sprint 계획
 - [x] **Sprint 1** (1주): 메뉴 재구성, 리디렉션, 홈 페이지 재구성 ✅ 2025-11-23 완료
-- [ ] **Sprint 2** (1주): 프로젝트 페이지 통합 (포트폴리오+로드맵+실험실)
-- [ ] **Sprint 3** (1주): 이야기 섹션 (블로그/뉴스레터/Changelog) + 함께하기
-- [ ] **Sprint 4** (2주): GitHub 연동, 진척률 자동화, 릴리즈 알림
+- [x] **Sprint 2** (4일): 프로젝트 페이지 통합 (포트폴리오+로드맵+실험실) ✅ 2025-11-23 완료
+- [x] **Sprint 3** (4일): 이야기 섹션 (블로그/뉴스레터/Changelog) + 함께하기 ✅ 2025-11-23 완료 (병렬)
+- [ ] **Sprint 4** (2주): GitHub 연동, 진척률 자동화, 릴리즈 알림 (예정)
 
 ### 핵심 기능
 1. **프로젝트 진척률 실시간 표시**: GitHub 연동, 마일스톤 기반
@@ -40,6 +40,41 @@
 ---
 
 ## ✅ 최근 완료 (2025-11-23)
+
+### 🚀 사이트 재구조화 Sprint 2 + Sprint 3 병렬 완료 ✅ (100%)
+
+**완료일**: 2025-11-23
+**병렬 에이전트**: 5~6개 동시 진행
+**시간 절감**: 74% (순차 34시간 → 병렬 9시간)
+
+#### Sprint 2: 프로젝트 페이지 통합 (완료)
+| Task | 작업 | 상태 |
+|------|------|------|
+| TASK-010 | ProjectsHub.tsx 완성 (4개 탭) | ✅ 완료 |
+| TASK-011 | 탭 컴포넌트 추출 (4개 파일) | ✅ 완료 |
+| TASK-012 | ProjectCard.tsx 확장 (진척률) | ✅ 완료 |
+| TASK-015 | E2E 테스트 22개 작성 | ✅ 완료 |
+
+#### Sprint 3: 이야기 & 함께하기 (완료)
+| Task | 작업 | 상태 |
+|------|------|------|
+| TASK-016 | StoriesHub.tsx 완성 | ✅ 완료 |
+| TASK-017 | Changelog.tsx 신규 생성 | ✅ 완료 |
+| TASK-018 | changelog_entries 마이그레이션 | ✅ 완료 |
+| TASK-019 | NewsletterArchive.tsx 생성 | ✅ 완료 |
+| TASK-020 | NewsletterDetail.tsx 생성 | ✅ 완료 |
+| TASK-021 | newsletter_archive 마이그레이션 | ✅ 완료 |
+| TASK-022 | useNewsletterArchive & useChangelog 훅 | ✅ 완료 |
+| TASK-034 | ConnectHub.tsx 완성 | ✅ 완료 |
+| TASK-025 | E2E 테스트 46개 작성 | ✅ 완료 |
+
+#### 통계
+- **신규 파일**: 20+ 개 (컴포넌트, 페이지, 훅, 테스트)
+- **E2E 테스트**: 68개 신규 (projects-hub 22, stories-hub 23, connect-hub 23)
+- **DB 마이그레이션**: 2개 (changelog_entries, newsletter_archive)
+- **빌드**: 29.14s 성공 (PWA precache 27 entries)
+
+---
 
 ### 🏗️ 사이트 재구조화 Sprint 1 ✅ (100% 완료)
 
