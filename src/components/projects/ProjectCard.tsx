@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/v2";
+import { useGitHubStats, formatGitHubStatsSummary } from "@/hooks/useGitHubStats";
 
 /**
  * 프로젝트 상태별 설정
@@ -84,6 +85,11 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const statusConfig = STATUS_CONFIG[project.status] || STATUS_CONFIG["backlog"];
   const progress = project.metrics?.progress ?? 0;
+
+  // GitHub 통계 조회 (showGitHub가 true이고 GitHub URL이 있을 때만)
+  const { data: githubStats, isLoading: isLoadingGitHub } = useGitHubStats(
+    showGitHub && project.links?.github ? project.links.github : null
+  );
 
   // 기술 스택 태그 (컴팩트 모드: 최대 2개, 일반 모드: 최대 3개)
   const maxTags = compact ? 2 : 3;
@@ -235,29 +241,40 @@ export function ProjectCard({
 
           {/* GitHub 정보 (showGitHub가 true일 때) */}
           {showGitHub && project.links?.github && (
-            <div className="flex items-center gap-3 pt-2 border-t border-border/50">
-              <a
-                href={project.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Github className="w-3.5 h-3.5" />
-                <span>GitHub</span>
-              </a>
-              {project.links.demo && (
+            <div className="flex items-center justify-between pt-2 border-t border-border/50">
+              <div className="flex items-center gap-3">
                 <a
-                  href={project.links.demo}
+                  href={project.links.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
                   className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Demo</span>
+                  <Github className="w-3.5 h-3.5" />
+                  <span>GitHub</span>
                 </a>
-              )}
+                {project.links.demo && (
+                  <a
+                    href={project.links.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Demo</span>
+                  </a>
+                )}
+              </div>
+
+              {/* GitHub 통계 */}
+              {isLoadingGitHub ? (
+                <span className="text-[10px] text-muted-foreground animate-pulse">로딩중...</span>
+              ) : githubStats ? (
+                <span className="text-[10px] text-muted-foreground">
+                  {formatGitHubStatsSummary(githubStats)}
+                </span>
+              ) : null}
             </div>
           )}
         </CardContent>

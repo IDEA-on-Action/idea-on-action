@@ -3,7 +3,7 @@
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
 **마지막 업데이트**: 2025-11-23
-**현재 버전**: 2.7.0 (사이트 재구조화 Sprint 2+3 완료)
+**현재 버전**: 2.8.0 (사이트 재구조화 Sprint 4 완료 - GitHub 연동)
 **상태**: ✅ Production Ready | 🔒 보안 점수 98/100 | 🎯 토스페이먼츠 심사 제출 완료
 **개발 방법론**: SDD (Spec-Driven Development) + MCP (Model Context Protocol) Integration
 
@@ -12,6 +12,18 @@
 ## 📋 최신 업데이트
 
 ### 2025-11-23 (오늘)
+- ✅ **사이트 재구조화 Sprint 4 완료** - GitHub 연동 & 진척률 자동화
+  - **TASK-026**: GitHub API 서비스 생성 (`src/lib/github-api.ts`)
+  - **TASK-027**: useGitHubStats 훅 생성 (React Query 캐싱)
+  - **TASK-028**: github_stats_cache 마이그레이션 (API Rate Limit 최적화)
+  - **TASK-029**: ProjectCard GitHub 통계 연동 (Stars, Forks, Contributors)
+  - **TASK-030**: 진척률 자동 계산 (마일스톤 기반 트리거)
+  - **TASK-031**: Release 감지 Edge Function (`sync-github-releases`)
+  - **TASK-032**: 관리자 알림 연동 (앱 내 + Slack)
+  - **TASK-033**: E2E 테스트 15개 신규 작성
+  - **패키지**: `@octokit/rest` 추가
+  - **빌드**: 20.85s 성공 (PWA precache 27 entries)
+
 - ✅ **사이트 재구조화 Sprint 2 + Sprint 3 병렬 완료** - 프로젝트/이야기/함께하기 페이지
   - **Sprint 2**: ProjectsHub 4개 탭 완성, ProjectCard 확장, 탭 컴포넌트 4개
   - **Sprint 3**: StoriesHub, ConnectHub 완성, Changelog/Newsletter 페이지
@@ -19,29 +31,6 @@
   - **React 훅**: useChangelog, useNewsletterArchive 생성
   - **E2E 테스트**: 68개 신규 작성 (projects-hub, stories-hub, connect-hub)
   - **병렬 에이전트**: 5~6개 동시 진행, 74% 시간 절감
-  - **빌드**: 29.14s 성공 (PWA precache 27 entries)
-
-- ✅ **사이트 재구조화 Sprint 1 완료** - 메뉴 재구성 및 허브 페이지
-  - **메뉴**: 7개 → 5개 (홈/서비스/프로젝트/이야기/함께하기)
-  - **허브 페이지**: ProjectsHub, StoriesHub, ConnectHub 스켈레톤 생성
-  - **리디렉션**: /about→/, /roadmap→/projects?tab=roadmap 등 8개 설정
-  - **SDD 문서**: spec/, plan/, tasks/ 디렉토리 구조화
-
-- ✅ **CMS Phase 5 완료** - 리치 텍스트 에디터 & 미디어 라이브러리 고도화 (병렬 6개 에이전트)
-  - **Sprint 1: 미디어 라이브러리 고도화**
-    - Storage bucket 마이그레이션 (`20251123000100_create_media_storage_bucket.sql`)
-    - `useMediaUpload` 훅 신규 생성 (단일/다중 업로드, 진행률 추적)
-    - `useMediaList` 훅 신규 생성 (페이지네이션, 무한 스크롤, React Query)
-    - `MediaFilter` 컴포넌트 신규 생성 (검색, 타입, 날짜, 정렬)
-    - `MediaUploader` 접근성 개선 (WCAG 2.1 AA, 한글화)
-    - `media-utils.ts` 확장 (이미지 최적화, 썸네일, 유효성 검사)
-    - `media.types.ts` 타입 정의 파일 신규 생성
-  - **Sprint 2: Tiptap 리치 텍스트 에디터**
-    - 고급 Extensions 4개 (`ImageExtension`, `CodeBlockExtension`, `MarkdownExtension`, `LinkExtension`)
-    - `ImageInsertDialog`, `CodeBlockDialog` 다이얼로그 컴포넌트
-    - `FormRichTextEditor` React Hook Form 통합 래퍼
-    - Admin 페이지 통합 (Portfolio, Lab, Blog)
-    - XSS 방지, 보안 강화
 
 ### 2025-11-22
 - ✅ **Minu 브랜드 전환 완료** - COMPASS → Minu 시리즈 리브랜딩
