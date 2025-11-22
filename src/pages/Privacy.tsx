@@ -26,7 +26,7 @@ export default function Privacy() {
         <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <div className="bg-primary/10 border-l-4 border-primary px-6 py-3 mb-8 rounded-r-lg">
             <p className="text-sm font-semibold mb-0">
-              <span className="text-primary">시행일</span>: 2025년 11월 14일
+              <span className="text-primary">시행일</span>: 2025년 11월 22일 (개정)
             </p>
           </div>
 
@@ -88,12 +88,21 @@ export default function Privacy() {
 
           <h3 className="text-xl font-semibold mt-8 mb-4 text-primary">2. 결제 시 수집 항목</h3>
           <ul className="space-y-2">
-            <li>신용카드 정보 (카드번호 뒤 4자리, 승인번호)</li>
+            <li>신용카드 정보 (카드번호 뒤 4자리, 승인번호, 유효기간 - 마스킹 처리)</li>
             <li>계좌 정보 (은행명, 계좌번호 일부)</li>
-            <li>결제 거래 내역</li>
+            <li>결제 거래 내역 (결제일시, 금액, 상품명, 거래상태)</li>
+            <li>빌링키 (구독 자동 결제용, 토스페이먼츠 측에서 안전하게 관리)</li>
           </ul>
 
-          <h3 className="text-xl font-semibold mt-8 mb-4 text-primary">3. 자동 수집 항목</h3>
+          <h3 className="text-xl font-semibold mt-8 mb-4 text-primary">3. 구독 서비스 관련 수집 항목</h3>
+          <ul className="space-y-2">
+            <li>구독 플랜 정보 (플랜명, 결제 주기, 구독 시작일)</li>
+            <li>구독 상태 (활성, 일시중지, 해지)</li>
+            <li>자동 결제 동의 여부 및 동의 일시</li>
+            <li>다음 결제 예정일</li>
+          </ul>
+
+          <h3 className="text-xl font-semibold mt-8 mb-4 text-primary">4. 자동 수집 항목</h3>
           <ul className="space-y-2">
             <li>IP 주소, 쿠키, 접속 기록, 서비스 이용 기록</li>
             <li>기기 정보 (OS, 브라우저 종류)</li>
@@ -120,7 +129,38 @@ export default function Privacy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제4조 (개인정보의 제3자 제공)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제4조 (결제 정보의 처리)</h2>
+          <ol className="space-y-4">
+            <li>
+              <strong className="text-primary">결제 정보의 수집 목적</strong>: 서비스 이용료 결제, 환불 처리, 구독 자동 갱신, 결제 내역 조회
+            </li>
+            <li>
+              <strong className="text-primary">결제 정보의 처리 방식</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>신용카드 전체 번호는 회사에 저장되지 않습니다. 결제대행사(토스페이먼츠)에서 암호화하여 안전하게 처리합니다.</li>
+                <li>빌링키(구독 자동 결제용 토큰)는 토스페이먼츠 측에서 보관하며, 회사는 결제 요청 시에만 사용합니다.</li>
+                <li>결제 내역(거래일시, 금액, 승인번호)은 전자금융거래법에 따라 5년간 보관됩니다.</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">자동 결제 동의</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>구독 서비스 이용 시 자동 결제에 대한 별도 동의를 받습니다.</li>
+                <li>결제 예정일 최소 7일 전에 이메일로 결제 예정 안내를 발송합니다.</li>
+                <li>이용자는 언제든지 자동 결제를 해지할 수 있습니다.</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">결제 정보의 보안</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>PCI-DSS 인증을 받은 토스페이먼츠를 통해 결제가 처리됩니다.</li>
+                <li>모든 결제 통신은 SSL/TLS 암호화를 통해 보호됩니다.</li>
+                <li>회사 내부에서 결제 정보에 접근할 수 있는 인원은 최소한으로 제한됩니다.</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제5조 (개인정보의 제3자 제공)</h2>
           <p>
             회사는 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 다만, 다음의 경우에는 예외로 합니다:
           </p>
@@ -151,7 +191,7 @@ export default function Privacy() {
             </tbody>
           </table>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제5조 (개인정보의 파기 절차 및 방법)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제6조 (개인정보의 파기 절차 및 방법)</h2>
           <ol>
             <li>
               <strong>파기 절차</strong>: 이용자가 입력한 정보는 목적이 달성된 후 별도의 DB로 옮겨져 내부 방침 및 관련 법령에 따라 일정 기간 저장된 후 파기됩니다.
@@ -165,7 +205,7 @@ export default function Privacy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제6조 (개인정보 처리의 위탁)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제7조 (개인정보 처리의 위탁)</h2>
           <p>회사는 원활한 서비스 제공을 위해 다음과 같이 개인정보 처리 업무를 위탁하고 있습니다:</p>
           <table className="min-w-full border-collapse border border-border">
             <thead>
@@ -190,7 +230,7 @@ export default function Privacy() {
             </tbody>
           </table>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제7조 (정보주체의 권리와 그 행사 방법)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제8조 (정보주체의 권리와 그 행사 방법)</h2>
           <p>이용자는 언제든지 다음의 권리를 행사할 수 있습니다:</p>
           <ol>
             <li>개인정보 열람 요구</li>
@@ -202,7 +242,7 @@ export default function Privacy() {
             회사는 지체 없이 조치하겠습니다.
           </p>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제8조 (개인정보 보호책임자)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제9조 (개인정보 보호책임자)</h2>
           <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만 처리 및 피해구제를 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다:</p>
           <div className="bg-muted/50 p-6 rounded-lg">
             <p>
@@ -216,7 +256,7 @@ export default function Privacy() {
             </p>
           </div>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제9조 (개인정보의 안전성 확보 조치)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제10조 (개인정보의 안전성 확보 조치)</h2>
           <p>회사는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다:</p>
           <ol>
             <li>
@@ -230,7 +270,7 @@ export default function Privacy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제10조 (개인정보 자동 수집 장치의 설치·운영 및 거부에 관한 사항)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제11조 (개인정보 자동 수집 장치의 설치·운영 및 거부에 관한 사항)</h2>
           <ol>
             <li>
               회사는 이용자에게 개별적인 맞춤 서비스를 제공하기 위해 이용 정보를 저장하고 수시로 불러오는 '쿠키(Cookie)'를 사용합니다.
@@ -243,9 +283,9 @@ export default function Privacy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제11조 (개인정보처리방침의 변경)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제12조 (개인정보처리방침의 변경)</h2>
           <p>
-            이 개인정보처리방침은 2025년 11월 14일부터 적용되며, 법령 및 방침에 따른 변경내용의 추가, 삭제 및 정정이 있는 경우에는
+            이 개인정보처리방침은 2025년 11월 22일부터 적용되며, 법령 및 방침에 따른 변경내용의 추가, 삭제 및 정정이 있는 경우에는
             변경사항의 시행 7일 전부터 공지사항을 통하여 고지할 것입니다.
           </p>
 
@@ -254,7 +294,7 @@ export default function Privacy() {
           <div className="bg-muted/50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold mb-2">부칙</h3>
             <p>
-              <strong>시행일</strong>: 이 개인정보처리방침은 2025년 11월 14일부터 시행합니다.
+              <strong>시행일</strong>: 이 개인정보처리방침은 2025년 11월 22일부터 시행합니다.
             </p>
           </div>
 

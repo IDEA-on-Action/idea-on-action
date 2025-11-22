@@ -9,10 +9,10 @@
  */
 
 import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router-dom'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { SEO } from '@/components/shared/SEO'
 import { ServiceCard } from '@/components/services/ServiceCard'
 import { useServices, useServiceCategories, type ServiceSortBy } from '@/hooks/useServices'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
@@ -45,13 +45,17 @@ export default function Services() {
 
   return (
     <>
-      <Helmet>
-        <title>서비스 | VIBE WORKING</title>
-        <meta
-          name="description"
-          content="AI 기반 워킹 솔루션 - 업무 자동화, 데이터 분석, 컨설팅 서비스를 제공합니다."
-        />
-      </Helmet>
+      <SEO
+        title="서비스"
+        description="AI 기반 프로덕트 스튜디오 - 풀스택 개발, UI/UX 디자인, MVP 개발, 운영 대행까지. 아이디어를 실현하는 전문 서비스를 제공합니다."
+        keywords={['AI 서비스', '풀스택 개발', 'MVP 개발', 'UI/UX 디자인', '운영 대행', '프로덕트 스튜디오']}
+        canonical="/services"
+        ogType="website"
+        breadcrumbs={[
+          { name: '홈', url: '/' },
+          { name: '서비스', url: '/services' }
+        ]}
+      />
 
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />

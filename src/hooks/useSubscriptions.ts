@@ -67,8 +67,14 @@ export function useCancelSubscription() {
   return useMutation({
     mutationFn: async ({ subscription_id, cancel_at_period_end, reason }: CancelSubscriptionRequest) => {
       // 1. 구독 상태 업데이트
+      // 1. 구독 상태 업데이트
       const status = cancel_at_period_end ? 'active' : 'cancelled'
-      const updateData: any = {
+      const updateData: {
+        cancel_at_period_end: boolean
+        metadata?: { cancel_reason: string }
+        status?: string
+        cancelled_at?: string
+      } = {
         cancel_at_period_end,
         metadata: reason ? { cancel_reason: reason } : undefined
       }

@@ -103,10 +103,14 @@ const Header = ({ className = "" }: HeaderProps) => {
 
   return (
     <header
+      role="banner"
       className={`fixed top-0 left-0 right-0 z-50 glass-card border-b transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-md' : 'bg-background/80'
         } border-gray-200 dark:border-gray-700 ${className}`}
     >
-      <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <nav
+        className="container mx-auto px-4 h-16 flex items-center justify-between"
+        aria-label="메인 네비게이션"
+      >
         <Link
           to="/"
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
@@ -261,8 +265,12 @@ const Header = ({ className = "" }: HeaderProps) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-          <div className="container mx-auto px-4 py-4 space-y-4">
+        <div
+          className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700"
+          role="menu"
+          aria-label="모바일 메뉴"
+        >
+          <div className="container mx-auto px-4 py-4 space-y-4" role="none">
             {/* 모바일 검색 */}
             <Button
               variant="ghost"
@@ -272,8 +280,9 @@ const Header = ({ className = "" }: HeaderProps) => {
                 setIsMobileMenuOpen(false);
               }}
               aria-label={t('search:title')}
+              role="menuitem"
             >
-              <SearchIcon className="h-5 w-5 mr-2" />
+              <SearchIcon className="h-5 w-5 mr-2" aria-hidden="true" />
               {t('search:title')}
             </Button>
 
@@ -295,6 +304,7 @@ const Header = ({ className = "" }: HeaderProps) => {
                     }`}
                   aria-label={`${item.label} 페이지로 이동`}
                   aria-current={isActive ? 'page' : undefined}
+                  role="menuitem"
                 >
                   {item.label}
                 </Component>

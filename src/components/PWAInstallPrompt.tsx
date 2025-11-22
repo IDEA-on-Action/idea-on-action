@@ -75,7 +75,7 @@ export function PWAInstallPrompt() {
               앱으로 설치하기
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
-              VIBE WORKING을 홈 화면에 추가하여 빠르게 접근하세요.
+              IDEA on Action을 홈 화면에 추가하여 빠르게 접근하세요.
             </p>
             <div className="flex gap-2 mt-3">
               <Button onClick={handleInstall} size="sm">

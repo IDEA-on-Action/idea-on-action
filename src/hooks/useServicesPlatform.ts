@@ -8,6 +8,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { domainCacheConfig } from '@/lib/react-query';
 import type {
   ServicePackage,
   ServicePackageInsert,
@@ -55,8 +56,8 @@ export function useServices() {
       if (error) throw error;
       return (data as ServiceWithContent[]) || [];
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+    ...domainCacheConfig.services,
+    refetchOnWindowFocus: false, // 성능 최적화
   });
 }
 
@@ -79,8 +80,8 @@ export function useServiceBySlug(slug: string) {
       return data as ServiceWithContent | null;
     },
     enabled: !!slug,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    ...domainCacheConfig.services,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -482,8 +483,8 @@ export function usePopularPackages(serviceId?: string) {
       if (error) throw error;
       return data || [];
     },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    ...domainCacheConfig.servicePackages,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -517,7 +518,7 @@ export function usePopularPlans(serviceId?: string) {
       if (error) throw error;
       return data || [];
     },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    ...domainCacheConfig.subscriptionPlans,
+    refetchOnWindowFocus: false,
   });
 }

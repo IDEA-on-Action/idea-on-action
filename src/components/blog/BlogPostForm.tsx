@@ -1,6 +1,6 @@
 /**
  * BlogPostForm Component
- * Phase 11 Week 1: Blog System
+ * Phase 11 Week 1: Blog System + CMS Phase 5: Version Control
  *
  * Form for creating/editing blog posts
  * - React Hook Form + Zod validation
@@ -8,14 +8,15 @@
  * - Featured image upload
  * - Category/Tag selection
  * - Auto slug generation
+ * - Version control with auto-save
  */
 
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useNavigate } from 'react-router-dom'
-import { Loader2, Eye, Upload, X } from 'lucide-react'
+import { Loader2, Eye, Upload, X, Save } from 'lucide-react'
 import { useCategories, useTags, useCreateBlogPost, useUpdateBlogPost } from '@/hooks/useBlogPosts'
 import { generateSlug, calculateReadingTime } from '@/types/blog'
 import { devError } from '@/lib/errors'
@@ -46,6 +47,9 @@ import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import type { BlogPostWithRelations } from '@/types/blog'
+import { VersionHistory, AutoSaveIndicator, VersionCompareDialog } from '@/components/admin/version'
+import { useAutoSave, useCreateVersion, useLatestVersion, useWarnOnUnsavedChanges } from '@/hooks/useVersionControl'
+import type { BlogPostSnapshot } from '@/types/version.types'
 
 // Validation Schema
 const blogPostSchema = z.object({
@@ -75,11 +79,17 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
   const { user } = useAuth()
   const [isUploading, setIsUploading] = useState(false)
   const [previewImage, setPreviewImage] = useState<string | null>(post?.featured_image || null)
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false)
+  const [compareVersions, setCompareVersions] = useState<{ from: number; to: number } | null>(null)
 
   const { data: categories, isLoading: categoriesLoading } = useCategories()
   const { data: tags, isLoading: tagsLoading } = useTags()
   const createMutation = useCreateBlogPost()
   const updateMutation = useUpdateBlogPost()
+  const createVersion = useCreateVersion()
+
+  // Get latest version number for current badge
+  const { data: latestVersion } = useLatestVersion('blog', post?.id || '', false)
 
   const form = useForm<BlogPostFormData>({
     resolver: zodResolver(blogPostSchema),
@@ -101,12 +111,102 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
   const watchTitle = form.watch('title')
   const watchContent = form.watch('content')
 
+  // Watch all form values for auto-save
+  const watchedValues = useWatch({ control: form.control })
+
+  // Convert form data to snapshot for versioning
+  const currentSnapshot = useMemo((): BlogPostSnapshot => ({
+    title: watchedValues.title || '',
+    slug: watchedValues.slug || '',
+    excerpt: watchedValues.excerpt,
+    content: watchedValues.content || '',
+    featured_image: watchedValues.featured_image,
+    category_id: watchedValues.category_id,
+    tag_ids: watchedValues.tag_ids,
+    status: watchedValues.status || 'draft',
+    meta_title: watchedValues.meta_title,
+    meta_description: watchedValues.meta_description,
+  }), [watchedValues])
+
+  // Auto-save hook (only for edit mode)
+  const autoSave = useAutoSave({
+    content_type: 'blog',
+    content_id: post?.id || '',
+    config: {
+      enabled: mode === 'edit' && !!post?.id,
+      interval_ms: 30000, // 30 seconds
+      debounce_ms: 2000, // 2 seconds
+      max_auto_saves: 5,
+    },
+  })
+
+  // Trigger auto-save when content changes
+  useEffect(() => {
+    if (mode === 'edit' && post?.id && form.formState.isDirty) {
+      autoSave.save(currentSnapshot as Record<string, unknown>)
+    }
+  }, [currentSnapshot, mode, post?.id, form.formState.isDirty, autoSave])
+
+  // Warn before leaving with unsaved changes
+  useWarnOnUnsavedChanges(form.formState.isDirty && mode === 'edit')
+
   // Auto-generate slug from title
   useEffect(() => {
     if (mode === 'create' && watchTitle && !form.formState.dirtyFields.slug) {
       form.setValue('slug', generateSlug(watchTitle))
     }
   }, [watchTitle, mode, form])
+
+  // Handle version restore
+  const handleVersionRestore = useCallback((content: Record<string, unknown>) => {
+    const snapshot = content as BlogPostSnapshot
+    form.reset({
+      title: snapshot.title,
+      slug: snapshot.slug,
+      excerpt: snapshot.excerpt || '',
+      content: snapshot.content,
+      featured_image: snapshot.featured_image || '',
+      category_id: snapshot.category_id,
+      tag_ids: snapshot.tag_ids || [],
+      status: snapshot.status,
+      meta_title: snapshot.meta_title || '',
+      meta_description: snapshot.meta_description || '',
+    })
+    if (snapshot.featured_image) {
+      setPreviewImage(snapshot.featured_image)
+    }
+    toast({
+      title: 'Version Restored',
+      description: 'The form has been updated with the restored version.',
+    })
+  }, [form, toast])
+
+  // Handle version compare
+  const handleVersionCompare = useCallback((from: number, to: number) => {
+    setCompareVersions({ from, to })
+    setCompareDialogOpen(true)
+  }, [])
+
+  // Save version manually
+  const handleSaveVersion = async () => {
+    if (!post?.id) return
+
+    try {
+      await createVersion.mutateAsync({
+        content_type: 'blog',
+        content_id: post.id,
+        content_snapshot: currentSnapshot as Record<string, unknown>,
+        change_summary: 'Manual save',
+        is_auto_save: false,
+      })
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to save version',
+        variant: 'destructive',
+      })
+    }
+  }
 
   // Handle image upload
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,6 +316,41 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Version Control Header - Only in Edit Mode */}
+        {mode === 'edit' && post?.id && (
+          <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
+            <div className="flex items-center gap-4">
+              <AutoSaveIndicator
+                status={autoSave.status}
+                lastSavedAt={autoSave.lastSavedAt}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSaveVersion}
+                disabled={createVersion.isPending || !form.formState.isDirty}
+              >
+                {createVersion.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
+                Save Version
+              </Button>
+              <VersionHistory
+                contentType="blog"
+                contentId={post.id}
+                currentVersionNumber={latestVersion?.version_number}
+                onRestore={handleVersionRestore}
+                onCompare={handleVersionCompare}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Title */}
         <FormField
           control={form.control}
@@ -524,6 +659,18 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
           </Button>
         </div>
       </form>
+
+      {/* Version Compare Dialog */}
+      {mode === 'edit' && post?.id && compareVersions && (
+        <VersionCompareDialog
+          open={compareDialogOpen}
+          onOpenChange={setCompareDialogOpen}
+          contentType="blog"
+          contentId={post.id}
+          fromVersion={compareVersions.from}
+          toVersion={compareVersions.to}
+        />
+      )}
     </Form>
   )
 }

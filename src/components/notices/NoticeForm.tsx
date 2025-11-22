@@ -1,12 +1,15 @@
 /**
- * NoticeForm Component - Phase 11 Week 2
+ * NoticeForm Component - Phase 11 Week 2 + CMS Phase 5: Version Control
+ *
+ * Form for creating/editing notices with version control support
  */
 
-import { useForm } from 'react-hook-form'
+import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useNavigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Save } from 'lucide-react'
 import { useCreateNotice, useUpdateNotice } from '@/hooks/useNotices'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,6 +20,9 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/hooks/useAuth'
 import type { NoticeWithAuthor } from '@/types/notice'
+import { VersionHistory, AutoSaveIndicator, VersionCompareDialog } from '@/components/admin/version'
+import { useAutoSave, useCreateVersion, useLatestVersion, useWarnOnUnsavedChanges } from '@/hooks/useVersionControl'
+import type { NoticeSnapshot } from '@/types/version.types'
 
 const noticeSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
@@ -38,8 +44,15 @@ export function NoticeForm({ notice, mode }: NoticeFormProps) {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { user } = useAuth()
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false)
+  const [compareVersions, setCompareVersions] = useState<{ from: number; to: number } | null>(null)
+
   const createMutation = useCreateNotice()
   const updateMutation = useUpdateNotice()
+  const createVersion = useCreateVersion()
+
+  // Get latest version number for current badge
+  const { data: latestVersion } = useLatestVersion('notice', notice?.id || '', false)
 
   const form = useForm<NoticeFormData>({
     resolver: zodResolver(noticeSchema),
@@ -52,6 +65,85 @@ export function NoticeForm({ notice, mode }: NoticeFormProps) {
       expires_at: notice?.expires_at || '',
     },
   })
+
+  // Watch all form values for auto-save
+  const watchedValues = useWatch({ control: form.control })
+
+  // Convert form data to snapshot for versioning
+  const currentSnapshot = useMemo((): NoticeSnapshot => ({
+    title: watchedValues.title || '',
+    content: watchedValues.content || '',
+    type: watchedValues.type || 'info',
+    status: watchedValues.status || 'draft',
+    is_pinned: watchedValues.is_pinned || false,
+    expires_at: watchedValues.expires_at,
+  }), [watchedValues])
+
+  // Auto-save hook (only for edit mode)
+  const autoSave = useAutoSave({
+    content_type: 'notice',
+    content_id: notice?.id || '',
+    config: {
+      enabled: mode === 'edit' && !!notice?.id,
+      interval_ms: 30000,
+      debounce_ms: 2000,
+      max_auto_saves: 5,
+    },
+  })
+
+  // Trigger auto-save when content changes
+  useEffect(() => {
+    if (mode === 'edit' && notice?.id && form.formState.isDirty) {
+      autoSave.save(currentSnapshot as Record<string, unknown>)
+    }
+  }, [currentSnapshot, mode, notice?.id, form.formState.isDirty, autoSave])
+
+  // Warn before leaving with unsaved changes
+  useWarnOnUnsavedChanges(form.formState.isDirty && mode === 'edit')
+
+  // Handle version restore
+  const handleVersionRestore = useCallback((content: Record<string, unknown>) => {
+    const snapshot = content as NoticeSnapshot
+    form.reset({
+      title: snapshot.title,
+      content: snapshot.content,
+      type: snapshot.type,
+      status: snapshot.status,
+      is_pinned: snapshot.is_pinned,
+      expires_at: snapshot.expires_at || '',
+    })
+    toast({
+      title: 'Version Restored',
+      description: 'The form has been updated with the restored version.',
+    })
+  }, [form, toast])
+
+  // Handle version compare
+  const handleVersionCompare = useCallback((from: number, to: number) => {
+    setCompareVersions({ from, to })
+    setCompareDialogOpen(true)
+  }, [])
+
+  // Save version manually
+  const handleSaveVersion = async () => {
+    if (!notice?.id) return
+
+    try {
+      await createVersion.mutateAsync({
+        content_type: 'notice',
+        content_id: notice.id,
+        content_snapshot: currentSnapshot as Record<string, unknown>,
+        change_summary: 'Manual save',
+        is_auto_save: false,
+      })
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to save version',
+        variant: 'destructive',
+      })
+    }
+  }
 
   const onSubmit = async (data: NoticeFormData) => {
     try {
@@ -70,7 +162,7 @@ export function NoticeForm({ notice, mode }: NoticeFormProps) {
 
       toast({ title: 'Success', description: `Notice ${mode}d successfully` })
       navigate('/admin/notices')
-    } catch (error) {
+    } catch {
       toast({ title: 'Error', description: `Failed to ${mode} notice`, variant: 'destructive' })
     }
   }
@@ -80,6 +172,41 @@ export function NoticeForm({ notice, mode }: NoticeFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Version Control Header - Only in Edit Mode */}
+        {mode === 'edit' && notice?.id && (
+          <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
+            <div className="flex items-center gap-4">
+              <AutoSaveIndicator
+                status={autoSave.status}
+                lastSavedAt={autoSave.lastSavedAt}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSaveVersion}
+                disabled={createVersion.isPending || !form.formState.isDirty}
+              >
+                {createVersion.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
+                Save Version
+              </Button>
+              <VersionHistory
+                contentType="notice"
+                contentId={notice.id}
+                currentVersionNumber={latestVersion?.version_number}
+                onRestore={handleVersionRestore}
+                onCompare={handleVersionCompare}
+              />
+            </div>
+          </div>
+        )}
+
         <FormField control={form.control} name="title" render={({ field }) => (
           <FormItem>
             <FormLabel>Title *</FormLabel>
@@ -156,6 +283,18 @@ export function NoticeForm({ notice, mode }: NoticeFormProps) {
           </Button>
         </div>
       </form>
+
+      {/* Version Compare Dialog */}
+      {mode === 'edit' && notice?.id && compareVersions && (
+        <VersionCompareDialog
+          open={compareDialogOpen}
+          onOpenChange={setCompareDialogOpen}
+          contentType="notice"
+          contentId={notice.id}
+          fromVersion={compareVersions.from}
+          toVersion={compareVersions.to}
+        />
+      )}
     </Form>
   )
 }

@@ -107,7 +107,10 @@ const Footer = ({ className = "" }: FooterProps) => {
   const location = useLocation();
 
   return (
-    <footer className={`border-t border-border bg-card/30 backdrop-blur-sm ${className}`}>
+    <footer
+      role="contentinfo"
+      className={`border-t border-border bg-card/30 backdrop-blur-sm ${className}`}
+    >
       <div className="container mx-auto px-4 py-12">
         {/* Main Grid: Brand + 4 Sections */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-8">
@@ -156,8 +159,16 @@ const Footer = ({ className = "" }: FooterProps) => {
 
           {/* Footer Sections */}
           {FOOTER_SECTIONS.map((section, sectionIndex) => (
-            <div key={sectionIndex}>
-              <h4 className="font-semibold mb-4 text-sm">{section.title}</h4>
+            <nav
+              key={sectionIndex}
+              aria-labelledby={`footer-section-${sectionIndex}`}
+            >
+              <h4
+                id={`footer-section-${sectionIndex}`}
+                className="font-semibold mb-4 text-sm"
+              >
+                {section.title}
+              </h4>
               <ul className="space-y-2 text-sm text-muted-foreground" role="list">
                 {section.links.map((link, linkIndex) => {
                   const isActive = !link.isExternal && location.pathname === link.href;
@@ -186,7 +197,7 @@ const Footer = ({ className = "" }: FooterProps) => {
                   );
                 })}
               </ul>
-            </div>
+            </nav>
           ))}
         </div>
 

@@ -10,12 +10,12 @@
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { Loader2, CreditCard, Calendar, AlertCircle, CheckCircle2, XCircle, Receipt } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { SEO } from '@/components/shared/SEO'
 import { useAuth } from '@/hooks/useAuth'
 import { useMySubscriptions, useCancelSubscription, useSubscriptionPayments } from '@/hooks/useSubscriptions'
 import {
@@ -140,9 +140,12 @@ export default function Subscriptions() {
     if (!user) {
         return (
             <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
-                <Helmet>
-                    <title>구독 관리 - IDEA on Action</title>
-                </Helmet>
+                <SEO
+                    title="구독 관리"
+                    description="IDEA on Action 구독 서비스를 관리하세요. 구독 조회, 결제 수단 변경, 구독 해지 등을 할 수 있습니다."
+                    canonical="/subscriptions"
+                    noIndex
+                />
                 <Header />
                 <main className="flex-1 container mx-auto px-4 py-16">
                     <Alert>
@@ -168,9 +171,12 @@ export default function Subscriptions() {
 
     return (
         <>
-            <Helmet>
-                <title>구독 관리 - IDEA on Action</title>
-            </Helmet>
+            <SEO
+                title="구독 관리"
+                description="IDEA on Action 구독 서비스를 관리하세요. 구독 조회, 결제 수단 변경, 구독 해지 등을 할 수 있습니다."
+                canonical="/subscriptions"
+                noIndex
+            />
 
             <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
                 <Header />

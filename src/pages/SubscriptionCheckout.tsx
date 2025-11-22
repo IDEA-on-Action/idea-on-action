@@ -7,12 +7,12 @@
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { SEO } from '@/components/shared/SEO'
 import { useAuth } from '@/hooks/useAuth'
 import { useServiceDetail } from '@/hooks/useServices'
 import { Button } from '@/components/ui/button'
@@ -148,9 +148,11 @@ export default function SubscriptionCheckout() {
   if (!isServiceLoading && !service) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
-        <Helmet>
-          <title>정기결제 - IDEA on Action</title>
-        </Helmet>
+        <SEO
+          title="정기결제"
+          description="IDEA on Action 정기결제 서비스에 가입하세요."
+          noIndex
+        />
         <Header />
         <main className="flex-1 container mx-auto px-4 py-16">
           <Alert>
@@ -169,9 +171,11 @@ export default function SubscriptionCheckout() {
 
   return (
     <>
-      <Helmet>
-        <title>정기결제 - {service?.title || 'IDEA on Action'}</title>
-      </Helmet>
+      <SEO
+        title={`정기결제 - ${service?.title || '서비스'}`}
+        description={`${service?.title || '서비스'} 정기결제에 가입하세요. 14일 무료 체험 후 자동 결제가 시작됩니다.`}
+        noIndex
+      />
 
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />

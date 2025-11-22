@@ -42,7 +42,7 @@ export default function RefundPolicy() {
         <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <div className="bg-primary/10 border-l-4 border-primary px-6 py-3 mb-8 rounded-r-lg">
             <p className="text-sm font-semibold mb-0">
-              <span className="text-primary">시행일</span>: 2025년 11월 14일
+              <span className="text-primary">시행일</span>: 2025년 11월 22일 (개정)
             </p>
           </div>
 
@@ -231,11 +231,14 @@ export default function RefundPolicy() {
             <CheckCircle2 className="h-4 w-4" />
             <AlertTitle>환불 가능</AlertTitle>
             <AlertDescription>
-              무료 체험 기간 중: 과금 없음
+              무료 체험 기간 중: 과금 없음, 체험 종료 전 취소 시 자동 결제 방지
               <br />
-              결제 후 7일 이내: 100% 환불
+              결제 후 7일 이내: 100% 환불 (서비스 미사용 또는 최소 사용 시)
               <br />
-              결제 후 7일 경과: 당월 환불 불가, 익월부터 자동 해지
+              결제 후 7일 경과: 당월 환불 불가, 구독 기간 종료 시까지 서비스 이용 가능
+              <br />
+              <br />
+              <strong>구독 취소 시</strong>: 현재 결제 주기 종료까지 서비스 이용 가능, 다음 결제일부터 자동 갱신 중단
             </AlertDescription>
           </Alert>
 
@@ -260,7 +263,51 @@ export default function RefundPolicy() {
             </AlertDescription>
           </Alert>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제6조 (환불 불가 사유)</h2>
+          <h2 id="subscription-cancellation" className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제6조 (구독 취소 정책)</h2>
+          <ol className="space-y-4">
+            <li>
+              <strong className="text-primary">취소 방법</strong>: 이용자는 다음의 방법으로 구독을 취소할 수 있습니다:
+              <ul className="mt-2 space-y-1">
+                <li>웹사이트 내 "마이페이지 &gt; 구독 관리" 메뉴에서 직접 취소</li>
+                <li>고객센터 이메일 (sinclair.seo@ideaonaction.ai) 또는 전화 (010-4904-2671)</li>
+                <li>24시간 이내 취소 처리 완료</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">취소 효력 발생 시점</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>취소 신청 즉시 다음 결제 주기의 자동 결제가 중단됩니다.</li>
+                <li>현재 결제 주기가 종료될 때까지 서비스를 계속 이용할 수 있습니다.</li>
+                <li>취소 후에도 이미 결제된 기간에 대한 서비스는 정상 제공됩니다.</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">무료 체험 취소</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>무료 체험 기간 중 언제든지 취소 가능합니다.</li>
+                <li>체험 종료 24시간 전까지 취소하면 자동 결제가 진행되지 않습니다.</li>
+                <li>체험 종료 1일 전 이메일로 유료 전환 안내를 발송합니다.</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">구독 재개</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>취소된 구독은 현재 결제 주기 종료 전까지 언제든지 재개할 수 있습니다.</li>
+                <li>결제 주기 종료 후 30일 이내 재구독 시 기존 데이터가 복원됩니다.</li>
+                <li>30일 경과 후 재구독 시 새 계정으로 시작됩니다.</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">연간 구독 취소</strong>:
+              <ul className="mt-2 space-y-1">
+                <li>연간 구독 취소 시 미사용 개월 수에 대해 비례 환불이 가능합니다 (제5조 참조).</li>
+                <li>환불 요청은 취소 신청 시 함께 접수해야 합니다.</li>
+                <li>환불을 원하지 않는 경우 구독 종료일까지 서비스 이용 후 자동 해지됩니다.</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제7조 (환불 불가 사유)</h2>
           <p>다음의 경우에는 환불이 불가능합니다:</p>
           <ol>
             <li>고객의 책임 있는 사유로 서비스가 훼손된 경우</li>
@@ -270,7 +317,7 @@ export default function RefundPolicy() {
             <li>계약서에 명시된 환불 불가 조항에 해당하는 경우</li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제7조 (부분 환불)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제8조 (부분 환불)</h2>
           <ol>
             <li>
               서비스가 부분적으로 제공된 경우, 제공된 서비스에 대한 대가를 공제한 금액을 환불합니다.
@@ -285,7 +332,7 @@ export default function RefundPolicy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제8조 (환불 지연 시 지연이자)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제9조 (환불 지연 시 지연이자)</h2>
           <ol>
             <li>
               회사가 환불 기한 내에 환불하지 못한 경우, 지연된 기간에 대하여 연 15%의 지연이자를 지급합니다.
@@ -300,7 +347,7 @@ export default function RefundPolicy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제9조 (분쟁 해결)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제10조 (분쟁 해결)</h2>
           <ol>
             <li>
               환불과 관련하여 분쟁이 발생한 경우, 고객은 한국소비자원, 전자거래분쟁조정위원회 등에 분쟁조정을 신청할 수 있습니다.
@@ -313,9 +360,9 @@ export default function RefundPolicy() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제10조 (환불정책의 변경)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제11조 (환불정책의 변경)</h2>
           <p>
-            이 환불정책은 2025년 11월 14일부터 적용되며, 법령 및 정책에 따른 변경사항이 있는 경우에는
+            이 환불정책은 2025년 11월 22일부터 적용되며, 법령 및 정책에 따른 변경사항이 있는 경우에는
             변경사항의 시행 7일 전부터 공지사항을 통하여 고지할 것입니다.
           </p>
 
@@ -324,7 +371,7 @@ export default function RefundPolicy() {
           <div className="bg-muted/50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold mb-2">부칙</h3>
             <p>
-              <strong>시행일</strong>: 이 환불정책은 2025년 11월 14일부터 시행합니다.
+              <strong>시행일</strong>: 이 환불정책은 2025년 11월 22일부터 시행합니다.
             </p>
           </div>
 

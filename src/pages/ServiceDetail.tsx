@@ -12,10 +12,10 @@
  */
 
 import { useParams, useNavigate } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { toast } from 'sonner'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { SEO } from '@/components/shared/SEO'
 import { useServiceDetail, useServiceDetailBySlug } from '@/hooks/useServicesPlatform'
 import { useCartStore } from '@/store/cartStore'
 import { Button } from '@/components/ui/button'
@@ -157,12 +157,36 @@ export default function ServiceDetail() {
     faq,
   } = service
 
+  // 최저 가격 계산 (패키지 또는 플랜 중)
+  const lowestPrice = Math.min(
+    ...(packages?.map(p => p.price) || [Infinity]),
+    ...(plans?.map(p => p.price) || [Infinity])
+  )
+
   return (
     <>
-      <Helmet>
-        <title>{title} | IDEA on Action</title>
-        <meta name="description" content={description || ''} />
-      </Helmet>
+      <SEO
+        title={title}
+        description={description || `${title} - IDEA on Action에서 제공하는 전문 서비스입니다.`}
+        keywords={[title, category?.name || '', ...(tags || [])].filter(Boolean)}
+        canonical={`/services/${service.slug || id}`}
+        ogType="service"
+        ogImage={image_url || undefined}
+        ogImageAlt={title}
+        service={{
+          name: title,
+          description: description || '',
+          price: lowestPrice !== Infinity ? lowestPrice : undefined,
+          priceCurrency: 'KRW',
+          category: category?.name,
+          image: image_url || undefined
+        }}
+        breadcrumbs={[
+          { name: '홈', url: '/' },
+          { name: '서비스', url: '/services' },
+          { name: title, url: `/services/${service.slug || id}` }
+        ]}
+      />
 
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
         <Header />

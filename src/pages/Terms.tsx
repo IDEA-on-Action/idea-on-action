@@ -23,7 +23,7 @@ export default function Terms() {
         <div className="prose prose-slate dark:prose-invert max-w-4xl mx-auto">
           <div className="bg-primary/10 border-l-4 border-primary px-6 py-3 mb-8 rounded-r-lg">
             <p className="text-sm font-semibold mb-0">
-              <span className="text-primary">시행일</span>: 2025년 11월 14일
+              <span className="text-primary">시행일</span>: 2025년 11월 22일 (개정)
             </p>
           </div>
 
@@ -106,7 +106,59 @@ export default function Terms() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제6조 (결제 및 환불)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제6조 (구독 서비스)</h2>
+          <ol className="space-y-4">
+            <li>
+              <strong className="text-primary">구독 서비스 정의</strong>: 회사는 COMPASS 플랫폼 등의 서비스를 월간 또는 연간 구독 형태로 제공합니다.
+            </li>
+            <li>
+              <strong className="text-primary">구독 기간</strong>:
+              <ul className="mt-2 space-y-2">
+                <li>월간 구독: 결제일로부터 1개월 단위로 갱신</li>
+                <li>연간 구독: 결제일로부터 1년 단위로 갱신 (월간 대비 20% 할인)</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">자동 갱신</strong>: 구독 서비스는 이용자가 해지하지 않는 한 구독 기간 만료 시 동일 조건으로 자동 갱신되며, 등록된 결제 수단으로 이용료가 자동 청구됩니다.
+            </li>
+            <li>
+              <strong className="text-primary">무료 체험</strong>: 회사는 일부 서비스에 대해 무료 체험 기간을 제공할 수 있으며, 체험 기간 종료 후 유료 전환에 대해 사전에 안내합니다.
+            </li>
+            <li>
+              <strong className="text-primary">서비스 등급 변경</strong>: 이용자는 구독 기간 중 서비스 등급(플랜)을 변경할 수 있으며, 차액은 일할 계산하여 정산합니다.
+            </li>
+          </ol>
+
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제7조 (구독 취소 및 해지)</h2>
+          <ol className="space-y-4">
+            <li>
+              <strong className="text-primary">취소 방법</strong>: 이용자는 다음의 방법으로 구독을 취소할 수 있습니다:
+              <ul className="mt-2 space-y-1">
+                <li>웹사이트 내 "마이페이지 &gt; 구독 관리" 메뉴</li>
+                <li>고객센터 이메일: sinclair.seo@ideaonaction.ai</li>
+                <li>고객센터 전화: 010-4904-2671</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">취소 효력</strong>: 구독 취소 시 현재 구독 기간이 만료되는 시점까지 서비스를 계속 이용할 수 있으며, 다음 결제일부터 자동 갱신이 중단됩니다.
+            </li>
+            <li>
+              <strong className="text-primary">즉시 해지</strong>: 이용자가 즉시 해지를 요청하는 경우, 환불정책에 따라 미사용 기간에 대한 환불이 처리됩니다.
+            </li>
+            <li>
+              <strong className="text-primary">회사의 해지</strong>: 회사는 다음의 경우 구독을 해지할 수 있습니다:
+              <ul className="mt-2 space-y-1">
+                <li>이용자가 약관을 위반한 경우</li>
+                <li>결제 수단의 문제로 이용료 결제가 2회 이상 실패한 경우</li>
+                <li>서비스 운영이 중단되는 경우 (최소 30일 전 사전 통지)</li>
+              </ul>
+            </li>
+            <li>
+              <strong className="text-primary">데이터 보관</strong>: 구독 해지 후 이용자의 데이터는 30일간 보관되며, 이 기간 내 재구독 시 데이터를 복원할 수 있습니다. 30일 경과 후 데이터는 영구 삭제됩니다.
+            </li>
+          </ol>
+
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제8조 (결제 및 환불)</h2>
           <ol className="space-y-4">
             <li>
               서비스 이용료는 회사가 정한 금액에 따르며, 결제 방법은 <strong className="text-primary">신용카드, 계좌이체, 전자결제</strong> 등을 포함합니다.
@@ -115,11 +167,33 @@ export default function Terms() {
               회사는 전자금융거래법 및 전자상거래법에 따라 <strong className="text-primary">토스페이먼츠</strong> 등의 결제대행사를 통해 결제 서비스를 제공합니다.
             </li>
             <li>
+              <strong className="text-primary">자동 결제</strong>: 구독 서비스의 경우 등록된 결제 수단으로 매 결제 주기마다 이용료가 자동 청구됩니다. 결제 예정일 최소 7일 전에 이메일로 사전 안내합니다.
+            </li>
+            <li>
+              <strong className="text-primary">결제 실패</strong>: 결제가 실패한 경우 회사는 이용자에게 알리고 7일 이내에 결제 수단 갱신을 요청합니다. 14일 이내 결제가 완료되지 않으면 서비스가 일시 중단될 수 있습니다.
+            </li>
+            <li>
               환불 정책은 별도의 "환불정책" 페이지에서 확인할 수 있습니다.
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제7조 (개인정보보호)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제9조 (서비스 수준 보장)</h2>
+          <ol className="space-y-4">
+            <li>
+              <strong className="text-primary">서비스 가용성</strong>: 회사는 COMPASS 플랫폼 서비스에 대해 연간 99.5% 이상의 가용성을 목표로 합니다. 단, 정기 점검 시간은 제외됩니다.
+            </li>
+            <li>
+              <strong className="text-primary">정기 점검</strong>: 정기 점검은 매주 수요일 새벽 2시~4시(KST)에 실시되며, 최소 24시간 전에 공지합니다.
+            </li>
+            <li>
+              <strong className="text-primary">장애 대응</strong>: 서비스 장애 발생 시 회사는 지체 없이 장애 복구에 착수하며, 장애 발생 및 복구 상황을 이용자에게 안내합니다.
+            </li>
+            <li>
+              <strong className="text-primary">SLA 보상</strong>: 회사의 귀책사유로 서비스 가용성이 월간 99% 미만인 경우, 환불정책에 따라 크레딧으로 보상합니다.
+            </li>
+          </ol>
+
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제10조 (개인정보보호)</h2>
           <ol className="space-y-4">
             <li>
               회사는 이용자의 개인정보를 보호하기 위해 <strong className="text-primary">개인정보보호법</strong> 및 관련 법령을 준수합니다.
@@ -129,7 +203,7 @@ export default function Terms() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제8조 (회사의 의무)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제11조 (회사의 의무)</h2>
           <ol className="space-y-4">
             <li>
               회사는 관련 법령과 이 약관이 금지하거나 미풍양속에 반하는 행위를 하지 않으며, 계속적이고 안정적으로 서비스를 제공하기 위해 노력합니다.
@@ -139,7 +213,7 @@ export default function Terms() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제9조 (이용자의 의무)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제12조 (이용자의 의무)</h2>
           <ol className="space-y-4">
             <li>
               이용자는 다음 행위를 하여서는 안 됩니다:
@@ -154,7 +228,7 @@ export default function Terms() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제10조 (저작권의 귀속 및 이용 제한)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제13조 (저작권의 귀속 및 이용 제한)</h2>
           <ol className="space-y-4">
             <li>
               회사가 작성한 저작물에 대한 <strong className="text-primary">저작권 기타 지적재산권</strong>은 회사에 귀속합니다.
@@ -164,7 +238,7 @@ export default function Terms() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제11조 (면책조항)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제14조 (면책조항)</h2>
           <ol className="space-y-4">
             <li>
               회사는 <strong className="text-primary">천재지변 또는 이에 준하는 불가항력</strong>으로 인하여 서비스를 제공할 수 없는 경우 서비스 제공에 관한 책임이 면제됩니다.
@@ -174,7 +248,7 @@ export default function Terms() {
             </li>
           </ol>
 
-          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제12조 (분쟁 해결)</h2>
+          <h2 className="text-2xl font-bold mt-12 mb-6 pb-3 border-b-2 border-primary/30">제15조 (분쟁 해결)</h2>
           <ol className="space-y-4">
             <li>
               회사와 이용자 간 발생한 분쟁에 관한 소송은 <strong className="text-primary">민사소송법상의 관할법원</strong>에 제기합니다.
@@ -189,7 +263,10 @@ export default function Terms() {
           <div className="bg-muted/50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold mb-2">부칙</h3>
             <p>
-              <strong>시행일</strong>: 이 약관은 2025년 11월 14일부터 시행합니다.
+              <strong>제1조 (시행일)</strong>: 이 약관은 2025년 11월 22일부터 시행합니다.
+            </p>
+            <p className="mt-2">
+              <strong>제2조 (경과조치)</strong>: 이 약관 시행 전에 체결된 서비스 이용계약에 대해서는 종전의 약관이 적용됩니다. 단, 구독 서비스의 경우 다음 갱신일부터 이 약관이 적용됩니다.
             </p>
           </div>
 
