@@ -3,8 +3,8 @@
 > 프로젝트 작업 목록 및 진행 상황 관리
 
 **마지막 업데이트**: 2025-11-22
-**현재 Phase**: ✅ Version 2.4.0 완료 (Minu 브랜드 전환)
-**완료된 항목**: COMPASS → Minu 리브랜딩, MCP 서버 연동 준비, DB 마이그레이션
+**현재 Phase**: ✅ Version 2.4.0 완료 (Minu 브랜드 전환 + MCP 연동)
+**완료된 항목**: COMPASS → Minu 리브랜딩, MCP 서버 연동 완료, 프로덕션 DB 마이그레이션
 **프로젝트 버전**: 2.4.0 (Minu 브랜드 전환)
 **프로덕션**: https://www.ideaonaction.ai
 
@@ -12,9 +12,9 @@
 
 ## ✅ 최근 완료 (2025-11-22)
 
-### 🎨 Minu 브랜드 전환 ✅ (100% 완료)
+### 🎨 Minu 브랜드 전환 + MCP 연동 ✅ (100% 완료)
 
-**목표**: COMPASS → Minu 시리즈 리브랜딩
+**목표**: COMPASS → Minu 시리즈 리브랜딩 및 MCP 서버 연동
 **시작일**: 2025-11-22
 **완료일**: 2025-11-22
 **현재 상태**: ✅ 완료
@@ -26,15 +26,28 @@
   - Compass Captain → **Minu Build** (프로젝트 진행)
   - Compass Harbor → **Minu Keep** (운영/유지보수)
 - [x] **파일 리네이밍** (compass-* → minu-*)
-- [x] **새 페이지 생성** (MinuPlatformPage, MinuFindPage)
-- [x] **MCP 서버 연동 준비**
-- [x] **DB 마이그레이션 파일 추가**
+- [x] **Minu 서비스 페이지 생성**
+  - MinuPlatformPage: 플랫폼 메인 페이지
+  - MinuFindPage: 사업기회 탐색 (MCP 연동)
+  - MinuFramePage: 문제정의 & RFP (MCP 연동)
+  - MinuBuildPage: 프로젝트 진행 (MCP 연동)
+  - MinuKeepPage: 운영/유지보수 (MCP 연동)
+- [x] **MCP 서버 연동 완료**
+  - dotenv 패키지 추가
+  - 환경 변수 자동 로딩
+  - useMinuSubscription 훅으로 구독 상태 조회
+  - Supabase 폴백 지원 (MCP 장애 시에도 정상 동작)
+- [x] **프로덕션 DB 마이그레이션 완료**
+  - services 테이블 slug/title 업데이트
+  - subscription_plans 이름 변경
+  - minu_integration_view 생성
+  - compass_integration_view 하위 호환성 유지
 - [x] **E2E 테스트 추가**
 - [x] **브랜드 가이드 문서 작성**
 
 #### 통계
-- 파일 변경: 21개 (+2,004 / -2,934 라인)
-- Git 커밋: d566958
+- 파일 변경: 25개 (+3,432 라인)
+- Git 커밋: d566958, 61c1b02, f74840b
 
 ---
 

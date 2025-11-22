@@ -20,27 +20,42 @@
 
 ### ✨ Added
 - `MinuPlatformPage.tsx`: Minu 플랫폼 메인 페이지
-- `MinuFindPage.tsx`: Minu Find 서비스 페이지
+- `MinuFindPage.tsx`: Minu Find 서비스 페이지 (MCP 연동)
+- `MinuFramePage.tsx`: Minu Frame 서비스 페이지 (MCP 연동)
+- `MinuBuildPage.tsx`: Minu Build 서비스 페이지 (MCP 연동)
+- `MinuKeepPage.tsx`: Minu Keep 서비스 페이지 (MCP 연동)
 - `docs/brand/minu-brand-guide.md`: 브랜드 가이드 문서
 - `tests/e2e/services/minu-platform.spec.ts`: E2E 테스트
 
 ### 🔄 Changed
 - 서비스 데이터 파일 리네임 (compass-* → minu-*)
   - `minu-find.ts`, `minu-frame.ts`, `minu-build.ts`, `minu-keep.ts`
-- MCP 서버 연동 준비 (`mcp-server/src/index.ts`)
-- App.tsx 라우트 업데이트
+- MCP 서버 dotenv 패키지 추가 및 환경 변수 로딩 수정
+- App.tsx 라우트 업데이트 (4개 Minu 서비스 페이지 연결)
+
+### 🔗 MCP Integration
+- 4개 Minu 서비스 페이지에 MCP 클라이언트 통합
+- `useMinuSubscription` 훅으로 구독 상태 실시간 조회
+- Supabase 폴백 지원 (MCP 서버 장애 시에도 정상 동작)
+- 플랜 상태 표시 (현재 이용 중, 업그레이드, 다운그레이드)
 
 ### 🗃️ Database
-- `20251122000001_rename_compass_to_minu.sql`: DB 마이그레이션 추가
+- `20251122000001_rename_compass_to_minu.sql`: 프로덕션 마이그레이션 완료
+  - services 테이블: slug 및 title 업데이트
+  - subscription_plans 테이블: plan_name 업데이트
+  - minu_integration_view: 신규 뷰 생성
+  - compass_integration_view: 하위 호환성 별칭 유지
 
 ### 📦 Stats
-- 파일 변경: 21개 (+2,004 / -2,934 라인)
-- 신규 생성: 6개
+- 파일 변경: 25개 (+3,432 라인)
+- 신규 생성: 9개
 - 리네임: 4개
-- 수정: 11개
+- 수정: 12개
 
-### Git Commit
+### Git Commits
 - d566958: feat(minu): COMPASS → Minu 브랜드 전환
+- 61c1b02: fix(mcp): dotenv 패키지 추가 및 마이그레이션 수정
+- f74840b: feat(minu): Frame, Build, Keep 서비스 페이지 추가 및 MCP 연동
 
 ---
 
