@@ -1,5 +1,6 @@
 # robots.txt for IDEA on Action
 # https://www.ideaonaction.ai/
+# Updated: 2025-11-22
 
 # Allow search engines to crawl public content
 User-agent: *
@@ -13,8 +14,12 @@ Allow: /community
 Allow: /work-with-us
 Allow: /status
 Allow: /services
+Allow: /services/*
 Allow: /blog
 Allow: /notices
+Allow: /terms
+Allow: /privacy
+Allow: /refund-policy
 
 # Disallow private/admin pages
 Disallow: /admin/
@@ -22,9 +27,12 @@ Disallow: /login
 Disallow: /profile
 Disallow: /2fa/
 
-# Disallow checkout/payment pages
+# Disallow checkout/payment pages (privacy)
 Disallow: /checkout/
 Disallow: /orders/
+Disallow: /subscription/checkout
+Disallow: /subscription/payment
+Disallow: /subscriptions
 
 # Sitemap
 Sitemap: https://www.ideaonaction.ai/sitemap.xml

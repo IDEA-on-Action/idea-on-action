@@ -18,31 +18,61 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "robots.txt", "logo-full.png", "logo-symbol.png", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
-        name: "VIBE WORKING - AI 기반 워킹 솔루션",
-        short_name: "VIBE WORKING",
-        description: "KEEP AWAKE, LIVE PASSIONATE - AI 기반 스마트 워크 플랫폼",
+        name: "IDEA on Action - 아이디어 실험실 & 프로덕트 스튜디오",
+        short_name: "IDEA on Action",
+        description: "생각을 멈추지 않고, 행동으로 옮기는 회사. AI 기반 워킹 솔루션으로 비즈니스 혁신을 실현하세요.",
         theme_color: "#3b82f6",
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",
         scope: "/",
         start_url: "/",
+        id: "/",
         icons: [
           {
             src: "/pwa-192x192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "any",
           },
           {
             src: "/pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "any",
+          },
+          {
+            src: "/pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
+          },
+          {
+            src: "/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
           },
         ],
-        categories: ["productivity", "business"],
+        categories: ["productivity", "business", "developer tools"],
         lang: "ko-KR",
+        dir: "ltr",
+        shortcuts: [
+          {
+            name: "서비스 보기",
+            short_name: "서비스",
+            description: "IDEA on Action 서비스 목록",
+            url: "/services",
+            icons: [{ src: "/pwa-192x192.png", sizes: "192x192" }],
+          },
+          {
+            name: "포트폴리오",
+            short_name: "포트폴리오",
+            description: "프로젝트 포트폴리오",
+            url: "/portfolio",
+            icons: [{ src: "/pwa-192x192.png", sizes: "192x192" }],
+          },
+        ],
       },
       workbox: {
         // ============================================================
@@ -74,7 +104,12 @@ export default defineConfig(({ mode }) => ({
           "**/*.{css,html,ico,png,svg,woff,woff2}",
           "**/index-*.js",       // Main bundle (all vendors merged)
           "**/workbox-*.js",     // PWA service worker
+          "offline.html",        // Offline fallback page
         ],
+
+        // Offline fallback configuration
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api/, /^\/auth/],
 
         // Exclude admin pages and lazy-loaded components from precache
         globIgnores: [
@@ -194,116 +229,59 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           // ============================================================
-          // VENDOR CHUNKS STRATEGY (TEMPORARILY DISABLED)
+          // VENDOR CHUNKS STRATEGY (TASK-077 Performance Optimization)
           // ============================================================
-          // REASON: React module loading order issues causing "createContext" errors
-          // - vendor-router disabled → vendor-query error appeared
-          // - Indicates async chunk loading race condition
-          // - ALL vendor chunks temporarily merged into index.js for cache invalidation
+          // Updated: 2025-11-22
           //
-          // ORIGINAL STRATEGY (to re-enable after cache invalidation):
-          // - vendor-react-core:     ~140 kB (React runtime only)
-          // - vendor-ui:            ~250 kB (Radix UI components)
-          // - vendor-charts:        ~100 kB (Recharts)
-          // - vendor-markdown:       ~80 kB (Markdown rendering)
-          // - vendor-forms:          ~50 kB (React Hook Form + Zod)
-          // - vendor-query:          ~40 kB (React Query)
-          // - vendor-router:         ~30 kB (React Router)
-          // - vendor-supabase:      ~150 kB (Supabase SDK)
-          // - vendor-auth:           ~50 kB (OTP, QR Code)
-          // - vendor-sentry:        ~100 kB (Error tracking)
-          // - vendor-payments:        ~5 kB (Toss Payments SDK)
+          // Strategy: Separate heavy lazy-loaded libraries to reduce
+          // initial bundle size while keeping React core in main bundle
+          // to prevent module loading order issues.
           //
-          // Total Vendor: ~995 kB
+          // Note: React, ReactDOM, React Router, React Query stay in
+          // index.js to ensure proper initialization order.
           // ============================================================
 
-          // ALL VENDOR CHUNKS TEMPORARILY DISABLED
-          // Uncomment below after successful cache invalidation
+          // 1. Recharts - Only used in admin analytics dashboards
+          // Separating this reduces main bundle significantly
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+            return 'vendor-charts';
+          }
 
-          // // 1. React Core (MUST LOAD FIRST)
-          // if (
-          //   id.includes('node_modules/react/') ||
-          //   id.includes('node_modules/react-dom/')
-          // ) {
-          //   return 'vendor-react-core';
-          // }
+          // 2. Markdown Rendering - Only used in blog posts and chat
+          if (
+            id.includes('node_modules/react-markdown') ||
+            id.includes('node_modules/remark-') ||
+            id.includes('node_modules/rehype-') ||
+            id.includes('node_modules/unified') ||
+            id.includes('node_modules/unist-') ||
+            id.includes('node_modules/hast-') ||
+            id.includes('node_modules/mdast-') ||
+            id.includes('node_modules/micromark')
+          ) {
+            return 'vendor-markdown';
+          }
 
-          // // 2. React Router
-          // if (id.includes('node_modules/react-router')) {
-          //   return 'vendor-router';
-          // }
+          // 3. TipTap Editor - Only used in admin content creation
+          if (
+            id.includes('node_modules/@tiptap') ||
+            id.includes('node_modules/prosemirror') ||
+            id.includes('node_modules/lowlight')
+          ) {
+            return 'vendor-editor';
+          }
 
-          // // 3. React Query
-          // if (id.includes('node_modules/@tanstack/react-query')) {
-          //   return 'vendor-query';
-          // }
+          // 4. Sentry - Error tracking (can load after initial paint)
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry';
+          }
 
-          // // 4. Radix UI Components (depends on React core)
-          // // Headless UI primitives for shadcn/ui
-          // // Target: ~250 kB gzip
-          // if (id.includes('node_modules/@radix-ui')) {
-          //   return 'vendor-ui';
-          // }
-
-          // // 5. Recharts (depends on React core)
-          // // Chart library for analytics dashboard
-          // // Target: ~100 kB gzip
-          // if (id.includes('node_modules/recharts')) {
-          //   return 'vendor-charts';
-          // }
-
-          // // 6. Markdown Rendering (depends on React core)
-          // // react-markdown, remark-gfm, rehype-raw, rehype-sanitize
-          // // Target: ~80 kB gzip
-          // if (
-          //   id.includes('node_modules/react-markdown') ||
-          //   id.includes('node_modules/remark-') ||
-          //   id.includes('node_modules/rehype-')
-          // ) {
-          //   return 'vendor-markdown';
-          // }
-
-          // // 7. Form Libraries (depends on React core)
-          // // React Hook Form + Zod validation
-          // // Target: ~50 kB gzip
-          // if (
-          //   id.includes('node_modules/react-hook-form') ||
-          //   id.includes('node_modules/@hookform') ||
-          //   id.includes('node_modules/zod')
-          // ) {
-          //   return 'vendor-forms';
-          // }
-
-          // // 8. Supabase (independent of React)
-          // // Backend-as-a-Service SDK
-          // // Target: ~150 kB gzip
-          // if (id.includes('node_modules/@supabase')) {
-          //   return 'vendor-supabase';
-          // }
-
-          // // 9. Auth & Security (independent of React)
-          // // OTP authentication and QR code generation
-          // // Target: ~50 kB gzip
-          // if (
-          //   id.includes('node_modules/otpauth') ||
-          //   id.includes('node_modules/qrcode')
-          // ) {
-          //   return 'vendor-auth';
-          // }
-
-          // // 10. Sentry (depends on React core)
-          // // Error tracking and monitoring
-          // // Target: ~100 kB gzip
-          // if (id.includes('node_modules/@sentry')) {
-          //   return 'vendor-sentry';
-          // }
-
-          // // 11. Payment SDKs (independent of React)
-          // // Toss Payments integration
-          // // Target: ~5 kB gzip
-          // if (id.includes('node_modules/@tosspayments')) {
-          //   return 'vendor-payments';
-          // }
+          // 5. Auth & Security (OTP, QR Code) - Only used in 2FA setup
+          if (
+            id.includes('node_modules/otpauth') ||
+            id.includes('node_modules/qrcode')
+          ) {
+            return 'vendor-auth';
+          }
 
           // ============================================================
           // APPLICATION CHUNKS STRATEGY
@@ -311,11 +289,14 @@ export default defineConfig(({ mode }) => ({
           // Goal: Separate heavy admin routes from main application bundle
           // to reduce initial load time for public pages.
           //
-          // Chunk Size Targets:
-          // - pages-admin:    ~50-60 kB gzip (Admin dashboard, CRUD pages)
-          // - index.js:      ~100-110 kB gzip (Main app, public pages)
-          //
-          // Expected Savings: ~50 kB gzip from index.js
+          // Expected Results:
+          // - vendor-charts:   ~100 kB gzip (lazy loaded)
+          // - vendor-markdown: ~50 kB gzip (lazy loaded)
+          // - vendor-editor:   ~80 kB gzip (lazy loaded)
+          // - vendor-sentry:   ~30 kB gzip (lazy loaded)
+          // - vendor-auth:     ~20 kB gzip (lazy loaded)
+          // - pages-admin:     ~800 kB gzip (lazy loaded)
+          // - index.js:        ~300 kB gzip (initial load)
           // ============================================================
 
           // Admin Routes (23 pages + 4 components)

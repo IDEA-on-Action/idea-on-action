@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3b82f6" />
+    <title>오프라인 - IDEA on Action</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-light: #60a5fa;
+        --background: #ffffff;
+        --foreground: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #0f172a;
+          --foreground: #f8fafc;
+          --muted: #94a3b8;
+          --border: #334155;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--background);
+        color: var(--foreground);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 28rem;
+        width: 100%;
+      }
+
+      .icon-container {
+        margin-bottom: 1.5rem;
+      }
+
+      .icon {
+        width: 5rem;
+        height: 5rem;
+        color: var(--muted);
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .description {
+        color: var(--muted);
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      @media (min-width: 400px) {
+        .button-group {
+          flex-direction: row;
+          justify-content: center;
+        }
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-decoration: none;
+      }
+
+      .button-primary {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+      }
+
+      .button-primary:hover {
+        background-color: var(--primary-light);
+      }
+
+      .button-secondary {
+        background-color: transparent;
+        color: var(--foreground);
+        border: 1px solid var(--border);
+      }
+
+      .button-secondary:hover {
+        background-color: var(--border);
+      }
+
+      .button svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .tips {
+        margin-top: 2rem;
+        padding: 1rem;
+        background-color: var(--border);
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .tips h2 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--foreground);
+      }
+
+      .tips ul {
+        list-style: none;
+        text-align: left;
+      }
+
+      .tips li {
+        padding: 0.25rem 0;
+        padding-left: 1rem;
+        position: relative;
+      }
+
+      .tips li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+      }
+
+      .brand {
+        margin-top: 2rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .brand strong {
+        color: var(--foreground);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Offline Icon -->
+      <div class="icon-container">
+        <svg
+          class="icon"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a5 5 0 01-7.072 0M12 12h.01M8.464 8.464a5 5 0 00-7.072 0M3 3l18 18"
+          />
+        </svg>
+      </div>
+
+      <h1>오프라인 상태입니다</h1>
+      <p class="description">
+        인터넷에 연결되어 있지 않습니다.<br />
+        네트워크 연결을 확인하고 다시 시도해 주세요.
+      </p>
+
+      <div class="button-group">
+        <button class="button button-primary" onclick="window.location.reload()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          다시 시도
+        </button>
+        <a href="/" class="button button-secondary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+          홈으로 가기
+        </a>
+      </div>
+
+      <div class="tips">
+        <h2>네트워크 연결 팁</h2>
+        <ul>
+          <li>Wi-Fi 또는 모바일 데이터가 켜져 있는지 확인하세요</li>
+          <li>비행기 모드가 꺼져 있는지 확인하세요</li>
+          <li>라우터를 재시작해 보세요</li>
+          <li>다른 네트워크로 연결해 보세요</li>
+        </ul>
+      </div>
+
+      <div class="brand">
+        <strong>IDEA on Action</strong> - 생각을 멈추지 않고, 행동으로 옮기는
+        회사
+      </div>
+    </div>
+
+    <script>
+      // 온라인 상태가 되면 자동으로 새로고침
+      window.addEventListener("online", function () {
+        window.location.reload();
+      });
+
+      // 네트워크 상태 주기적 체크
+      let checkInterval = setInterval(function () {
+        if (navigator.onLine) {
+          window.location.reload();
+          clearInterval(checkInterval);
+        }
+      }, 5000);
+    </script>
+  </body>
+</html>
