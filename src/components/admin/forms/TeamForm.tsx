@@ -13,12 +13,15 @@
  * CMS Phase 2 - Agent 3
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Supabase Storage Hook
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 // UI Components
 import { FormModal } from '@/components/admin/ui/FormModal';
@@ -128,6 +131,20 @@ export function TeamForm({
   isSubmitting = false,
   error = null,
 }: TeamFormProps) {
+  // Supabase Storage upload hook for avatar images
+  const { uploadFile, uploading: uploadingImage, deleteFile } = useFileUpload({
+    bucket: 'cms-images',
+    maxSize: 5, // 5MB max
+    accept: ['image/*'],
+    optimizeImages: true,
+    onComplete: (file, url) => {
+      console.log('[TeamForm] Image uploaded:', file.name, url);
+    },
+    onError: (file, error) => {
+      console.error('[TeamForm] Image upload failed:', file.name, error);
+    },
+  });
+
   // Form setup
   const form = useForm<TeamFormValues>({
     resolver: zodResolver(teamSchema),
@@ -197,13 +214,28 @@ export function TeamForm({
     }
   };
 
-  // Image upload handler (placeholder - implement with Supabase)
-  const handleImageUpload = async (file: File): Promise<string> => {
-    // TODO: Implement Supabase upload
-    // For now, return a placeholder URL
-    console.log('Uploading file:', file.name);
-    return URL.createObjectURL(file);
-  };
+  // Image upload handler - integrated with Supabase Storage
+  const handleImageUpload = useCallback(async (file: File): Promise<string> => {
+    try {
+      const result = await uploadFile(file);
+      return result.url;
+    } catch (error) {
+      console.error('[TeamForm] Upload error:', error);
+      throw error;
+    }
+  }, [uploadFile]);
+
+  // Handle image delete from Supabase Storage
+  const handleImageDelete = useCallback(async (url: string) => {
+    try {
+      await deleteFile(url);
+      form.setValue('avatar_url', '');
+    } catch (error) {
+      console.error('[TeamForm] Delete error:', error);
+      // Even if delete fails, clear the form value
+      form.setValue('avatar_url', '');
+    }
+  }, [deleteFile, form]);
 
   // Character count helper
   const getCharCount = (field: keyof TeamFormValues) => {
@@ -424,11 +456,27 @@ export function TeamForm({
                 <Label>Avatar Image</Label>
                 <ImageUpload
                   value={form.watch('avatar_url') || ''}
-                  onChange={(url) => form.setValue('avatar_url', typeof url === 'string' ? url : '')}
+                  onChange={(url) => {
+                    const newUrl = typeof url === 'string' ? url : '';
+                    const currentUrl = form.getValues('avatar_url');
+                    // If URL is being cleared and we had a previous URL, delete from storage
+                    if (!newUrl && currentUrl) {
+                      handleImageDelete(currentUrl);
+                    } else {
+                      form.setValue('avatar_url', newUrl);
+                    }
+                  }}
                   onUpload={handleImageUpload}
                   multiple={false}
                   showAltText={false}
+                  disabled={uploadingImage}
                 />
+                {uploadingImage && (
+                  <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Uploading image...
+                  </p>
+                )}
                 {form.formState.errors.avatar_url && (
                   <p className="text-sm text-red-600 mt-1">
                     {form.formState.errors.avatar_url.message}

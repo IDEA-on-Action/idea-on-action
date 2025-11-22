@@ -50,6 +50,7 @@ export function useNotices(options: UseNoticesOptions = {}) {
 
   return useQuery({
     queryKey: QUERY_KEYS.list({ ...filters, sortBy, sortOrder } as NoticeFilters),
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지 (CMS Phase 4 최적화)
     queryFn: async () => {
       let query = supabase
         .from('notices')
@@ -107,6 +108,7 @@ export function useNotices(options: UseNoticesOptions = {}) {
 export function useNotice(id: string | undefined) {
   return useQuery({
     queryKey: QUERY_KEYS.detail(id || ''),
+    staleTime: 1000 * 60 * 10, // 10분간 캐시 유지 (CMS Phase 4 최적화)
     queryFn: async () => {
       if (!id) throw new Error('Notice ID is required')
 

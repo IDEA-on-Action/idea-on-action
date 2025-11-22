@@ -9,7 +9,44 @@
 ## 📅 2025년 11월 15일~22일 업데이트
 
 **최신 업데이트**:
-- 2025-11-22: **🧭 Compass Navigator 통합 준비 완료** ✅ - MCP 서버 스펙 및 DB 뷰 생성
+- 2025-11-22: **🎯 Minu 브랜드 전환 완료** ✅ - COMPASS → Minu 시리즈 리브랜딩
+  - **배경**: COMPASS 서비스 라인을 Minu 브랜드로 통합 전환
+  - **작업 시간**: ~3-4시간 (파일 리네이밍, 페이지 생성, DB 마이그레이션, MCP 연동)
+  - **완료 태스크**: 브랜드 리네이밍, 서비스 페이지 생성, MCP 연동, DB 마이그레이션
+
+  - **Task 1: 브랜드 리네이밍 (4개 서비스)**
+    - Compass Navigator → **Minu Find** (사업기회 탐색)
+    - Compass Cartographer → **Minu Frame** (문제정의 & RFP)
+    - Compass Captain → **Minu Build** (프로젝트 진행)
+    - Compass Harbor → **Minu Keep** (운영/유지보수)
+
+  - **Task 2: 파일 리네이밍**
+    - `CompassNavigatorPage.tsx` → `MinuFindPage.tsx`
+    - `compass-subscription.ts` → `minu-subscription.ts`
+    - `useCompassSubscription.ts` → `useMinuSubscription.ts`
+    - 신규 생성: `MinuFramePage.tsx`, `MinuBuildPage.tsx`, `MinuKeepPage.tsx`
+
+  - **Task 3: MCP 서버 연동**
+    - MCP 서버 dotenv 설정 수정 (환경 변수 로딩)
+    - useMinuSubscription 훅으로 구독 상태 조회
+    - Supabase 폴백 지원 (MCP 장애 시에도 정상 동작)
+
+  - **Task 4: 프로덕션 DB 마이그레이션**
+    - `20251122000001_rename_compass_to_minu.sql` 생성
+    - services 테이블: slug 및 title 업데이트
+    - subscription_plans 테이블: plan_name 업데이트
+    - `compass_integration_view` → `minu_integration_view` 뷰 생성
+    - 하위 호환성: `compass_integration_view` 별칭 유지
+
+  - **결과**:
+    - ✅ COMPASS → Minu 브랜드 전환 100% 완료
+    - ✅ 5개 서비스 페이지 생성 (Find, Frame, Build, Keep + 기존)
+    - ✅ MCP 클라이언트 통합 완료
+    - ✅ 프로덕션 DB 마이그레이션 완료
+    - ✅ E2E 테스트 추가
+    - ✅ 브랜드 가이드 문서 작성
+
+- 2025-11-22: **🧭 Compass Navigator MCP 통합 준비 완료** ✅ - MCP 서버 스펙 및 DB 뷰 생성
   - **배경**: 신규 서비스 "Compass Navigator"와 "생각과 행동" 간의 사용자/구독 데이터 연동 필요
   - **작업 시간**: ~1시간 (스펙 정의, DB 마이그레이션, 검증)
   - **완료 태스크**: MCP 스펙 문서, DB 뷰, 검증 스크립트

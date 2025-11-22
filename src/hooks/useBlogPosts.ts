@@ -56,6 +56,7 @@ export function useBlogPosts(options: UsePostsOptions = {}) {
 
   return useQuery({
     queryKey: QUERY_KEYS.list({ ...filters, sortBy, sortOrder } as BlogPostFilters),
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지 (CMS Phase 4 최적화)
     queryFn: async () => {
       let query = supabase
         .from('blog_posts')
@@ -129,6 +130,7 @@ export function useBlogPosts(options: UsePostsOptions = {}) {
 export function useBlogPost(id: string | undefined) {
   return useQuery({
     queryKey: QUERY_KEYS.detail(id || ''),
+    staleTime: 1000 * 60 * 10, // 10분간 캐시 유지 (CMS Phase 4 최적화)
     queryFn: async () => {
       if (!id) throw new Error('Post ID is required')
 
@@ -178,6 +180,7 @@ export function useBlogPost(id: string | undefined) {
 export function useBlogPostBySlug(slug: string | undefined) {
   return useQuery({
     queryKey: QUERY_KEYS.detailBySlug(slug || ''),
+    staleTime: 1000 * 60 * 10, // 10분간 캐시 유지 (CMS Phase 4 최적화)
     queryFn: async () => {
       if (!slug) throw new Error('Post slug is required')
 
@@ -381,6 +384,7 @@ export function useIncrementViewCount() {
 export function useCategories() {
   return useQuery({
     queryKey: QUERY_KEYS.categories,
+    staleTime: 1000 * 60 * 30, // 30분간 캐시 유지 (카테고리는 자주 변경 안 됨)
     queryFn: async () => {
       const { data, error } = await supabase
         .from('post_categories')
@@ -399,6 +403,7 @@ export function useCategories() {
 export function useTags() {
   return useQuery({
     queryKey: QUERY_KEYS.tags,
+    staleTime: 1000 * 60 * 30, // 30분간 캐시 유지 (태그는 자주 변경 안 됨)
     queryFn: async () => {
       const { data, error } = await supabase
         .from('post_tags')

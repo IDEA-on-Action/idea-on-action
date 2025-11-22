@@ -3,12 +3,15 @@
  * Comprehensive portfolio create/edit form with React Hook Form + Zod validation
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Supabase Storage Hook
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 // UI Components
 import { FormModal } from '@/components/admin/ui/FormModal';
@@ -151,6 +154,20 @@ export function PortfolioForm({
   isSubmitting = false,
   error = null,
 }: PortfolioFormProps) {
+  // Supabase Storage upload hook for portfolio images
+  const { uploadFile, uploading: uploadingImage, deleteFile } = useFileUpload({
+    bucket: 'cms-images',
+    maxSize: 10, // 10MB max for portfolio images
+    accept: ['image/*'],
+    optimizeImages: true,
+    onComplete: (file, url) => {
+      console.log('[PortfolioForm] Image uploaded:', file.name, url);
+    },
+    onError: (file, error) => {
+      console.error('[PortfolioForm] Image upload failed:', file.name, error);
+    },
+  });
+
   // Form setup
   const form = useForm<PortfolioFormValues>({
     resolver: zodResolver(portfolioSchema),
@@ -245,13 +262,40 @@ export function PortfolioForm({
     }
   };
 
-  // Image upload handler (placeholder - implement with Supabase)
-  const handleImageUpload = async (file: File): Promise<string> => {
-    // TODO: Implement Supabase upload
-    // For now, return a placeholder URL
-    console.log('Uploading file:', file.name);
-    return URL.createObjectURL(file);
-  };
+  // Image upload handler - integrated with Supabase Storage
+  const handleImageUpload = useCallback(async (file: File): Promise<string> => {
+    try {
+      const result = await uploadFile(file);
+      return result.url;
+    } catch (error) {
+      console.error('[PortfolioForm] Upload error:', error);
+      throw error;
+    }
+  }, [uploadFile]);
+
+  // Handle single image delete (thumbnail)
+  const handleThumbnailDelete = useCallback(async (url: string) => {
+    try {
+      await deleteFile(url);
+      form.setValue('thumbnail', '');
+    } catch (error) {
+      console.error('[PortfolioForm] Thumbnail delete error:', error);
+      // Even if delete fails, clear the form value
+      form.setValue('thumbnail', '');
+    }
+  }, [deleteFile, form]);
+
+  // Handle gallery image delete
+  const handleGalleryImageDelete = useCallback(async (urlToDelete: string) => {
+    try {
+      await deleteFile(urlToDelete);
+    } catch (error) {
+      console.error('[PortfolioForm] Gallery image delete error:', error);
+    }
+    // Update the images array regardless of delete success
+    const currentImages = form.getValues('images') || [];
+    form.setValue('images', currentImages.filter(url => url !== urlToDelete));
+  }, [deleteFile, form]);
 
   // Character count helper
   const getCharCount = (field: keyof PortfolioFormValues) => {
@@ -406,11 +450,27 @@ export function PortfolioForm({
                 <Label>Thumbnail Image</Label>
                 <ImageUpload
                   value={form.watch('thumbnail') || ''}
-                  onChange={(url) => form.setValue('thumbnail', typeof url === 'string' ? url : '')}
+                  onChange={(url) => {
+                    const newUrl = typeof url === 'string' ? url : '';
+                    const currentUrl = form.getValues('thumbnail');
+                    // If URL is being cleared and we had a previous URL, delete from storage
+                    if (!newUrl && currentUrl) {
+                      handleThumbnailDelete(currentUrl);
+                    } else {
+                      form.setValue('thumbnail', newUrl);
+                    }
+                  }}
                   onUpload={handleImageUpload}
                   multiple={false}
                   showAltText={false}
+                  disabled={uploadingImage}
                 />
+                {uploadingImage && (
+                  <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Uploading image...
+                  </p>
+                )}
                 {form.formState.errors.thumbnail && (
                   <p className="text-sm text-red-600 mt-1">
                     {form.formState.errors.thumbnail.message}
@@ -423,10 +483,27 @@ export function PortfolioForm({
                 <Label>Gallery Images (Max 10)</Label>
                 <ImageUpload
                   value={form.watch('images') || []}
-                  onChange={(urls) => form.setValue('images', Array.isArray(urls) ? urls : [urls])}
+                  onChange={(urls) => {
+                    const newUrls = Array.isArray(urls) ? urls : urls ? [urls] : [];
+                    const currentUrls = form.getValues('images') || [];
+
+                    // Find which images were removed
+                    const removedUrls = currentUrls.filter(url => !newUrls.includes(url));
+
+                    // Delete removed images from storage
+                    removedUrls.forEach(url => {
+                      handleGalleryImageDelete(url);
+                    });
+
+                    // If not all removed, just update form value (removals handled above)
+                    if (removedUrls.length === 0) {
+                      form.setValue('images', newUrls);
+                    }
+                  }}
                   onUpload={handleImageUpload}
                   multiple={true}
                   showAltText={false}
+                  disabled={uploadingImage}
                 />
                 {form.formState.errors.images && (
                   <p className="text-sm text-red-600 mt-1">

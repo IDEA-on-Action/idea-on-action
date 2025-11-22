@@ -3,14 +3,54 @@
 > 프로젝트 작업 목록 및 진행 상황 관리
 
 **마지막 업데이트**: 2025-11-22
-**현재 Phase**: ✅ Version 2.4.0 완료 (Minu 브랜드 전환 + MCP 연동)
-**완료된 항목**: COMPASS → Minu 리브랜딩, MCP 서버 연동 완료, 프로덕션 DB 마이그레이션
-**프로젝트 버전**: 2.4.0 (Minu 브랜드 전환)
+**현재 Phase**: ✅ Version 2.4.1 완료 (CMS Phase 4 + 미디어 라이브러리)
+**완료된 항목**: CMS Phase 4 최적화, 미디어 라이브러리 구축, 프로덕션 마이그레이션 적용
+**프로젝트 버전**: 2.4.1 (CMS Phase 4)
 **프로덕션**: https://www.ideaonaction.ai
 
 ---
 
 ## ✅ 최근 완료 (2025-11-22)
+
+### ⚡ CMS Phase 4: 최적화 ✅ (100% 완료)
+
+**목표**: 성능 최적화, Upload 기능 완성, 미디어 라이브러리 구축
+**시작일**: 2025-11-22
+**완료일**: 2025-11-22
+**현재 상태**: ✅ 완료
+**버전**: 2.4.1
+
+#### 완료된 작업 (병렬 4개 에이전트)
+
+**1. React Query 캐싱 전략 최적화**
+- [x] useBlogPosts: staleTime 5-10분 적용
+- [x] useNotices: staleTime 5-10분 적용
+- [x] 카테고리/태그: staleTime 30분 적용
+
+**2. TeamForm/PortfolioForm Upload 구현**
+- [x] TeamForm Supabase Storage 연동
+- [x] PortfolioForm 다중 이미지 업로드
+- [x] 이미지 삭제 기능 추가
+- [x] 업로드 진행 상태 표시
+
+**3. 미디어 라이브러리 구축**
+- [x] media_library 테이블 생성 (14개 컬럼)
+- [x] media-library Storage bucket 생성
+- [x] RLS 정책 4개 설정
+- [x] E2E 테스트 38개 작성
+
+**4. 프로덕션 마이그레이션 적용**
+- [x] 통합 스크립트 실행 (apply-2025-11-22-migrations.sql)
+- [x] 70개 함수 search_path 보안 강화
+- [x] 보안 점수: 32/100 → 98/100
+
+#### 통계
+- 신규 파일: 8개
+- 수정 파일: 6개
+- E2E 테스트: +38개 (총 330+)
+- 마이그레이션: 4개 적용
+
+---
 
 ### 🎨 Minu 브랜드 전환 + MCP 연동 ✅ (100% 완료)
 
