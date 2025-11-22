@@ -24,9 +24,9 @@ import { FormModal } from '@/components/admin/ui/FormModal';
 import { MultiSelect } from '@/components/admin/ui/MultiSelect';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { RichTextEditor } from '@/components/admin/editor/RichTextEditor';
 import {
   Select,
   SelectContent,
@@ -298,8 +298,8 @@ export function LabForm({
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="open">Open =�</SelectItem>
-                    <SelectItem value="in_progress">In Progress =�</SelectItem>
+                    <SelectItem value="open">Open =�</SelectItem>
+                    <SelectItem value="in_progress">In Progress =�</SelectItem>
                     <SelectItem value="completed">Completed </SelectItem>
                     <SelectItem value="closed">Closed U</SelectItem>
                   </SelectContent>
@@ -311,22 +311,25 @@ export function LabForm({
                 )}
               </div>
 
-              {/* Description */}
+              {/* Description - RichTextEditor */}
               <div>
                 <Label htmlFor="description">Description * ({getCharCount('description')}/5000)</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Detailed bounty description (supports Markdown)"
-                  rows={8}
-                  maxLength={5000}
-                  {...form.register('description')}
-                />
-                <p className="text-xs text-muted-foreground mt-1">Supports Markdown formatting</p>
-                {form.formState.errors.description && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {form.formState.errors.description.message}
-                  </p>
-                )}
+                <div className="mt-2">
+                  <RichTextEditor
+                    value={form.watch('description') || ''}
+                    onChange={(value) => form.setValue('description', value, { shouldValidate: true })}
+                    defaultMode="wysiwyg"
+                    outputFormat="markdown"
+                    config={{
+                      placeholder: 'Detailed bounty description...',
+                      minHeight: 200,
+                      maxHeight: 400,
+                    }}
+                    error={!!form.formState.errors.description}
+                    errorMessage={form.formState.errors.description?.message}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">WYSIWYG 또는 마크다운 모드로 작성 가능</p>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -350,8 +353,8 @@ export function LabForm({
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="beginner">Beginner =�</SelectItem>
-                    <SelectItem value="intermediate">Intermediate =�</SelectItem>
+                    <SelectItem value="beginner">Beginner =�</SelectItem>
+                    <SelectItem value="intermediate">Intermediate =�</SelectItem>
                     <SelectItem value="advanced">Advanced =4</SelectItem>
                   </SelectContent>
                 </Select>

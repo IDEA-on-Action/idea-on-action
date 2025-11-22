@@ -2,8 +2,8 @@
 
 > Claude와의 개발 협업을 위한 프로젝트 핵심 문서
 
-**마지막 업데이트**: 2025-11-22
-**현재 버전**: 2.4.0 (Minu 브랜드 전환)
+**마지막 업데이트**: 2025-11-23
+**현재 버전**: 2.5.0 (CMS Phase 5 - 리치 텍스트 에디터 & 미디어 고도화)
 **상태**: ✅ Production Ready | 🔒 보안 점수 98/100 | 🎯 토스페이먼츠 심사 제출 완료
 **개발 방법론**: SDD (Spec-Driven Development) + MCP (Model Context Protocol) Integration
 
@@ -11,21 +11,32 @@
 
 ## 📋 최신 업데이트
 
-### 2025-11-22 (오늘)
+### 2025-11-23 (오늘)
+- ✅ **CMS Phase 5 완료** - 리치 텍스트 에디터 & 미디어 라이브러리 고도화 (병렬 6개 에이전트)
+  - **Sprint 1: 미디어 라이브러리 고도화**
+    - Storage bucket 마이그레이션 (`20251123000100_create_media_storage_bucket.sql`)
+    - `useMediaUpload` 훅 신규 생성 (단일/다중 업로드, 진행률 추적)
+    - `useMediaList` 훅 신규 생성 (페이지네이션, 무한 스크롤, React Query)
+    - `MediaFilter` 컴포넌트 신규 생성 (검색, 타입, 날짜, 정렬)
+    - `MediaUploader` 접근성 개선 (WCAG 2.1 AA, 한글화)
+    - `media-utils.ts` 확장 (이미지 최적화, 썸네일, 유효성 검사)
+    - `media.types.ts` 타입 정의 파일 신규 생성
+  - **Sprint 2: Tiptap 리치 텍스트 에디터**
+    - 고급 Extensions 4개 (`ImageExtension`, `CodeBlockExtension`, `MarkdownExtension`, `LinkExtension`)
+    - `ImageInsertDialog`, `CodeBlockDialog` 다이얼로그 컴포넌트
+    - `FormRichTextEditor` React Hook Form 통합 래퍼
+    - Admin 페이지 통합 (Portfolio, Lab, Blog)
+    - XSS 방지, 보안 강화
+
+### 2025-11-22
 - ✅ **Minu 브랜드 전환 완료** - COMPASS → Minu 시리즈 리브랜딩
   - Compass Navigator → **Minu Find** (사업기회 탐색)
   - Compass Cartographer → **Minu Frame** (문제정의 & RFP)
   - Compass Captain → **Minu Build** (프로젝트 진행)
   - Compass Harbor → **Minu Keep** (운영/유지보수)
 - ✅ **MCP 서버 연동 완료** - Minu 4개 서비스 페이지 MCP 클라이언트 통합
-  - MCP 서버 dotenv 설정, 환경 변수 로딩 수정
-  - MinuFramePage, MinuBuildPage, MinuKeepPage 신규 생성
-  - useMinuSubscription 훅으로 구독 상태 조회
-  - Supabase 폴백 지원 (MCP 장애 시에도 정상 동작)
 - ✅ **프로덕션 DB 마이그레이션 완료** - services, subscription_plans, views 업데이트
 - ✅ **Newsletter CSV Export 날짜 필터 완성** - DateRangePicker 컴포넌트, E2E 테스트 3개 추가
-- ✅ **Newsletter 고도화 완료** - 문서화 2개, E2E 테스트 33개, CSV Export 검증
-- ✅ **토스페이먼츠 심사 준비 완료** - DB 검증 시스템, 엣지 함수 문서화, 심사 서류 7개
 - ✅ **Function Search Path 보안 강화** - 67개 함수 SQL Injection 방어 (보안 점수 98/100)
 
 ### 2025-11-21

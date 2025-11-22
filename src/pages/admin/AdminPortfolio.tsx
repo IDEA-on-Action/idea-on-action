@@ -82,6 +82,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { PortfolioItem } from '@/types/cms.types'
 import { FormSection } from '@/components/admin/FormSection'
+import { FormRichTextEditor } from '@/components/admin/forms/FormRichTextEditor'
 
 // Zod Schema for Portfolio Form
 const portfolioSchema = z.object({
@@ -613,19 +614,15 @@ export default function AdminPortfolio() {
                   )}
                 />
 
-                {/* Description */}
-                <FormField
-                  control={form.control}
+                {/* Description - RichTextEditor */}
+                <FormRichTextEditor
                   name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>상세 설명</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="프로젝트 상세 설명" className="min-h-[100px]" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  control={form.control}
+                  label="상세 설명"
+                  placeholder="프로젝트 상세 설명을 입력하세요..."
+                  description="WYSIWYG 또는 마크다운 모드로 작성할 수 있습니다"
+                  minHeight={150}
+                  maxHeight={400}
                 />
 
                 {/* Client Name & Logo */}
@@ -845,47 +842,34 @@ export default function AdminPortfolio() {
                 description="프로젝트의 문제점, 해결책, 결과 및 추천사를 입력하세요"
                 defaultOpen={false}
               >
-                {/* Challenges, Solutions, Outcomes */}
-                <FormField
-                  control={form.control}
+                {/* Challenges - RichTextEditor */}
+                <FormRichTextEditor
                   name="challenges"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>도전 과제</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="프로젝트의 주요 도전 과제" className="min-h-[80px]" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  control={form.control}
+                  label="도전 과제"
+                  placeholder="프로젝트의 주요 도전 과제를 입력하세요..."
+                  minHeight={120}
+                  maxHeight={300}
                 />
 
-                <FormField
-                  control={form.control}
+                {/* Solutions - RichTextEditor */}
+                <FormRichTextEditor
                   name="solutions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>해결 방법</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="도전 과제에 대한 해결 방법" className="min-h-[80px]" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  control={form.control}
+                  label="해결 방법"
+                  placeholder="도전 과제에 대한 해결 방법을 입력하세요..."
+                  minHeight={120}
+                  maxHeight={300}
                 />
 
-                <FormField
-                  control={form.control}
+                {/* Outcomes - RichTextEditor */}
+                <FormRichTextEditor
                   name="outcomes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>성과</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="프로젝트 성과" className="min-h-[80px]" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  control={form.control}
+                  label="성과"
+                  placeholder="프로젝트 성과를 입력하세요..."
+                  minHeight={120}
+                  maxHeight={300}
                 />
 
                 {/* Testimonial (JSON) */}

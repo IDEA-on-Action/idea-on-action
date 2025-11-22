@@ -8,26 +8,13 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Search,
-  Grid,
-  LayoutList,
   Trash2,
-  RefreshCw,
-  Filter,
   ChevronLeft,
   ChevronRight,
   ImagePlus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +30,7 @@ import { useMediaLibrary } from '@/hooks/useMediaLibrary';
 import { MediaUploader } from './MediaUploader';
 import { MediaGrid } from './MediaGrid';
 import { MediaModal } from './MediaModal';
+import { MediaFilter } from './MediaFilter';
 import { toast } from 'sonner';
 import type { MediaItem, MediaSearchParams } from '@/types/cms.types';
 
@@ -92,31 +80,28 @@ export function MediaLibrary({
   // State
   // ===================================================================
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [mimeTypeFilter, setMimeTypeFilter] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'created_at' | 'filename' | 'file_size'>('created_at');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<MediaSearchParams>({
+    page: 1,
+    per_page: 20,
+    sort_by: 'created_at',
+    sort_order: 'desc',
+  });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [previewItem, setPreviewItem] = useState<MediaItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
 
-  // Debounced search
-  const debouncedSearch = useDebounce(searchQuery, 300);
+  // Debounced search for filters
+  const debouncedSearch = useDebounce(filters.search || '', 300);
 
   // ===================================================================
   // Build Search Params
   // ===================================================================
 
   const searchParams: MediaSearchParams = useMemo(() => ({
+    ...filters,
     search: debouncedSearch || undefined,
-    mime_type: mimeTypeFilter || undefined,
-    sort_by: sortBy,
-    sort_order: sortOrder,
-    page,
-    per_page: 20,
-  }), [debouncedSearch, mimeTypeFilter, sortBy, sortOrder, page]);
+  }), [filters, debouncedSearch]);
 
   // ===================================================================
   // Media Library Hook
@@ -225,79 +210,30 @@ export function MediaLibrary({
   // Render
   // ===================================================================
 
+  // Handler for filter changes
+  const handleFiltersChange = useCallback((newFilters: MediaSearchParams) => {
+    setFilters(newFilters);
+  }, []);
+
+  // Handler for page changes
+  const handlePageChange = useCallback((newPage: number) => {
+    setFilters(prev => ({ ...prev, page: newPage }));
+  }, []);
+
+  // ===================================================================
+  // Render
+  // ===================================================================
+
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search files..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
-            className="pl-9"
-          />
-        </div>
-
-        {/* Filters */}
-        <div className="flex gap-2">
-          <Select
-            value={mimeTypeFilter}
-            onValueChange={(value) => {
-              setMimeTypeFilter(value);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-[140px]">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="All types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All types</SelectItem>
-              <SelectItem value="image/jpeg">JPEG</SelectItem>
-              <SelectItem value="image/png">PNG</SelectItem>
-              <SelectItem value="image/gif">GIF</SelectItem>
-              <SelectItem value="image/webp">WebP</SelectItem>
-              <SelectItem value="image/svg">SVG</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={`${sortBy}-${sortOrder}`}
-            onValueChange={(value) => {
-              const [by, order] = value.split('-') as ['created_at' | 'filename' | 'file_size', 'asc' | 'desc'];
-              setSortBy(by);
-              setSortOrder(order);
-            }}
-          >
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="created_at-desc">Newest first</SelectItem>
-              <SelectItem value="created_at-asc">Oldest first</SelectItem>
-              <SelectItem value="filename-asc">Name (A-Z)</SelectItem>
-              <SelectItem value="filename-desc">Name (Z-A)</SelectItem>
-              <SelectItem value="file_size-desc">Largest first</SelectItem>
-              <SelectItem value="file_size-asc">Smallest first</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
-            <span className="sr-only">Refresh</span>
-          </Button>
-        </div>
-      </div>
+      {/* Filter Component */}
+      <MediaFilter
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onRefresh={() => refetch()}
+        isLoading={isLoading}
+        showDateFilter
+      />
 
       {/* Toolbar */}
       <div className="flex items-center justify-between border-b pb-4">
@@ -372,7 +308,7 @@ export function MediaLibrary({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage <= 1 || isLoading}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -384,7 +320,7 @@ export function MediaLibrary({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage >= totalPages || isLoading}
           >
             Next

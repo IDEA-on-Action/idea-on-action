@@ -2,15 +2,55 @@
 
 > 프로젝트 작업 목록 및 진행 상황 관리
 
-**마지막 업데이트**: 2025-11-22
-**현재 Phase**: ✅ Version 2.4.1 완료 (CMS Phase 4 + 미디어 라이브러리)
-**완료된 항목**: CMS Phase 4 최적화, 미디어 라이브러리 구축, 프로덕션 마이그레이션 적용
-**프로젝트 버전**: 2.4.1 (CMS Phase 4)
+**마지막 업데이트**: 2025-11-23
+**현재 Phase**: ✅ Version 2.5.0 완료 (CMS Phase 5 - 리치 텍스트 에디터 & 미디어 고도화)
+**완료된 항목**: CMS Phase 5 완료, Tiptap 에디터 통합, 미디어 라이브러리 고도화
+**프로젝트 버전**: 2.5.0 (CMS Phase 5)
 **프로덕션**: https://www.ideaonaction.ai
 
 ---
 
-## ✅ 최근 완료 (2025-11-22)
+## ✅ 최근 완료 (2025-11-23)
+
+### 🚀 CMS Phase 5: 리치 텍스트 에디터 & 미디어 고도화 ✅ (100% 완료)
+
+**목표**: Tiptap 리치 텍스트 에디터 통합 및 미디어 라이브러리 고도화
+**시작일**: 2025-11-23
+**완료일**: 2025-11-23
+**현재 상태**: ✅ 완료
+**버전**: 2.5.0
+
+#### 완료된 작업 (병렬 6개 에이전트)
+
+**Sprint 1: 미디어 라이브러리 고도화**
+- [x] Storage bucket 마이그레이션 (`20251123000100_create_media_storage_bucket.sql`)
+- [x] `useMediaUpload` 훅 신규 생성 (단일/다중 업로드, 진행률 추적)
+- [x] `useMediaList` 훅 신규 생성 (페이지네이션, 무한 스크롤, React Query)
+- [x] `MediaFilter` 컴포넌트 신규 생성 (검색, 타입, 날짜, 정렬)
+- [x] `MediaUploader` 접근성 개선 (WCAG 2.1 AA, 한글화)
+- [x] `media-utils.ts` 확장 (이미지 최적화, 썸네일, 유효성 검사)
+- [x] `media.types.ts` 타입 정의 파일 신규 생성
+
+**Sprint 2: Tiptap 리치 텍스트 에디터**
+- [x] 고급 Extensions 4개 구현
+  - `ImageExtension` (리사이즈, 정렬, alt text)
+  - `CodeBlockExtension` (9개 언어, 줄 번호, 복사)
+  - `MarkdownExtension` (단축키, 자동 변환)
+  - `LinkExtension` (URL 검증, XSS 방지)
+- [x] `ImageInsertDialog` 컴포넌트 (URL/라이브러리 탭)
+- [x] `CodeBlockDialog` 컴포넌트 (언어 선택, 미리보기)
+- [x] `FormRichTextEditor` React Hook Form 통합 래퍼
+- [x] Admin 페이지 통합 (Portfolio, Lab, Blog)
+- [x] `toggle.tsx` UI 컴포넌트 추가
+
+#### 통계
+- 신규 파일: 12개
+- 수정 파일: 9개
+- 마이그레이션: 1개
+
+---
+
+## ✅ 이전 완료 (2025-11-22)
 
 ### ⚡ CMS Phase 4: 최적화 ✅ (100% 완료)
 

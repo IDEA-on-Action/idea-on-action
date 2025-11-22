@@ -16,7 +16,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useNavigate } from 'react-router-dom'
-import { Loader2, Eye, Upload, X, Save } from 'lucide-react'
+import { Loader2, Upload, X, Save } from 'lucide-react'
 import { useCategories, useTags, useCreateBlogPost, useUpdateBlogPost } from '@/hooks/useBlogPosts'
 import { generateSlug, calculateReadingTime } from '@/types/blog'
 import { devError } from '@/lib/errors'
@@ -41,8 +41,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { MarkdownRenderer } from './MarkdownRenderer'
+import { RichTextEditor } from '@/components/admin/editor/RichTextEditor'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
@@ -109,7 +108,6 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
   })
 
   const watchTitle = form.watch('title')
-  const watchContent = form.watch('content')
 
   // Watch all form values for auto-save
   const watchedValues = useWatch({ control: form.control })
@@ -406,41 +404,34 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
           )}
         />
 
-        {/* Content (Markdown Editor with Preview) */}
+        {/* Content - RichTextEditor with WYSIWYG and Markdown modes */}
         <FormField
           control={form.control}
           name="content"
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <FormItem>
-              <FormLabel>Content * (Markdown)</FormLabel>
-              <Tabs defaultValue="write" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="write">Write</TabsTrigger>
-                  <TabsTrigger value="preview">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="write">
-                  <FormControl>
-                    <Textarea
-                      placeholder="Write your content in Markdown..."
-                      rows={20}
-                      className="font-mono"
-                      {...field}
-                    />
-                  </FormControl>
-                </TabsContent>
-                <TabsContent value="preview">
-                  <div className="border rounded-lg p-4 min-h-[500px] bg-background">
-                    {watchContent ? (
-                      <MarkdownRenderer content={watchContent} />
-                    ) : (
-                      <p className="text-muted-foreground">Nothing to preview yet...</p>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
+              <FormLabel>Content * (WYSIWYG / Markdown)</FormLabel>
+              <FormControl>
+                <RichTextEditor
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  defaultMode="wysiwyg"
+                  outputFormat="markdown"
+                  config={{
+                    placeholder: 'Write your blog post content...',
+                    minHeight: 400,
+                    maxHeight: 800,
+                    enableImages: true,
+                    enableCodeBlocks: true,
+                    enableLinks: true,
+                  }}
+                  error={!!error}
+                  errorMessage={error?.message}
+                />
+              </FormControl>
+              <FormDescription>
+                Switch between WYSIWYG and Markdown modes using the toolbar toggle
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

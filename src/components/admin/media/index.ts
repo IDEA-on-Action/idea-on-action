@@ -9,3 +9,4 @@ export { MediaUploader, type MediaUploaderProps } from './MediaUploader';
 export { MediaGrid, type MediaGridProps } from './MediaGrid';
 export { MediaItem, type MediaItemProps } from './MediaItem';
 export { MediaModal, type MediaModalProps } from './MediaModal';
+export { MediaFilter, type MediaFilterProps } from './MediaFilter';
