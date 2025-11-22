@@ -241,11 +241,15 @@ export default defineConfig(({ mode }) => ({
           // index.js to ensure proper initialization order.
           // ============================================================
 
-          // 1. Recharts - Only used in admin analytics dashboards
-          // Separating this reduces main bundle significantly
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
-            return 'vendor-charts';
-          }
+          // 1. Recharts - DISABLED due to circular dependency issues
+          // recharts + d3-* libraries have complex internal dependencies
+          // that cause "Cannot access 'X' before initialization" errors
+          // when separated into their own chunk.
+          // Keeping them in the main bundle for now.
+          // TODO: Re-evaluate with recharts v3 or alternative charting library
+          // if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+          //   return 'vendor-charts';
+          // }
 
           // 2. Markdown Rendering - Only used in blog posts and chat
           if (
@@ -290,13 +294,12 @@ export default defineConfig(({ mode }) => ({
           // to reduce initial load time for public pages.
           //
           // Expected Results:
-          // - vendor-charts:   ~100 kB gzip (lazy loaded)
           // - vendor-markdown: ~50 kB gzip (lazy loaded)
           // - vendor-editor:   ~80 kB gzip (lazy loaded)
           // - vendor-sentry:   ~30 kB gzip (lazy loaded)
           // - vendor-auth:     ~20 kB gzip (lazy loaded)
           // - pages-admin:     ~800 kB gzip (lazy loaded)
-          // - index.js:        ~300 kB gzip (initial load)
+          // - index.js:        ~400 kB gzip (initial load, includes recharts)
           // ============================================================
 
           // Admin Routes (23 pages + 4 components)
